@@ -6,10 +6,11 @@ import button from '@components/search/SortBy/sortBy.html.twig';
 
 export async function getServerSideProps () {
   const fs = require('fs');
+  const path = require('path');
   const d = new Date();
   const menu = { date: d.toLocaleString(), menu: { random: Math.random(), menu: 'things' } } 
 
-  fs.writeFileSync('./menu.json', JSON.stringify(menu, null, 4));
+  fs.writeFileSync(path.resolve(__dirname, './menu.json'), JSON.stringify(menu, null, 4));
   return { props: {menu: menu}};
 }
 
