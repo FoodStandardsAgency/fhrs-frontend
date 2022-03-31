@@ -7,7 +7,7 @@ import button from '@components/search/SortBy/sortBy.html.twig'
 export async function getStaticProps () {
   const fs = require('fs');
   const d = new Date();
-  const page = require('path');
+  const path = require('path');
 
   const menu = JSON.parse(fs.readFileSync(path.resolve(__dirname, './menu.json'), 'utf8'));
 //  const menu = { date: d.toLocaleString(), menu: { random: Math.random(), menu: 'things' } }
