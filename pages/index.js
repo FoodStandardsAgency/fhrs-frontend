@@ -8,8 +8,14 @@ export async function getStaticProps () {
   const fs = require('fs');
   const d = new Date();
   const path = require('path');
+  let menu = {};
 
-  const menu = JSON.parse(fs.readFileSync(path.resolve(__dirname, './menu.json'), 'utf8'));
+  try {
+  menu = JSON.parse(fs.readFileSync(path.resolve(__dirname, './menu.json'), 'utf8'));
+  }
+  catch (e) {
+  menu = { not: "not built" };
+  }
 //  const menu = { date: d.toLocaleString(), menu: { random: Math.random(), menu: 'things' } }
   
 
