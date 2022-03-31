@@ -8,7 +8,7 @@ export async function getStaticProps () {
   const fs = require('fs');
   const d = new Date();
 
-  const menu = JSON.parse(fs.readFileSync('data/menu.json', 'utf8'));
+  const menu = JSON.parse(fs.readFileSync('menu.json', 'utf8'));
   
 
 

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "menu": "node menu-write.js"
   },
   "dependencies": {
     "fsa-pattern-library-assets": "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#main",
