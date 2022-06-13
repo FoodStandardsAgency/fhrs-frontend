@@ -10,6 +10,7 @@
     "menu": "node menu-write.js"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "fsa-pattern-library-assets": "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#main",
     "html-react-parser": "^1.4.9",
     "next": "12.1.2",
