@@ -17,13 +17,14 @@ export async function getStaticProps () {
 }
 
 const PageWrapper = (Component) =>  {
-  return (props) => (
+  return function PageWrapperInner(props) {
+    return (
     <>
       <TwigTemplate template={header} values={props.menus.header} attribs={[]}/>
       <Component {...props} />
       <TwigTemplate template={footer} values={props.menus.footer} attribs={[]}/>
-    </>
-  );
+    </>)
+  }
 }
 
 export default PageWrapper;
