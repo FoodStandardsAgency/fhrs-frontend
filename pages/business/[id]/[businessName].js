@@ -13,13 +13,15 @@ import {useRouter} from 'next/router';
 export async function getStaticPaths () {
   const data = await api.setType('establishments', {basic: true}).getResults();
   const establishments = data.establishments;
-  const paths = establishments.map((establishment) => (
-    {
+  const   paths = establishments.map((establishment) => {
+    let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
+    if (!bn.length) bn = "unknown";
+    return {
       params: {
         id: establishment.FHRSID.toString(),
-        businessName: establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase(),
+        businessName: bn,
       }
-    }));
+    }});
   return {
     paths,
     fallback: 'blocking',
