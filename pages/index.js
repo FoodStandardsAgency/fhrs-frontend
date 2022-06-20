@@ -1,5 +1,5 @@
 import PageWrapper, { getStaticProps } from '../components/layout/PageWrapper';
-import LayoutCentered from '../components/layout/layoutCentered';
+import LayoutCentered from '../components/layout/LayoutCentered';
 
 function Home(props)  {
   return (
