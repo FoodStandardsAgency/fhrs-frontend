@@ -2,7 +2,7 @@ import textBlock from '@components/components/article/TextBlock/textBlock.html.t
 import businessHero from '@components/components/fhrs/BusinessHero/businessHero.html.twig';
 import titleAndText from '@components/components/form/TitleAndText/titleAndText.html.twig';
 import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
-import LayoutCentered from '../../../components/layout/layoutCentered';
+import LayoutCentered from '../../../components/layout/LayoutCentered';
 import StandardsTable from '../../../components/business/StandardsTable';
 import LocalAuthority from '../../../components/business/LocalAuthority';
 import PageWrapper from '../../../components/layout/PageWrapper';
