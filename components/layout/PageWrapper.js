@@ -16,16 +16,18 @@ export async function getStaticProps () {
   };
 }
 
-const PageWrapper = (Component) =>  {
-  return function PageWrapperInner(props) {
+export default function PageWrapper(Component) {
+  function PageWrapper(props) {
     return (
-    <>
-      <TwigTemplate template={header} values={props.menus.header} attribs={[]}/>
-      <Component {...props} />
-      <TwigTemplate template={footer} values={props.menus.footer} attribs={[]}/>
-    </>)
+      <>
+        <TwigTemplate template={header} values={props.menus.header} attribs={[]}/>
+        <Component {...props} />
+        <TwigTemplate template={footer} values={props.menus.footer} attribs={[]}/>
+      </>
+    );
   }
+  PageWrapper.displayName = `PageWrapper(${Component.displayName || Component.name}`;
+  return PageWrapper;
 }
 
-export default PageWrapper;
 

@@ -56,6 +56,9 @@ function BusinessPage({business, scores}) {
   }
   formattedAddress += business.PostCode ? business.PostCode : '';
 
+  // Get business reply if available
+  let businessReply = business.RightToReply;
+
   // Generate hero data
   const heroData = {
     name: business.BusinessName,
@@ -76,6 +79,26 @@ function BusinessPage({business, scores}) {
 
   const foodSafetyText = {
     content: '<p>If you wish to see the food safety officer’s report on which this rating is based, you can request this from the local authority that carried out the inspection. You can do this by sending an email to the address below. The local authority will consider your request and will usually send you a copy of the report. In some cases, the local authority may decide that they cannot do so but will let you know this and explain why.</p>',
+  }
+
+  const aboutRightToReply = {
+    tag: 'h3',
+    title: 'About comments made by the business:',
+    description: '<p>A business has the right to reply to its local authority about the food hygiene rating given. This means a business may draw attention to improvements made since the inspection and/or explain particular circumstances at the time of inspection that might have affected the rating the business was given. The comments made by the business have been reviewed and may have been edited by a local authority food safety officer so they fit the terms and conditions of this website but the accuracy of any statements made has not been verified.</p>',
+  }
+
+  let rightToReplySection = '';
+  if (businessReply) {
+    const rightToReply = {
+      tag: 'h2',
+      title: 'What the business says',
+      description: businessReply.replace('&lt;p&gt;', '').replace('&lt;/p&gt;', ''),
+    }
+    rightToReplySection =
+      <>
+        <TwigTemplate template={titleAndText} values={rightToReply} attribs={[]}/>
+        <TwigTemplate template={titleAndText} values={aboutRightToReply} attribs={[]}/>
+      </>;
   }
 
   const businessOwnerText = {
@@ -116,6 +139,7 @@ function BusinessPage({business, scores}) {
         <TwigTemplate template={businessHero} values={heroData} attribs={[]}/>
         <StandardsTable scores={scores}/>
         <TwigTemplate template={textBlock} values={foodSafetyText} attribs={[]}/>
+        {rightToReplySection}
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
         <TwigTemplate template={titleAndText} values={getCodeText} attribs={[]}/>
         <LocalAuthority business={business} />
