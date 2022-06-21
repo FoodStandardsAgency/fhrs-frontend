@@ -11,9 +11,9 @@ import api from '../../../lib/api.js';
 import {useRouter} from 'next/router';
 
 export async function getStaticPaths () {
-  const data = await api.setType('establishments', {basic: true}).getResults();
+  const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 500}).getResults();
   const establishments = data.establishments;
-  const   paths = establishments.map((establishment) => {
+  const paths = establishments.map((establishment) => {
     let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
     if (!bn.length) bn = "unknown";
     return {
