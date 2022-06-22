@@ -1,8 +1,9 @@
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import TwigTemplate from '../../lib/parse.js';
 
-function StandardsTable(scores) {
-  const scoreDescriptors = scores.scores.scoreDescriptors;
+function StandardsTable(props) {
+  const scoreDescriptors = props.scores.scoreDescriptors;
+  const translations = props.translations;
   if (scoreDescriptors.length < 1) {
     return null;
   }
@@ -16,28 +17,27 @@ function StandardsTable(scores) {
 
   const table = '<table>' +
     '<tr>' +
-    '<th>Area inspected by food safety officer</th>' +
-    '<th>Standards found</th>' +
+    `<th>${translations.st_area_inspected}</th>` +
+    `<th>${translations.st_standards_found}</th>` +
     '</tr>' +
     '<tr>' +
     '<td>' +
-    '<strong>Hygienic food handling</strong>' +
-    '<p>Hygienic handling of food including preparation, cooking, re-heating, cooling and storage</p>' +
+    `<strong>${translations.st_hygienic_food_handling_label}</strong>` +
+    `<p>${translations.st_hygienic_food_handling_description}</p>` +
     '</td>' +
     `<td>${results.Hygiene}</td>` +
     '</tr>' +
     '<tr>' +
     '<td>' +
-    '<strong>Cleanliness and condition of facilities and building\n</strong>' +
-    '<p>Cleanliness and condition of facilities and building (including having appropriate layout, ventilation, hand washing facilities and pest control) to enable good food hygiene</p>' +
+    `<strong>${translations.st_hygienic_cleanliness_label}</strong>` +
+    `<p>${translations.st_hygienic_cleanliness_description}</p>` +
     '</td>' +
     `<td>${results.Structural}</td>` +
     '</tr>' +
     '<tr>' +
     '<td>' +
-    '<strong>Management of food safety\n</strong>' +
-    '<p>System or checks in place to ensure that food sold or served is safe to eat, evidence that staff know about food safety, and the food safety officer has confidence that standards will be maintained in future\n' +
-    '</p>' +
+    `<strong>${translations.st_hygienic_management_label}</strong>` +
+    `<p>${translations.st_hygienic_management_description}</p>` +
     '</td>' +
     `<td>${results.Confidence}</td>` +
     '</tr>' +

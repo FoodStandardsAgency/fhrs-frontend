@@ -8,7 +8,9 @@ import LocalAuthority from '../../../components/business/LocalAuthority';
 import PageWrapper from '../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../lib/parse.js';
 import api from '../../../lib/api.js';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from "next-i18next";
 
 export async function getStaticPaths () {
   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 500}).getResults();
@@ -29,22 +31,25 @@ export async function getStaticPaths () {
 }
 
 export async function getStaticProps (context) {
-  const res = await fetch(process.env.FSA_MAIN_BASE_URL + '/api/menus');
+  const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale == 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
   const businessId = context.params.id;
-  const business = await api.setType('establishments', {id: businessId}).getResults();
-  const scores = await api.setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
+  const business = await api.setLanguage(context.locale == 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
+  const scores = await api.setLanguage(context.locale == 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
   return {
     props: {
       business: business,
       scores: scores,
       menus: menus,
+      locale: context.locale,
+      ...(await serverSideTranslations(context.locale, ['common', 'businessHero', 'businessPage'])),
     },
     revalidate: 21600,
   }
 }
 
-function BusinessPage({business, scores}) {
+function BusinessPage({business, scores, locale}) {
+  const { t } = useTranslation(['common', 'businessHero', 'businessPage']);
   // Format date
   const date = new Date(business.RatingDate);
   const formattedDate = date.toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
@@ -63,35 +68,37 @@ function BusinessPage({business, scores}) {
   const heroData = {
     name: business.BusinessName,
     back_link: '#',
-    back_to_search_results: 'Back to search results',
+    back_to_search_results: t('back_to_search_results', {ns: 'businessHero'}),
     search_local_link: '#',
-    search_this_local_authority_area: 'Search this local authority area',
+    search_this_local_authority_area: t('search_this_local_authority_area', {ns: 'businessHero'}),
     search_all_link: '#',
-    search_all_data: 'Search all data',
-    address_title: 'Address',
+    search_all_data: t('search_all_data', {ns: 'businessHero'}),
+    address_title: t('address_title', {ns: 'businessHero'}),
     address_content: formattedAddress,
-    business_type_title: 'Business type',
+    business_type_title: t('business_type_title', {ns: 'businessHero'}),
     business_type_content: business.BusinessType,
-    date_title: 'Date of inspection',
+    date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
     rating: business.RatingValue,
+    welsh: locale === 'cy' ? true : false,
+    wales_business: false, // This isn't captured in the API so not sure how we're going to get this?
   }
 
   const foodSafetyText = {
-    content: '<p>If you wish to see the food safety officer’s report on which this rating is based, you can request this from the local authority that carried out the inspection. You can do this by sending an email to the address below. The local authority will consider your request and will usually send you a copy of the report. In some cases, the local authority may decide that they cannot do so but will let you know this and explain why.</p>',
+    content: t('food_safety_text', {ns: 'businessPage'}),
   }
 
   const aboutRightToReply = {
     tag: 'h3',
-    title: 'About comments made by the business:',
-    description: '<p>A business has the right to reply to its local authority about the food hygiene rating given. This means a business may draw attention to improvements made since the inspection and/or explain particular circumstances at the time of inspection that might have affected the rating the business was given. The comments made by the business have been reviewed and may have been edited by a local authority food safety officer so they fit the terms and conditions of this website but the accuracy of any statements made has not been verified.</p>',
+    title: t('about_comments_label', {ns: 'businessPage'}),
+    description: t('about_comments_description', {ns: 'businessPage'}),
   }
 
   let rightToReplySection = '';
   if (businessReply) {
     const rightToReply = {
       tag: 'h2',
-      title: 'What the business says',
+      title: t('what_the_business_says_label', {ns: 'businessPage'}),
       description: businessReply.replace('&lt;p&gt;', '').replace('&lt;/p&gt;', ''),
     }
     rightToReplySection =
@@ -103,46 +110,64 @@ function BusinessPage({business, scores}) {
 
   const businessOwnerText = {
     tag: 'h2',
-    title: 'Are you the business owner or manager?',
-    description: '<p>If any information on this page is incorrect you can email the correct information to your local authority by using the email address below.</p><p>You can find out <a href="https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses">how to appeal against the rating given and find out about your right to reply</a>. You can also <a href="https://www.food.gov.uk/business-guidance/food-hygiene-ratings-for-businesses"> ask for a re-inspection</a>.</p>',
+    title: t('business_owner_or_manager_title', {ns: 'businessPage'}),
+    description: t('business_owner_or_manager_description', {ns: 'businessPage'}),
   }
 
   const getCodeText = {
     tag: 'h2',
-    title: 'Display this rating on your website',
-    description: '<p>You can display this rating on your website.</p><p><a href="#">Get the code.</a></p>',
+    title: t('get_code_title', {ns: 'businessPage'}),
+    description: t('get_code_description', {ns: 'businessPage'}),
   }
 
   const promoGroupText = {
     cards: [
       {
-        title: 'Download data',
-        description: 'Re-usable hygiene data',
+        title: t('download_data_label', {ns: 'businessPage'}),
+        description: t('download_data_description', {ns: 'businessPage'}),
         promo_link: '/open-data',
       },
       {
-        title: 'Food problems?',
-        description: 'Consumers, businesses and enforcers can report issues',
+        title: t('food_problems_label', {ns: 'businessPage'}),
+        description: t('food_problems_description', {ns: 'businessPage'}),
         promo_link: 'https://www.food.gov.uk/contact/consumers/report-problem',
       },
       {
-        title: 'Be updated',
-        description: 'Get email and text updates. Follow us',
+        title: t('be_updated_label', {ns: 'businessPage'}),
+        description: t('be_updated_description', {ns: 'businessPage'}),
         promo_link: 'https://www.food.gov.uk/news-alerts/subscribe/alerts/',
       },
     ]
+  }
+
+  const localAuthorityText = {
+    la_section_title: t('la_section_title', {ns: 'businessPage'}),
+    la_name_label: t('la_name_label', {ns: 'businessPage'}),
+    la_website_label: t('la_website_label', {ns: 'businessPage'}),
+    la_email_label: t('la_email_label', {ns: 'businessPage'}),
+  }
+
+  const standardsTableText = {
+    st_area_inspected: t('st_area_inspected', {ns: 'businessPage'}),
+    st_standards_found: t('st_standards_found', {ns: 'businessPage'}),
+    st_hygienic_food_handling_label: t('st_hygienic_food_handling_label', {ns: 'businessPage'}),
+    st_hygienic_food_handling_description: t('st_hygienic_food_handling_description', {ns: 'businessPage'}),
+    st_hygienic_cleanliness_label: t('st_hygienic_cleanliness_label', {ns: 'businessPage'}),
+    st_hygienic_cleanliness_description: t('st_hygienic_cleanliness_description', {ns: 'businessPage'}),
+    st_hygienic_management_label: t('st_hygienic_management_label', {ns: 'businessPage'}),
+    st_hygienic_management_description: t('st_hygienic_management_description', {ns: 'businessPage'}),
   }
 
   return (
     <>
       <LayoutCentered>
         <TwigTemplate template={businessHero} values={heroData} attribs={[]}/>
-        <StandardsTable scores={scores}/>
+        <StandardsTable scores={scores} translations={standardsTableText}/>
         <TwigTemplate template={textBlock} values={foodSafetyText} attribs={[]}/>
         {rightToReplySection}
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
         <TwigTemplate template={titleAndText} values={getCodeText} attribs={[]}/>
-        <LocalAuthority business={business} />
+        <LocalAuthority business={business} translations={localAuthorityText} />
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupText} attribs={[]}/>
     </>

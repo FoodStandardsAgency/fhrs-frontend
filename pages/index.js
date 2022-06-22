@@ -4,9 +4,9 @@ import LayoutCentered from '../components/layout/LayoutCentered';
 function Home(props)  {
   return (
      <div>
-     <LayoutCentered>
+       <LayoutCentered>
         Test content
-        </LayoutCentered>
+       </LayoutCentered>
      </div>
   )
 }
