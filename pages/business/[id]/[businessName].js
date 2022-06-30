@@ -8,7 +8,6 @@ import LocalAuthority from '../../../components/business/LocalAuthority';
 import PageWrapper from '../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../lib/parse.js';
 import api from '../../../lib/api.js';
-import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from "next-i18next";
 
@@ -31,11 +30,11 @@ export async function getStaticPaths () {
 }
 
 export async function getStaticProps (context) {
-  const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale == 'cy' ? '/cy' : '') + '/api/menus');
+  const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
   const businessId = context.params.id;
-  const business = await api.setLanguage(context.locale == 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
-  const scores = await api.setLanguage(context.locale == 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
+  const business = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
+  const scores = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
   return {
     props: {
       business: business,
@@ -80,7 +79,7 @@ function BusinessPage({business, scores, locale}) {
     date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
     rating: business.RatingValue,
-    welsh: locale === 'cy' ? true : false,
+    welsh: locale === 'cy',
     wales_business: false, // This isn't captured in the API so not sure how we're going to get this?
   }
 
