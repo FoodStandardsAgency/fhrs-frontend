@@ -10,7 +10,7 @@ function FhrsApp({ Component, pageProps }) {
       <SearchContext.Provider>
         <Component {...pageProps} />
       </SearchContext.Provider>
-      <script src={"https://raw.githubusercontent.com/FoodStandardsAgency/fsa-pattern-library-assets/develop/dist/main.js"} defer />
+      <script src={"/main.js"} defer />
     </>
   )
 }
