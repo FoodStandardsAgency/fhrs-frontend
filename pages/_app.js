@@ -10,7 +10,7 @@ function FhrsApp({ Component, pageProps }) {
       <SearchContext.Provider>
         <Component {...pageProps} />
       </SearchContext.Provider>
-      <Script src={"https://raw.githubusercontent.com/FoodStandardsAgency/fsa-pattern-library-assets/develop/dist/main.js"}/>
+      <script src={"https://raw.githubusercontent.com/FoodStandardsAgency/fsa-pattern-library-assets/develop/dist/main.js"} />
     </>
   )
 }
