@@ -1,6 +1,6 @@
 import '../styles/globals.css'
-import { SearchContext } from "../context/searchContext.js";
 import 'fsa-pattern-library-assets/dist/main.css';
+import { SearchContext } from "../context/searchContext.js";
 import { appWithTranslation } from 'next-i18next';
 import Script from 'next/script';
 
@@ -10,7 +10,7 @@ function FhrsApp({ Component, pageProps }) {
       <SearchContext.Provider>
         <Component {...pageProps} />
       </SearchContext.Provider>
-      <Script src={"/fsa-pattern-library-assets/dist/main.js"}/>
+      <Script src={"/main.js"}/>
     </>
   )
 }

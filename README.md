@@ -34,4 +34,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## TODO
 
 Complete README!
-Fix the fonts. The fonts don't pull in automatically from PL. Figure out why.
+Fix the fonts. The fonts don't pull in automatically from PL. Figure out why. They are currently manually reimported in styles/global.css

@@ -1,0 +1,1 @@
+../node_modules/fsa-pattern-library-assets/dist/main.js
