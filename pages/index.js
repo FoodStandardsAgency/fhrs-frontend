@@ -7,7 +7,7 @@ import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratin
 import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
 import {useTranslation} from "next-i18next";
 import api from "../lib/api";
-import searchBoxMain from "../components/search/searchBoxMain";
+import SearchBoxMain from "../components/search/SearchBoxMain";
 import {useRouter} from "next/router";
 
 export async function getStaticProps(context) {
@@ -66,7 +66,7 @@ function Home({locale}) {
     <div>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <searchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'}/>
+         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'}/>
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
     </div>
