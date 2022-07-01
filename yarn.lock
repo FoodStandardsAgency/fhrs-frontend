@@ -295,6 +295,11 @@ balanced-match@^1.0.0, balanced-match@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
 
+bingmaps-react@^1.2.10:
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/bingmaps-react/-/bingmaps-react-1.2.10.tgz#2d3176c3c39dfde3c920db96c8c7d31b120ae8ff"
+  integrity sha512-fM887Sr6OIlo6ThmSpGfNEDssSytdnsMrbDTDs+YH/43etf0dlfcR4oaJvygy+fwn21hpP2lVvwTHUDZvGxZqA==
+
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.11.tgz#3c7fcbf529d87226f3d2f52b966ff5271eb441dd"
@@ -805,6 +810,23 @@ fs.realpath@^1.0.0:
 "fsa-pattern-library-assets@https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#develop":
   version "0.0.0"
   resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#af9b102dfccf073f897ef9a580192c0a773645b8"
+
+"fsa-pattern-library-source@https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#develop":
+  version "1.0.5"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#8551d8dd86b33a1c8acc35eb959286c642193b8c"
+  dependencies:
+    css-vars-ponyfill "2.4.7"
+    dwnld-attr-polyfill "^1.1.7"
+    element-closest-polyfill "1.0.4"
+    image-map-resizer "^1.0.10"
+    object-fit-images "^3.2.4"
+    postcss "8.4.8"
+    postcss-css-variables "0.18.0"
+    react "17.0.2"
+    react-dom "17.0.2"
+    smoothscroll-polyfill "^0.4.4"
+    url-polyfill "1.1.12"
+    uuid "^8.3.2"
 
 function-bind@^1.1.1:
   version "1.1.1"
