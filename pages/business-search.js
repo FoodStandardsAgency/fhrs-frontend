@@ -1,7 +1,7 @@
 import PageWrapper from '../components/layout/PageWrapper';
 import LayoutCentered from '../components/layout/LayoutCentered';
-import ratingsSearchBox from '@components/components/FHRS/RatingsSearchBox/ratingsSearchBox.html.twig';
-import searchCard from '@components/components/FHRS/SearchCard/searchCard.html.twig';
+import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
+import searchCard from '@components/components/fhrs/SearchCard/searchCard.html.twig';
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import SearchBoxMain from "../components/search/searchBoxMain";
 import {useEffect, useState} from "react";

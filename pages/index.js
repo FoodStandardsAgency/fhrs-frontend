@@ -2,12 +2,12 @@ import PageWrapper from '../components/layout/PageWrapper';
 import LayoutCentered from '../components/layout/LayoutCentered';
 import TwigTemplate from "../lib/parse";
 import hero from '@components/components/general/Hero/hero.html.twig';
-import ratingsSearchBox from '@components/components/FHRS/RatingsSearchBox/ratingsSearchBox.html.twig';
-import promoGroup from '@components/components/Landing/PromoGroup/promoGroup.html.twig';
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
+import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
 import {useTranslation} from "next-i18next";
 import api from "../lib/api";
-import SearchBoxMain from "../components/search/SearchBoxMain";
+import searchBoxMain from "../components/search/searchBoxMain";
 import {useRouter} from "next/router";
 
 export async function getStaticProps(context) {
@@ -66,7 +66,7 @@ function Home({locale}) {
     <div>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'}/>
+         <searchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'}/>
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
     </div>
