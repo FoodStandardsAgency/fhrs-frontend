@@ -80,6 +80,7 @@ function SearchBoxMain(props) {
     hygiene_rating_or_status,
     country_or_la,
     hygiene_status,
+    range,
   } = query;
 
   let defaultRating = null;
@@ -160,7 +161,7 @@ function SearchBoxMain(props) {
             value: "ltoe"
           }
         ],
-        default: "equal"
+        default: range ? range : "equal",
       },
     ],
     right: [
