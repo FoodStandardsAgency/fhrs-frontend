@@ -9,7 +9,10 @@ import PageWrapper from '../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../lib/parse.js';
 import api from '../../../lib/api.js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from "next-i18next";
+import {useTranslation} from "next-i18next";
+import {useEffect} from "react";
+import BingMapsReact from "bingmaps-react";
+import * as ReactDOM from "react-dom";
 
 export async function getStaticPaths () {
   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 20}).getResults();
@@ -41,13 +44,14 @@ export async function getStaticProps (context) {
       scores: scores,
       menus: menus,
       locale: context.locale,
+      bing_key: process.env.BING_MAPS_KEY,
       ...(await serverSideTranslations(context.locale, ['common', 'businessHero', 'businessPage'])),
     },
     revalidate: 21600,
   }
 }
 
-function BusinessPage({business, scores, locale}) {
+function BusinessPage({business, scores, locale, bing_key}) {
   const { t } = useTranslation(['common', 'businessHero', 'businessPage']);
   // Format date
   const date = new Date(business.RatingDate);
@@ -81,6 +85,9 @@ function BusinessPage({business, scores, locale}) {
     rating: business.RatingValue,
     welsh: locale === 'cy',
     wales_business: false, // This isn't captured in the API so not sure how we're going to get this?
+    map: true,
+    show_map: t('show_map', {ns: 'businessHero'}),
+    hide_map: t('hide_map', {ns: 'businessHero'}),
   }
 
   const foodSafetyText = {
@@ -156,6 +163,35 @@ function BusinessPage({business, scores, locale}) {
     st_hygienic_management_label: t('st_hygienic_management_label', {ns: 'businessPage'}),
     st_hygienic_management_description: t('st_hygienic_management_description', {ns: 'businessPage'}),
   }
+
+  const {latitude, longitude} = business.geocode;
+
+  useEffect(() => {
+    const mapWrapper = document.querySelector('.business-hero__map__wrapper');
+    if (mapWrapper){
+      ReactDOM.render(<BingMapsReact
+        bingMapsKey={bing_key}
+        mapOptions={{
+          navigationBarMode: 'round',
+        }}
+        viewOptions={{
+          center: { latitude: latitude, longitude: longitude },
+          mapTypeId: 'road',
+        }}
+        pushPins={[
+          {
+            center: {
+              latitude: latitude,
+              longitude: longitude,
+            },
+            options: {
+              title: business.BusinessName,
+            }
+          }
+        ]}
+      />, mapWrapper)
+    }
+  }, []);
 
   return (
     <>

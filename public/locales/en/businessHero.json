@@ -5,5 +5,7 @@
   "address_title": "Address",
   "business_type_title": "Business type",
   "date_title": "Date of inspection",
-  "name_prefix": "Get online ratings for"
+  "name_prefix": "Get online ratings for",
+  "show_map": "Show map",
+  "hide_map": "Hide map"
 }

@@ -5,5 +5,7 @@
   "address_title": "Cyfeiriad",
   "business_type_title": "Math o fusnes",
   "date_title": "Arolygiad diwethaf",
-  "name_prefix": "Cael sgôr ar-lein ar gyfer"
+  "name_prefix": "Cael sgôr ar-lein ar gyfer",
+  "show_map": "Dangos map",
+  "hide_map": "Cuddio map"
 }
