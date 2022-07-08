@@ -10,8 +10,9 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import api from "../lib/api";
 import TwigTemplate from "../lib/parse";
-import Pagination from "../components/search/Pagination";
+import formatDate from "../lib/formatDate";
 import {useTranslation} from "next-i18next";
+import Pagination from "../components/search/Pagination";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -20,14 +21,14 @@ export async function getStaticProps(context) {
     props: {
       menus: menus,
       locale: context.locale,
-      ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination'])),
+      ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination', 'dates'])),
     },
     revalidate: 21600,
   }
 }
 
 function BusinessSearch({locale}) {
-  const {t} = useTranslation(['searchPage']);
+  const {t} = useTranslation(['searchPage', 'dates']);
   const [results, setResults] = useState({});
   const {query, isReady} = useRouter();
   useEffect(() => {
@@ -106,8 +107,11 @@ function BusinessSearch({locale}) {
           for (let i = 1; i <= 4; i++) {
             formattedAddress += establishment[`AddressLine${i}`] ? establishment[`AddressLine${i}`] + '<br>' : '';
           }
+          formattedAddress = formattedAddress.replace(/<br>$/, '');
+
           const date = new Date(establishment.RatingDate);
-          const formattedDate = date.toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
+          const formattedDate = formatDate(date, t, locale);
+
           const establishmentContent = {
             business_name: establishment.BusinessName,
             business_link: `business/${establishment.FHRSID.toString()}/${establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
@@ -116,13 +120,14 @@ function BusinessSearch({locale}) {
             post_code: establishment.PostCode,
             last_inspected: t('last_inspected'),
             rating_date: formattedDate,
-            rating: establishment.RatingValue.toString(),
+            rating: establishment.RatingValue.toString().replace(' ', ''),
             private_address: t('private_address'),
             registered_with: t('registered_with'),
             local_authority_name: establishment.LocalAuthorityName,
             local_authority: t('local_authority'),
             business_say: t('business_say'),
             business_appeal: !!establishment.RightToReply,
+            fhis: establishment.SchemeType === 'FHIS',
           }
           return <TwigTemplate key={`${establishment.FHRSID.toString()}`} template={searchCard}
                                values={establishmentContent} attribs={[]}/>
