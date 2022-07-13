@@ -6,9 +6,9 @@ import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
 import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
 import {useTranslation} from "next-i18next";
-import api from "../lib/api";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import {useRouter} from "next/router";
+import Head from 'next/head'
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -25,6 +25,7 @@ export async function getStaticProps(context) {
 
 function Home({locale}) {
   const {t} = useTranslation(['common', 'homepage', 'businessPage']);
+  const pageTitle = `${t('page_title', {ns: 'homepage'})} | ${t('title')}`;
   const { query } = useRouter();
   const heroContent = {
     background_colour: 'green',
@@ -63,13 +64,16 @@ function Home({locale}) {
   }
 
   return (
-    <div>
+    <>
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
          <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'}/>
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
-    </div>
+    </>
   )
 }
 

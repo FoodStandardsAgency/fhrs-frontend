@@ -13,6 +13,8 @@ import {useTranslation} from "next-i18next";
 import {useEffect} from "react";
 import BingMapsReact from "bingmaps-react";
 import * as ReactDOM from "react-dom";
+import formatDate from "../../../lib/formatDate";
+import Head from "next/head";
 
 export async function getStaticPaths () {
   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 20}).getResults();
@@ -45,17 +47,20 @@ export async function getStaticProps (context) {
       menus: menus,
       locale: context.locale,
       bing_key: process.env.BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['common', 'businessHero', 'businessPage'])),
+      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage'])),
     },
     revalidate: 21600,
   }
 }
 
 function BusinessPage({business, scores, locale, bing_key}) {
-  const { t } = useTranslation(['common', 'businessHero', 'businessPage']);
+  const { t } = useTranslation(['dates', 'common', 'businessHero', 'businessPage']);
+
+  const pageTitle = `${business.BusinessName ? business.BusinessName : 'unknown'} | ${t('page_title', {ns: 'businessPage'})} | ${t('title', {ns: 'common'})}`;
+
   // Format date
   const date = new Date(business.RatingDate);
-  const formattedDate = date.toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
+  const formattedDate = formatDate(date, t, locale)
 
   // Format address
   let formattedAddress = '';
@@ -195,6 +200,9 @@ function BusinessPage({business, scores, locale, bing_key}) {
 
   return (
     <>
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
       <LayoutCentered>
         <TwigTemplate template={businessHero} values={heroData} attribs={[]}/>
         <StandardsTable scores={scores} translations={standardsTableText}/>

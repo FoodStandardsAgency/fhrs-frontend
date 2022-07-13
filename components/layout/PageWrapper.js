@@ -23,7 +23,9 @@ export default function PageWrapper(Component) {
     return (
       <>
         <TwigTemplate template={header} values={props.menus.header} attribs={[]}/>
-        <Component {...props} />
+        <main>
+          <Component {...props} />
+        </main>
         <TwigTemplate template={footer} values={props.menus.footer} attribs={[]}/>
       </>
     );

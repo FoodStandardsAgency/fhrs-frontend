@@ -1,15 +1,12 @@
 import '../styles/globals.css'
 import 'fsa-pattern-library-assets/dist/main.css';
-import { SearchContext } from "../context/searchContext.js";
 import { appWithTranslation } from 'next-i18next';
-import Script from 'next/script';
+import './../components/search/Loader/Loader.css';
 
 function FhrsApp({ Component, pageProps }) {
    return (
     <>
-      <SearchContext.Provider>
-        <Component {...pageProps} />
-      </SearchContext.Provider>
+      <Component {...pageProps} />
       <script src={"/main.js"} defer />
     </>
   )
