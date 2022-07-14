@@ -59,7 +59,7 @@ function SearchBoxMain(props) {
       const action = e.target.formAction;
       const url = new URL(action);
       const searchParams = new URLSearchParams(url);
-      e.target.formAction = '/business-search' + searchParams;
+      e.target.formAction = `${locale === 'cy' ? '/cy' : ''}/business-search${searchParams}`;
     });
     async function getSearchBoxOptions(fields, locale) {
       console.log('use', locale);
