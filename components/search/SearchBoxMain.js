@@ -53,6 +53,14 @@ function SearchBoxMain(props) {
     },
   ];
   useEffect(() => {
+    const form = document.querySelector('.ratings-search-box');
+    const submit = form.querySelector('input[type="submit"]');
+    submit.addEventListener('click', (e) => {
+      const action = e.target.formAction;
+      const url = new URL(action);
+      const searchParams = new URLSearchParams(url);
+      e.target.formAction = '/business-search' + searchParams;
+    });
     async function getSearchBoxOptions(fields, locale) {
       console.log('use', locale);
       let searchBoxOptions = {};

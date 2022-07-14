@@ -72,7 +72,7 @@ function Home({locale}) {
       </Head>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'} pageTitle={searchBoxTitle} />
+         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} />
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
     </>
