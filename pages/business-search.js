@@ -3,6 +3,8 @@ import LayoutCentered from '../components/layout/LayoutCentered';
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
 import searchCard from '@components/components/fhrs/SearchCard/searchCard.html.twig';
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
+import searchNoResults from '@components/components/search/SearchNoResults/searchNoResults.html.twig';
+import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.html.twig';
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import SearchSortHeader from "../components/search/SearchSortHeader";
@@ -13,6 +15,7 @@ import TwigTemplate from "../lib/parse";
 import formatDate from "../lib/formatDate";
 import {useTranslation} from "next-i18next";
 import Pagination from "../components/search/Pagination";
+import LayoutFullWidth from "../components/layout/LayoutFullWidth";
 import Loader from "../components/search/Loader/Loader"
 import Head from "next/head";
 
@@ -67,8 +70,17 @@ function BusinessSearch({locale}) {
         pageSize: 10,
       }
       let searchResults = {};
+      let authorities = {};
       try {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
+        authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
+        searchResults.establishments = searchResults.establishments.map(establishment => {
+          const authority = authorities.authorities.filter((la) => {
+            return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
+          });
+          establishment.inWales = authority[0].RegionName === 'Wales';
+          return establishment;
+        })
         setStatus(false);
         setResults(searchResults);
       } catch (e) {
@@ -108,13 +120,31 @@ function BusinessSearch({locale}) {
 
   const helpText = t('no_results_text');
 
+  const breadcrumbContent = {
+    items: [
+      {
+        'text': 'Home',
+        'url': '/'
+      },
+      {
+        'text': 'Business search',
+        'url': null,
+      },
+    ],
+  }
+
+  const searchBoxTitle = t('search_box_title');
+
   return (
     <div>
       <Head>
         <title>{pageTitle}</title>
       </Head>
+      <LayoutFullWidth>
+        <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
+      </LayoutFullWidth>
       <LayoutCentered>
-        <SearchBoxMain locale={locale} query={query} submitType={'input'}/>
+        <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle}/>
         {
           Object.keys(query).length !== 0 && loading ?
             <Loader/> :
@@ -148,8 +178,10 @@ function BusinessSearch({locale}) {
                     business_say: t('business_say'),
                     business_appeal: !!business.RightToReply,
                     fhis: business.SchemeType === 'FHIS',
-                  }
-                  return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
+            wales_business: business.inWales,
+            welsh: locale === 'cy',
+          }
+          return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
                                        values={establishmentContent} attribs={[]}/>
                 })}
                 {paginationBlock}

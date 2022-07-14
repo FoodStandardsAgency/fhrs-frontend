@@ -33,7 +33,7 @@ async function getFieldData(apiIndex, fieldName, fieldKey, locale, fhis = false)
 }
 
 function SearchBoxMain(props) {
-  const {locale, query, submit, submitType} = props;
+  const {locale, query, submit, submitType, pageTitle} = props;
   const [options, setOptions] = useState({});
   const searchFields = [
     {
@@ -91,7 +91,7 @@ function SearchBoxMain(props) {
   const {t} = useTranslation(['ratingsSearchBox']);
 
   const searchBoxContent = {
-    title: t('title'),
+    title: pageTitle,
     business_name_label: t('business_name_label'),
     business_name_value: business_name_search ? business_name_search : '',
     address_search_label: t('address_search_label'),

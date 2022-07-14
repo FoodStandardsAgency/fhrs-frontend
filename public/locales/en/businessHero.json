@@ -7,5 +7,8 @@
   "date_title": "Date of inspection",
   "name_prefix": "Get online ratings for",
   "show_map": "Show map",
-  "hide_map": "Hide map"
+  "hide_map": "Hide map",
+  "private_address": "Private address",
+  "registered_with": "Registered with",
+  "local_authority": "local authority"
 }

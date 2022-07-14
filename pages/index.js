@@ -63,6 +63,8 @@ function Home({locale}) {
     ],
   }
 
+  const searchBoxTitle = t('search_box_title', {ns: 'homepage'});
+
   return (
     <>
       <Head>
@@ -70,7 +72,7 @@ function Home({locale}) {
       </Head>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'}/>
+         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'link'} pageTitle={searchBoxTitle} />
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
     </>

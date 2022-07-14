@@ -1,4 +1,5 @@
 {
+  "search_box_title": "Canlyniadau chwilio",
   "page_title": "Canlyniadau chwilio",
   "no_results_title": "Heb ganfod unrhyw ganlyniadau",
   "no_results_text": "Methu â dod o hyd i fusnes? Rhowch gynnig ar chwilio am enw’r buses yn unig neu gyda rhan gyntaf y cod post.",
@@ -8,5 +9,5 @@
   "private_address": "Cyfeiriad Preifat",
   "registered_with": "Wedi cofrestru gydag",
   "local_authority": "awdurdod lleol",
-  "business_say": "Beth sydd gan y busnes i’w ddweud"
-  }
+  "business_say": "Beth sydd gan y busnes i’w ddweud",
+}

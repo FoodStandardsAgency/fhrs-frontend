@@ -10,7 +10,7 @@ import TwigTemplate from '../../../lib/parse.js';
 import api from '../../../lib/api.js';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import BingMapsReact from "bingmaps-react";
 import * as ReactDOM from "react-dom";
 import formatDate from "../../../lib/formatDate";
@@ -55,6 +55,42 @@ export async function getStaticProps (context) {
 
 function BusinessPage({business, scores, locale, bing_key}) {
   const { t } = useTranslation(['dates', 'common', 'businessHero', 'businessPage']);
+  const [inWales, setInWales] = useState(false);
+
+  useEffect(() => {
+    const mapWrapper = document.querySelector('.business-hero__map__wrapper');
+    if (mapWrapper){
+      ReactDOM.render(<BingMapsReact
+        bingMapsKey={bing_key}
+        mapOptions={{
+          navigationBarMode: 'round',
+        }}
+        viewOptions={{
+          center: { latitude: latitude, longitude: longitude },
+          mapTypeId: 'road',
+        }}
+        pushPins={[
+          {
+            center: {
+              latitude: latitude,
+              longitude: longitude,
+            },
+            options: {
+              title: business.BusinessName,
+            }
+          }
+        ]}
+      />, mapWrapper)
+    }
+    async function isInWales(localAuthorityCode) {
+      const authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
+      const authority = authorities.authorities.filter((la) => {
+        return la.LocalAuthorityIdCode === localAuthorityCode;
+      });
+      setInWales(authority[0].RegionName === 'Wales');
+    }
+    isInWales(business.LocalAuthorityCode);
+  }, []);
 
   const pageTitle = `${business.BusinessName ? business.BusinessName : 'unknown'} | ${t('page_title', {ns: 'businessPage'})} | ${t('title', {ns: 'common'})}`;
 
@@ -67,7 +103,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
   for (let i = 1; i <= 4; i++) {
     formattedAddress += business[`AddressLine${i}`] ? business[`AddressLine${i}`] + '<br>' : '';
   }
-  formattedAddress += business.PostCode ? business.PostCode : '';
+  formattedAddress = formattedAddress.replace(/<br>$/, '');
 
   // Get business reply if available
   let businessReply = business.RightToReply;
@@ -82,17 +118,24 @@ function BusinessPage({business, scores, locale, bing_key}) {
     search_all_link: '#',
     search_all_data: t('search_all_data', {ns: 'businessHero'}),
     address_title: t('address_title', {ns: 'businessHero'}),
+    private: !formattedAddress,
     address_content: formattedAddress,
+    post_code: business.PostCode,
+    private_address: t('private_address', {ns: 'businessHero'}),
+    registered_with: t('registered_with', {ns: 'businessHero'}),
+    local_authority_name: business.LocalAuthorityName,
+    local_authority: t('local_authority', {ns: 'businessHero'}),
     business_type_title: t('business_type_title', {ns: 'businessHero'}),
     business_type_content: business.BusinessType,
     date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
     rating: business.RatingValue,
     welsh: locale === 'cy',
-    wales_business: false, // This isn't captured in the API so not sure how we're going to get this?
-    map: true,
+    wales_business: inWales,
+    map: !!formattedAddress,
     show_map: t('show_map', {ns: 'businessHero'}),
     hide_map: t('hide_map', {ns: 'businessHero'}),
+    fhis: business.SchemeType === 'FHIS',
   }
 
   const foodSafetyText = {
@@ -170,33 +213,6 @@ function BusinessPage({business, scores, locale, bing_key}) {
   }
 
   const {latitude, longitude} = business.geocode;
-
-  useEffect(() => {
-    const mapWrapper = document.querySelector('.business-hero__map__wrapper');
-    if (mapWrapper){
-      ReactDOM.render(<BingMapsReact
-        bingMapsKey={bing_key}
-        mapOptions={{
-          navigationBarMode: 'round',
-        }}
-        viewOptions={{
-          center: { latitude: latitude, longitude: longitude },
-          mapTypeId: 'road',
-        }}
-        pushPins={[
-          {
-            center: {
-              latitude: latitude,
-              longitude: longitude,
-            },
-            options: {
-              title: business.BusinessName,
-            }
-          }
-        ]}
-      />, mapWrapper)
-    }
-  }, []);
 
   return (
     <>
