@@ -9,21 +9,44 @@ import {useTranslation} from "next-i18next";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import {useRouter} from "next/router";
 import Head from 'next/head'
+import {getSearchBoxOptions} from "../lib/getInputFieldValues";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
+
+  const searchFields = [
+    {
+      apiIndex: 'businessTypes',
+      fieldName: 'BusinessTypeName',
+      fieldKey: 'BusinessTypeId',
+    },
+    {
+      apiIndex: 'countries',
+      fieldName: 'name',
+      fieldKey: 'id',
+    },
+    {
+      apiIndex: 'ratings',
+      fieldName: 'ratingName',
+      fieldKey: 'ratingKeyName',
+    },
+  ];
+
+  const options = await getSearchBoxOptions(searchFields, context.locale);
+
   return {
     props: {
       menus: menus,
       locale: context.locale,
+      options: options,
       ...(await serverSideTranslations(context.locale, ['common', 'homepage', 'ratingsSearchBox', 'businessPage'])),
     },
     revalidate: 21600,
   }
 }
 
-function Home({locale}) {
+function Home({locale, options}) {
   const {t} = useTranslation(['common', 'homepage', 'businessPage']);
   const pageTitle = `${t('page_title', {ns: 'homepage'})} | ${t('title')}`;
   const { query } = useRouter();
@@ -72,7 +95,7 @@ function Home({locale}) {
       </Head>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} />
+         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} options={options} />
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
     </>

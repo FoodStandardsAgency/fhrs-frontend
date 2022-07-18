@@ -1,57 +1,18 @@
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
 import TwigTemplate from '../../lib/parse.js';
-import api from "../../lib/api";
 import {useEffect, useState} from "react";
 import {useTranslation} from "next-i18next";
 import { i18n } from 'next-i18next'
 
-async function getFieldData(apiIndex, fieldName, fieldKey, locale, fhis = false) {
-  const data = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType(apiIndex).getResults();
-  const options = data[apiIndex];
-  let fieldData = [];
-  Object.keys(options).map(function (key) {
-    if (apiIndex === 'ratings' && (fhis) && options[key].schemeTypeId === 1) {
-     return;
-    }
-    else if (apiIndex === 'ratings' && (!fhis) && options[key].schemeTypeId === 2) {
-      return;
-    }
-    const name = options[key][fieldName];
-    const value = options[key][fieldKey]
-    fieldData.push({
-      text: name,
-      value: value,
-    });
-  });
-  if (apiIndex !== 'businessTypes') {
-    fieldData.unshift({
-      text: locale === 'cy' ? 'Pob un' : 'All',
-      value: 'all',
-    })
-  }
-  return fieldData;
-}
-
 function SearchBoxMain(props) {
-  const {locale, query, submit, submitType, pageTitle} = props;
-  const [options, setOptions] = useState({});
-  const searchFields = [
-    {
-      apiIndex: 'businessTypes',
-      fieldName: 'BusinessTypeName',
-      fieldKey: 'BusinessTypeId',
-    },
-    {
-      apiIndex: 'countries',
-      fieldName: 'name',
-      fieldKey: 'id',
-    },
-    {
-      apiIndex: 'ratings',
-      fieldName: 'ratingName',
-      fieldKey: 'ratingKeyName',
-    },
-  ];
+  const {locale, query, submit, submitType, pageTitle, options, localAuthority} = props;
+  const isLocalAuthoritySearch = !!localAuthority;
+  let localAuthorityId = null;
+  let isScottishLocalAuthority = false;
+  if (localAuthority) {
+    localAuthorityId = localAuthority.LocalAuthorityId.toString();
+    isScottishLocalAuthority = localAuthority.RegionName === 'Scotland';
+  }
   useEffect(() => {
     const form = document.querySelector('.ratings-search-box');
     const submit = form.querySelector('input[type="submit"]');
@@ -59,25 +20,9 @@ function SearchBoxMain(props) {
       const action = e.target.formAction;
       const url = new URL(action);
       const searchParams = new URLSearchParams(url);
-      e.target.formAction = `${locale === 'cy' ? '/cy' : ''}/business-search${searchParams}`;
+      e.target.formAction = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams}`;
     });
-    async function getSearchBoxOptions(fields, locale) {
-      console.log('use', locale);
-      let searchBoxOptions = {};
-      for (const field of fields) {
-        const {apiIndex, fieldName, fieldKey} = field;
-        if (apiIndex === 'ratings') {
-          searchBoxOptions[`${apiIndex}FHRS`] = await getFieldData(apiIndex, fieldName, fieldKey, locale);
-          searchBoxOptions[`${apiIndex}FHIS`] = await getFieldData(apiIndex, fieldName, fieldKey, locale, true);
-        }
-        else {
-          searchBoxOptions[apiIndex] = await getFieldData(apiIndex, fieldName, fieldKey, locale);
-        }
-      }
-      setOptions(searchBoxOptions);
-    }
     i18n.addResourceBundle(locale, 'ratingsSearchBox')
-    getSearchBoxOptions(searchFields, locale)
   }, []);
 
   const {
@@ -97,35 +42,50 @@ function SearchBoxMain(props) {
   }
 
   const {t} = useTranslation(['ratingsSearchBox']);
-
-  const searchBoxContent = {
-    title: pageTitle,
-    business_name_label: t('business_name_label'),
-    business_name_value: business_name_search ? business_name_search : '',
-    address_search_label: t('address_search_label'),
-    address_search_value: address_search ? address_search : '',
-    location_label: t('location_label'),
-    blocked_location_label: t('blocked_location_label'),
-    search_map_results_label: t('search_map_results_label'),
-    hide_map_results_label: t('hide_map_results_label'),
-    more_options_label: t('more_options_label'),
-    fewer_options_label: t('fewer_options_label'),
-    local_authority_link: {
-      url: '#',
-      title: t('local_authority_link_title'),
+  let searchAllData = {};
+  let contentLeft = [
+    {
+      type: "dropdown",
+      title: t('business_type_label'),
+      name: "business_type",
+      id: "business_type",
+      options: options.businessTypes,
+      default: business_type ? business_type : 'all',
     },
-    submit_button_label: t('submit_button_label'),
-    submit_button_url: submit,
-    submit_button_type: submitType,
-    left: [
-      {
-        type: "dropdown",
-        title: t('business_type_label'),
-        name: "business_type",
-        id: "business_type",
-        options: options.businessTypes,
-        default: business_type ? business_type : 'all',
-      },
+  ];
+  let contentRight = [];
+  if (isLocalAuthoritySearch) {
+    searchAllData = {
+      url: `${locale === 'cy' ? '/cy' : ''}/business-search`,
+      title: t('search_all_data_label'),
+    };
+    if (isScottishLocalAuthority) {
+      contentRight = contentRight.concat([
+        {
+          type: "dropdown",
+          title: t('hygiene_status_header'),
+          name: "hygiene_status",
+          id: "hygiene-status",
+          options: options.ratingsFHIS,
+          default: hygiene_status ? hygiene_status : '',
+        }
+      ]);
+    }
+    else {
+      contentRight = contentRight.concat([
+        {
+          type: "dropdown",
+          title: t('hygiene_rating_header'),
+          name: "hygiene_rating",
+          id: "hygiene_rating",
+          options: options.ratingsFHRS,
+          default: defaultRating ? defaultRating : 'all',
+        },
+      ]);
+    }
+  }
+  else {
+    contentLeft = contentLeft.concat([
       {
         type: "fieldset",
         legend: t('hygiene_rating_header'),
@@ -171,8 +131,8 @@ function SearchBoxMain(props) {
         ],
         default: range ? range : "equal",
       },
-    ],
-    right: [
+    ]);
+    contentRight = contentRight.concat([
       {
         type: "dropdown",
         title: t('country_or_la_label'),
@@ -205,7 +165,37 @@ function SearchBoxMain(props) {
           }
         ]
       }
-    ]
+    ]);
+  }
+
+  const searchBoxContent = {
+    title: pageTitle,
+    title_prefix: isLocalAuthoritySearch ? t('search_the') : '',
+    title_suffix: isLocalAuthoritySearch ? t('area') : '',
+    subtitle_prefix: isLocalAuthoritySearch ? t('provided_by') : '',
+    council_name: isLocalAuthoritySearch ? localAuthority.Name : '',
+    area: isLocalAuthoritySearch ? localAuthority.Name : '',
+    business_name_label: t('business_name_label'),
+    business_name_value: business_name_search ? business_name_search : '',
+    address_search_label: t('address_search_label'),
+    address_search_value: address_search ? address_search : '',
+    location_label: t('location_label'),
+    blocked_location_label: t('blocked_location_label'),
+    search_map_results_label: t('search_map_results_label'),
+    hide_map_results_label: t('hide_map_results_label'),
+    more_options_label: t('more_options_label'),
+    fewer_options_label: t('fewer_options_label'),
+    welsh: locale === 'cy',
+    search_all_data_link: searchAllData,
+    local_authority_link: {
+      url: '#',
+      title: isLocalAuthoritySearch ? t('search_a_different_area') : t('local_authority_link_title'),
+    },
+    submit_button_label: t('submit_button_label'),
+    submit_button_url: submit,
+    submit_button_type: submitType,
+    left: contentLeft,
+    right: contentRight,
   }
   return (
     <>
