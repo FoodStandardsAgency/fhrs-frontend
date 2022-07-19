@@ -134,7 +134,6 @@ function LocalAuthoritySearch({authority, locale, options}) {
     content: `<p class='search-no-results__title'>${t('no_results_title')}</p>`,
   }
 
-
   const helpText = t('no_results_text', {ns:'searchPage'});
 
   return (
@@ -163,7 +162,7 @@ function LocalAuthoritySearch({authority, locale, options}) {
 
                   const establishmentContent = {
                     business_name: business.BusinessName,
-                    business_link: `business/${business.FHRSID.toString()}/${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
+                    business_link: `/business/${business.FHRSID.toString()}/${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
                     private: !formattedAddress,
                     address: formattedAddress,
                     post_code: business.PostCode,
