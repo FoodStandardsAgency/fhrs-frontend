@@ -8,7 +8,7 @@ import LocalAuthority from '../../../components/business/LocalAuthority';
 import PageWrapper from '../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../lib/parse.js';
 import api from '../../../lib/api.js';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
 import BingMapsReact from "bingmaps-react";
@@ -16,7 +16,7 @@ import * as ReactDOM from "react-dom";
 import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
 
-export async function getStaticPaths () {
+export async function getStaticPaths() {
   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 20}).getResults();
   const establishments = data.establishments;
   const paths = establishments.map((establishment) => {
@@ -27,14 +27,15 @@ export async function getStaticPaths () {
         id: establishment.FHRSID.toString(),
         businessName: bn,
       }
-    }});
+    }
+  });
   return {
     paths,
     fallback: 'blocking',
   }
 }
 
-export async function getStaticProps (context) {
+export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
   const businessId = context.params.id;
@@ -54,19 +55,21 @@ export async function getStaticProps (context) {
 }
 
 function BusinessPage({business, scores, locale, bing_key}) {
-  const { t } = useTranslation(['dates', 'common', 'businessHero', 'businessPage']);
+  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage']);
   const [inWales, setInWales] = useState(false);
+
+  const {latitude, longitude} = business.geocode;
 
   useEffect(() => {
     const mapWrapper = document.querySelector('.business-hero__map__wrapper');
-    if (mapWrapper){
+    if (mapWrapper) {
       ReactDOM.render(<BingMapsReact
         bingMapsKey={bing_key}
         mapOptions={{
           navigationBarMode: 'round',
         }}
         viewOptions={{
-          center: { latitude: latitude, longitude: longitude },
+          center: {latitude: latitude, longitude: longitude},
           mapTypeId: 'road',
         }}
         pushPins={[
@@ -82,6 +85,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
         ]}
       />, mapWrapper)
     }
+
     async function isInWales(localAuthorityCode) {
       const authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
       const authority = authorities.authorities.filter((la) => {
@@ -89,6 +93,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
       });
       setInWales(authority[0].RegionName === 'Wales');
     }
+
     isInWales(business.LocalAuthorityCode);
   }, []);
 
@@ -108,6 +113,9 @@ function BusinessPage({business, scores, locale, bing_key}) {
   // Get business reply if available
   let businessReply = business.RightToReply;
 
+  const isPrivate = !formattedAddress;
+  const noMap = !latitude || !longitude;
+
   // Generate hero data
   const heroData = {
     name: business.BusinessName,
@@ -118,7 +126,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     search_all_link: '#',
     search_all_data: t('search_all_data', {ns: 'businessHero'}),
     address_title: t('address_title', {ns: 'businessHero'}),
-    private: !formattedAddress,
+    private: isPrivate,
     address_content: formattedAddress,
     post_code: business.PostCode,
     private_address: t('private_address', {ns: 'businessHero'}),
@@ -132,7 +140,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     rating: business.RatingValue,
     welsh: locale === 'cy',
     wales_business: inWales,
-    map: !!formattedAddress,
+    map: !isPrivate && !noMap,
     show_map: t('show_map', {ns: 'businessHero'}),
     hide_map: t('hide_map', {ns: 'businessHero'}),
     fhis: business.SchemeType === 'FHIS',
@@ -159,6 +167,17 @@ function BusinessPage({business, scores, locale, bing_key}) {
       <>
         <TwigTemplate template={titleAndText} values={rightToReply} attribs={[]}/>
         <TwigTemplate template={titleAndText} values={aboutRightToReply} attribs={[]}/>
+      </>;
+  }
+
+  let noMapAvailableSection = '';
+  if (isPrivate || noMap) {
+    const noMapAvailable = {
+        content: isPrivate ? t('private_no_map_available', {ns: 'businessPage'}) : t('no_map_available', {ns: 'businessPage'}),
+    }
+    noMapAvailableSection =
+      <>
+        <TwigTemplate template={textBlock} values={noMapAvailable} attribs={[]}/>
       </>;
   }
 
@@ -212,8 +231,6 @@ function BusinessPage({business, scores, locale, bing_key}) {
     st_hygienic_management_description: t('st_hygienic_management_description', {ns: 'businessPage'}),
   }
 
-  const {latitude, longitude} = business.geocode;
-
   return (
     <>
       <Head>
@@ -221,12 +238,13 @@ function BusinessPage({business, scores, locale, bing_key}) {
       </Head>
       <LayoutCentered>
         <TwigTemplate template={businessHero} values={heroData} attribs={[]}/>
+        {noMapAvailableSection}
         <StandardsTable scores={scores} translations={standardsTableText}/>
         <TwigTemplate template={textBlock} values={foodSafetyText} attribs={[]}/>
         {rightToReplySection}
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
         <TwigTemplate template={titleAndText} values={getCodeText} attribs={[]}/>
-        <LocalAuthority business={business} translations={localAuthorityText} />
+        <LocalAuthority business={business} translations={localAuthorityText}/>
       </LayoutCentered>
       <TwigTemplate template={promoGroup} values={promoGroupText} attribs={[]}/>
     </>

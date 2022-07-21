@@ -25,5 +25,7 @@
   "st_hygienic_management_description": "System or checks in place to ensure that food sold or served is safe to eat, evidence that staff know about food safety, and the food safety officer has confidence that standards will be maintained in future",
   "what_the_business_says_label": "What the business says",
   "about_comments_label": "About comments made by the business",
-  "about_comments_description": "A business has the right to reply to its local authority about the food hygiene rating given. This means a business may draw attention to improvements made since the inspection and/or explain particular circumstances at the time of inspection that might have affected the rating the business was given. The comments made by the business have been reviewed and may have been edited by a local authority food safety officer so they fit the terms and conditions of this website but the accuracy of any statements made has not been verified."
+  "about_comments_description": "A business has the right to reply to its local authority about the food hygiene rating given. This means a business may draw attention to improvements made since the inspection and/or explain particular circumstances at the time of inspection that might have affected the rating the business was given. The comments made by the business have been reviewed and may have been edited by a local authority food safety officer so they fit the terms and conditions of this website but the accuracy of any statements made has not been verified.",
+  "private_no_map_available": "No map is available for this business because it is run from a private address.",
+  "no_map_available": "A map cannot be shown for this address."
 }
