@@ -111,6 +111,7 @@ function BusinessSearch({locale, options}) {
         // TODO: add error state for no results
       }
     }
+
     getSearchResults(query);
   }, [isReady]);
 
@@ -201,10 +202,10 @@ function BusinessSearch({locale, options}) {
                     business_say: t('business_say'),
                     business_appeal: !!business.RightToReply,
                     fhis: business.SchemeType === 'FHIS',
-            wales_business: business.inWales,
-            welsh: locale === 'cy',
-          }
-          return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
+                    wales_business: business.inWales,
+                    welsh: locale === 'cy',
+                  }
+                  return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
                                        values={establishmentContent} attribs={[]}/>
                 })}
                 {paginationBlock}
