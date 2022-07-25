@@ -95,9 +95,18 @@ function LocalAuthoritySearch({authority, locale, options}) {
         localAuthorityId: authority.LocalAuthorityId.toString(),
       }
       let searchResults = {};
+      let authorities = {};
       try {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
+        authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
         setStatus(false);
+        searchResults.establishments = searchResults.establishments.map(establishment => {
+          const authority = authorities.authorities.filter((la) => {
+            return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
+          });
+          establishment.inWales = authority[0].RegionName === 'Wales';
+          return establishment;
+        })
         setResults(searchResults);
       } catch (e) {
         setStatus(false);
@@ -176,6 +185,8 @@ function LocalAuthoritySearch({authority, locale, options}) {
                     business_say: t('business_say'),
                     business_appeal: !!business.RightToReply,
                     fhis: business.SchemeType === 'FHIS',
+                    wales_business: business.inWales,
+                    welsh: locale === 'cy',
                   }
                   return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
                                        values={establishmentContent} attribs={[]}/>
