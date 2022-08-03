@@ -15,6 +15,7 @@ import BingMapsReact from "bingmaps-react";
 import * as ReactDOM from "react-dom";
 import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
+import parse from 'html-react-parser';
 
 export async function getStaticPaths() {
   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 20}).getResults();
@@ -157,11 +158,12 @@ function BusinessPage({business, scores, locale, bing_key}) {
   }
 
   let rightToReplySection = '';
+  console.log('br', businessReply);
   if (businessReply) {
     const rightToReply = {
       tag: 'h2',
       title: t('what_the_business_says_label', {ns: 'businessPage'}),
-      description: businessReply.replace('&lt;p&gt;', '').replace('&lt;/p&gt;', ''),
+      description: parse(businessReply),
     }
     rightToReplySection =
       <>
