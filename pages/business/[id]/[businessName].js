@@ -158,7 +158,6 @@ function BusinessPage({business, scores, locale, bing_key}) {
   }
 
   let rightToReplySection = '';
-  console.log('br', businessReply);
   if (businessReply) {
     const rightToReply = {
       tag: 'h2',
