@@ -187,6 +187,8 @@ function LocalAuthoritySearch({authority, locale, options}) {
                     fhis: business.SchemeType === 'FHIS',
                     wales_business: business.inWales,
                     welsh: locale === 'cy',
+                    status_summary: business.NewRatingPending ? t('status_summary') : null,
+                    status_description: business.NewRatingPending ? t('status_description') : null,
                   }
                   return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
                                        values={establishmentContent} attribs={[]}/>
