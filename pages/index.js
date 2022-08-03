@@ -4,12 +4,15 @@ import TwigTemplate from "../lib/parse";
 import hero from '@components/components/general/Hero/hero.html.twig';
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
-import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
 import {useTranslation} from "next-i18next";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import {useRouter} from "next/router";
 import Head from 'next/head'
 import {getSearchBoxOptions} from "../lib/getInputFieldValues";
+
+const options = {
+  footerBlockText: true,
+}
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -62,30 +65,6 @@ function Home({locale, options}) {
     mini: true,
   }
 
-  const promoGroupContent = {
-    title: t('promo_group_title', {ns: 'homepage'}),
-    description: t('promo_group_description', {ns: 'homepage'}),
-    description_link_url: '#',
-    description_link_label: t('promo_group_link', {ns: 'homepage'}),
-    cards: [
-      {
-        title: t('download_data_label', {ns: 'businessPage'}),
-        description: t('download_data_description', {ns: 'businessPage'}),
-        promo_link: '/open-data',
-      },
-      {
-        title: t('food_problems_label', {ns: 'businessPage'}),
-        description: t('food_problems_description', {ns: 'businessPage'}),
-        promo_link: 'https://www.food.gov.uk/contact/consumers/report-problem',
-      },
-      {
-        title: t('be_updated_label', {ns: 'businessPage'}),
-        description: t('be_updated_description', {ns: 'businessPage'}),
-        promo_link: 'https://www.food.gov.uk/news-alerts/subscribe/alerts/',
-      },
-    ],
-  }
-
   const searchBoxTitle = t('search_box_title', {ns: 'homepage'});
 
   return (
@@ -97,9 +76,8 @@ function Home({locale, options}) {
       <LayoutCentered>
          <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} options={options} />
       </LayoutCentered>
-      <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
     </>
   )
 }
 
-export default PageWrapper(Home);
+export default PageWrapper(Home, options);
