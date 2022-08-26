@@ -9,5 +9,7 @@
   "private_address": "Private address",
   "registered_with": "Registered with",
   "local_authority": "local authority",
-  "business_say": "What the business says"
+  "business_say": "What the business says",
+  "status_summary": "Recently inspected",
+  "status_description": "New rating to be published soon"
 }
