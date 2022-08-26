@@ -1,3 +1,12 @@
 {
-  "title": "Food Standards Agency"
+  "title": "Food Standards Agency",
+  "promo_group_title": "About food food hygiene ratings",
+  "promo_group_description":  "The information on businesses is held on behalf of local authorities in England, Northern Ireland, Wales and Scotland. Any queries about individual businesses should be directed to the appropriate <a href=\"https://www.food.gov.uk/contact/consumers/find-details/contact-a-local-food-safety-team\">local authority</a>.",
+  "promo_group_link": "Find out more about ratings",
+  "download_data_label": "Download data",
+  "download_data_description": "Re-usable hygiene data",
+  "food_problems_label": "Food problems?",
+  "food_problems_description": "Consumers, businesses and enforcers can report issues",
+  "be_updated_label": "Be updated",
+  "be_updated_description": "Get email and text updates. Follow us"
 }

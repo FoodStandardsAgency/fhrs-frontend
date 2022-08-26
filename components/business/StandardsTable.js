@@ -15,33 +15,46 @@ function StandardsTable(props) {
     results[category] = description;
   });
 
-  const table = '<table>' +
-    '<tr>' +
-    `<th>${translations.st_area_inspected}</th>` +
-    `<th>${translations.st_standards_found}</th>` +
-    '</tr>' +
-    '<tr>' +
-    '<td>' +
-    `<strong>${translations.st_hygienic_food_handling_label}</strong>` +
-    `<p>${translations.st_hygienic_food_handling_description}</p>` +
-    '</td>' +
-    `<td>${results.Hygiene}</td>` +
-    '</tr>' +
-    '<tr>' +
-    '<td>' +
-    `<strong>${translations.st_hygienic_cleanliness_label}</strong>` +
-    `<p>${translations.st_hygienic_cleanliness_description}</p>` +
-    '</td>' +
-    `<td>${results.Structural}</td>` +
-    '</tr>' +
-    '<tr>' +
-    '<td>' +
-    `<strong>${translations.st_hygienic_management_label}</strong>` +
-    `<p>${translations.st_hygienic_management_description}</p>` +
-    '</td>' +
-    `<td>${results.Confidence}</td>` +
-    '</tr>' +
-    '</table>'
+  const table = `
+    <table>
+       <caption>${translations.st_standards_title}</caption>
+       <thead>
+         <tr>
+           <th scope="col">${translations.st_area_inspected}</th>
+           <th scope="col">${translations.st_standards_found}</th>
+         </tr>
+       </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div>
+                <strong>${translations.st_hygienic_food_handling_label}</strong>
+                <p>${translations.st_hygienic_food_handling_description}</p>        
+              </div>
+            </td>
+            <td>${results.Hygiene}</td>
+          </tr>
+          <tr>
+            <td>
+              <div>
+                <strong>${translations.st_hygienic_cleanliness_label}</strong>
+                <p>${translations.st_hygienic_cleanliness_description}</p>  
+              </div>   
+            </td>
+            <td>${results.Structural}</td>
+          </tr>
+          <tr>
+            <td>
+              <div>
+                <strong>${translations.st_hygienic_management_label}</strong>
+                <p>${translations.st_hygienic_management_description}</p>  
+              </div>
+            </td>
+            <td>${results.Confidence}</td>
+          </tr>
+       </tbody>
+    </table>
+  `;
 
   const content = {
     content: table,

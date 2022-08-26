@@ -1,3 +1,12 @@
 {
-  "title": "Asiantaeth Safonau Bwyd"
+  "title": "Asiantaeth Safonau Bwyd",
+  "promo_group_title": "Ynglŷn â sgoriau hylendid bwyd bwyd",
+  "promo_group_description": "Mae’r sgôr hylendid bwyd neu ganlyniad arolygiad a roddir i fusnes yn adlewyrchu'r safonau hylendid bwyd a ganfuwyd adeg yr arolygiad neu'r ymweliad gan yr <a href=\"https://www.food.gov.uk/cy/contact/consumers/find-details/cysylltwch-a-thim-diogelwch-bwyd\">awdurdod lleol</a>. Nid yw'r sgôr hylendid bwyd yn ganllaw ar ansawdd bwyd.",
+  "promo_group_link": "Mwy am y sgoriau",
+  "download_data_label": "Lawrlwytho Data",
+  "download_data_description": "Data sgoriau hylendid y gellir ei ail-ddefnyddio",
+  "food_problems_label": "Problem gyda bwyd?",
+  "food_problems_description": "Gall defnyddwyr, busnesau a swyddogion gorfodi roi gwybod am broblemau",
+  "be_updated_label": "Newyddion diweddaraf",
+  "be_updated_description": "Yr wybodaeth ddiweddaraf dros e-bost a neges destun. Dilynwch ni"
 }

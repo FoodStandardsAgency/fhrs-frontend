@@ -1,7 +1,7 @@
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import businessHero from '@components/components/fhrs/BusinessHero/businessHero.html.twig';
 import titleAndText from '@components/components/form/TitleAndText/titleAndText.html.twig';
-import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
+import explanationBlock from '@components/components/article/ExplanationBlock/explanationBlock.html.twig';
 import LayoutCentered from '../../../components/layout/LayoutCentered';
 import StandardsTable from '../../../components/business/StandardsTable';
 import LocalAuthority from '../../../components/business/LocalAuthority';
@@ -15,6 +15,7 @@ import BingMapsReact from "bingmaps-react";
 import * as ReactDOM from "react-dom";
 import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
+import parse from 'html-react-parser';
 
 export async function getStaticPaths() {
   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 20}).getResults();
@@ -161,7 +162,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     const rightToReply = {
       tag: 'h2',
       title: t('what_the_business_says_label', {ns: 'businessPage'}),
-      description: businessReply.replace('&lt;p&gt;', '').replace('&lt;/p&gt;', ''),
+      description: parse(businessReply),
     }
     rightToReplySection =
       <>
@@ -188,29 +189,10 @@ function BusinessPage({business, scores, locale, bing_key}) {
   }
 
   const getCodeText = {
-    tag: 'h2',
-    title: t('get_code_title', {ns: 'businessPage'}),
-    description: t('get_code_description', {ns: 'businessPage'}),
-  }
-
-  const promoGroupText = {
-    cards: [
-      {
-        title: t('download_data_label', {ns: 'businessPage'}),
-        description: t('download_data_description', {ns: 'businessPage'}),
-        promo_link: '/open-data',
-      },
-      {
-        title: t('food_problems_label', {ns: 'businessPage'}),
-        description: t('food_problems_description', {ns: 'businessPage'}),
-        promo_link: 'https://www.food.gov.uk/contact/consumers/report-problem',
-      },
-      {
-        title: t('be_updated_label', {ns: 'businessPage'}),
-        description: t('be_updated_description', {ns: 'businessPage'}),
-        promo_link: 'https://www.food.gov.uk/news-alerts/subscribe/alerts/',
-      },
-    ]
+    type: 'general',
+    wysiwyg_content: `<h2>${t('get_code_title', {ns: 'businessPage'})}</h2><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
+    link_text: t('get_code_link_text', {ns: 'businessPage'}),
+    link_url: '#',
   }
 
   const localAuthorityText = {
@@ -229,6 +211,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     st_hygienic_cleanliness_description: t('st_hygienic_cleanliness_description', {ns: 'businessPage'}),
     st_hygienic_management_label: t('st_hygienic_management_label', {ns: 'businessPage'}),
     st_hygienic_management_description: t('st_hygienic_management_description', {ns: 'businessPage'}),
+    st_standards_title: t('st_standards_title', {ns: 'businessPage'}),
   }
 
   return (
@@ -243,10 +226,9 @@ function BusinessPage({business, scores, locale, bing_key}) {
         <TwigTemplate template={textBlock} values={foodSafetyText} attribs={[]}/>
         {rightToReplySection}
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
-        <TwigTemplate template={titleAndText} values={getCodeText} attribs={[]}/>
+        <TwigTemplate template={explanationBlock} values={getCodeText} attribs={[]}/>
         <LocalAuthority business={business} translations={localAuthorityText}/>
       </LayoutCentered>
-      <TwigTemplate template={promoGroup} values={promoGroupText} attribs={[]}/>
     </>
   )
 }
