@@ -18,7 +18,7 @@ import Head from "next/head";
 import parse from 'html-react-parser';
 
 export async function getStaticPaths() {
-  const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 20}).getResults();
+  const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 1}).getResults();
   const establishments = data.establishments;
   const paths = establishments.map((establishment) => {
     let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
