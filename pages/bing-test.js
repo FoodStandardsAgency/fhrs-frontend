@@ -8,7 +8,7 @@ export async function getStaticProps(context) {
     props: {
       menus: menus,
       locale: context.locale,
-      bing_key: process.env.BING_MAPS_KEY,
+      bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
     },
     revalidate: 21600,
   }

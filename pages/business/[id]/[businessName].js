@@ -48,7 +48,7 @@ export async function getStaticProps(context) {
       scores: scores,
       menus: menus,
       locale: context.locale,
-      bing_key: process.env.BING_MAPS_KEY,
+      bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage'])),
     },
     revalidate: 21600,

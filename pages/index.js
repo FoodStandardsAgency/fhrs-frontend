@@ -43,6 +43,7 @@ export async function getStaticProps(context) {
       menus: menus,
       locale: context.locale,
       options: options,
+      bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       ...(await serverSideTranslations(context.locale, ['common', 'homepage', 'ratingsSearchBox', 'businessPage'])),
     },
     revalidate: 21600,
