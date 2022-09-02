@@ -18,7 +18,7 @@ function LocalAuthority(props) {
      website_url: website_url,
      website_label: domain,
      email_title: translations.la_email_label,
-     email_address: business.LocalAuthorityEmailAddress,
+     email_address: business.LocalAuthorityEmailAddress.trim() ? business.LocalAuthorityEmailAddress : '',
      logo_svg: '',
    }
    return(
