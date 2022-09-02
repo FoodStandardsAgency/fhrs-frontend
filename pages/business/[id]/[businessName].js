@@ -200,6 +200,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     la_name_label: t('la_name_label', {ns: 'businessPage'}),
     la_website_label: t('la_website_label', {ns: 'businessPage'}),
     la_email_label: t('la_email_label', {ns: 'businessPage'}),
+    opens_in_new_tab_label: t('opens_in_new_tab_label', {ns: 'common'})
   }
 
   const standardsTableText = {
