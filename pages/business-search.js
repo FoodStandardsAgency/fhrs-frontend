@@ -45,12 +45,13 @@ export async function getStaticProps(context) {
   ];
 
   const options = await getSearchBoxOptions(searchFields, context.locale);
-
+  const sortOptions = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('sortOptions').getResults();
   return {
     props: {
       menus: menus,
       locale: context.locale,
       options: options,
+      sortOptions: sortOptions.sortOptions,
       bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination', 'dates'])),
     },
@@ -58,7 +59,7 @@ export async function getStaticProps(context) {
   }
 }
 
-function BusinessSearch({locale, options, bingKey}) {
+function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   const {t} = useTranslation(['searchPage', 'dates', 'common']);
 
@@ -218,7 +219,7 @@ function BusinessSearch({locale, options, bingKey}) {
 
   let resultsHeader = '';
   if (resultsMeta.totalResults) {
-    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta}/>;
+    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}/>;
   }
 
   const noResultsContent = {

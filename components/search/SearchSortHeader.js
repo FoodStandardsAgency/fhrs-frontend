@@ -15,11 +15,21 @@ function getDisplayedResults(totalResults, pageSize, pageNumber) {
   return `${offset} - ${last}`;
 }
 
+function getSortOptions(options) {
+  let sortOptions = [];
+  options.forEach(option => {
+    sortOptions.push({
+      text: option.sortOptionName,
+      value: option.sortOptionKey,
+    });
+  });
+  return sortOptions;
+}
+
 function SearchSortHeader(props) {
-  const { locale, resultsMeta } = props;
+  const { locale, resultsMeta, sortOptions } = props;
   const { query, isReady } = useRouter();
 
-  const [sortOptions, setSortOptions] = useState({});
   const [sortType, setSortType] = useState({});
 
   useEffect(() => {
@@ -31,18 +41,6 @@ function SearchSortHeader(props) {
       updateParams('sort', sortSelect.value);
       location.reload();
     });
-    async function getSortOptions() {
-      const res = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('sortOptions').getResults();
-      let sortOptions = [];
-      res.sortOptions.forEach(option => {
-        sortOptions.push({
-          text: option.sortOptionName,
-          value: option.sortOptionKey,
-        });
-      });
-      setSortOptions(sortOptions);
-    }
-    getSortOptions();
     setSortType(sort);
     i18n.addResourceBundle(locale, 'searchSortHeader')
   }, [isReady]);
@@ -59,7 +57,7 @@ function SearchSortHeader(props) {
 
   const sortByContent = {
     sort_by: "Sort by",
-    options: sortOptions,
+    options: getSortOptions(sortOptions),
     default: sortType,
   }
 

@@ -9,10 +9,8 @@ import SearchSortHeader from "../../components/search/SearchSortHeader";
 import Head from "next/head";
 import SearchBoxMain from "../../components/search/SearchBoxMain";
 import Loader from "../../components/search/Loader";
-import formatDate from "../../lib/formatDate";
 import TwigTemplate from "../../lib/parse";
 import {useTranslation} from "next-i18next";
-import searchCard from '@components/components/fhrs/SearchCard/searchCard.html.twig';
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import {getSearchBoxOptions} from "../../lib/getInputFieldValues";
 import SearchCard from "../../components/search/SearchCard";
@@ -53,6 +51,7 @@ export async function getStaticProps(context) {
   ];
 
   const options = await getSearchBoxOptions(searchFields, context.locale);
+  const sortOptions = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('sortOptions').getResults();
 
   return {
     props: {
@@ -60,13 +59,14 @@ export async function getStaticProps(context) {
       locale: context.locale,
       authority: authority,
       options: options,
+      sortOptions: sortOptions.sortOptions,
       ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates'])),
     },
     revalidate: 21600,
   }
 }
 
-function LocalAuthoritySearch({authority, locale, options}) {
+function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
   const {t} = useTranslation(['searchPage', 'dates', 'common']);
   const pageTitle = `${t('page_title', {ns: 'searchPage'})} | ${t('title', {ns: 'common'})}`;
   const [results, setResults] = useState({});
@@ -140,7 +140,7 @@ function LocalAuthoritySearch({authority, locale, options}) {
 
   let resultsHeader = '';
   if (resultsMeta.totalResults) {
-    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta}/>;
+    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}/>;
   }
 
   const noResultsContent = {
