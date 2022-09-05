@@ -810,7 +810,7 @@ fs.realpath@^1.0.0:
 
 "fsa-pattern-library-assets@https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#develop":
   version "0.0.0"
-  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#12573d317e01af0b0523376a54790f31eb1b3d6f"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#94cbe1f00cd6b59a10c3bcfa6012892ac5dd1fb1"
 
 "fsa-pattern-library-source@https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#develop":
   version "1.0.7"

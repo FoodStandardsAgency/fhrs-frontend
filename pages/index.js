@@ -43,6 +43,7 @@ export async function getStaticProps(context) {
       menus: menus,
       locale: context.locale,
       options: options,
+      bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       ...(await serverSideTranslations(context.locale, ['common', 'homepage', 'ratingsSearchBox', 'businessPage'])),
     },
     revalidate: 21600,
@@ -74,7 +75,7 @@ function Home({locale, options}) {
       </Head>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} options={options} />
+         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} options={options} hideTitleOnMobile={true} />
       </LayoutCentered>
     </>
   )

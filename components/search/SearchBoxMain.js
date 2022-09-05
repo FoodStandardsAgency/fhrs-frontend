@@ -5,7 +5,7 @@ import {useTranslation} from "next-i18next";
 import { i18n } from 'next-i18next'
 
 function SearchBoxMain(props) {
-  const {locale, query, submit, submitType, pageTitle, options, localAuthority} = props;
+  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, hideTitleOnMobile} = props;
   const isLocalAuthoritySearch = !!localAuthority;
   let localAuthorityId = null;
   let isScottishLocalAuthority = false;
@@ -16,11 +16,20 @@ function SearchBoxMain(props) {
   useEffect(() => {
     const form = document.querySelector('.ratings-search-box');
     const submit = form.querySelector('input[type="submit"]');
+    const mapToggle = form.querySelector('#map-toggle');
     submit.addEventListener('click', (e) => {
-      const action = e.target.formAction;
-      const url = new URL(action);
-      const searchParams = new URLSearchParams(url);
-      e.target.formAction = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams}`;
+      e.preventDefault();
+      const formData = new FormData(form);
+      const searchParams = new URLSearchParams();
+      for (const entry of formData.entries()) {
+        if (entry[1]) {
+          searchParams.append(entry[0], entry[1]);
+        }
+      }
+      const mapState = mapToggle ? mapToggle.getAttribute('aria-checked') === 'true' : false;
+      mapState ? searchParams.append('init_map_state', true) : null;
+      const updatedUrl = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
+      window.location.href = updatedUrl;
     });
     i18n.addResourceBundle(locale, 'ratingsSearchBox')
   }, []);
@@ -34,6 +43,7 @@ function SearchBoxMain(props) {
     country_or_la,
     hygiene_status,
     range,
+    init_map_state,
   } = query;
 
   let defaultRating = null;
@@ -196,6 +206,9 @@ function SearchBoxMain(props) {
     submit_button_type: submitType,
     left: contentLeft,
     right: contentRight,
+    show_map: showMap,
+    initial_map_state: init_map_state,
+    hide_title_on_mobile: hideTitleOnMobile,
   }
   return (
     <>

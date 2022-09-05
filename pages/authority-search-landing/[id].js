@@ -1,7 +1,7 @@
 import LayoutCentered from '../../components/layout/LayoutCentered';
 import PageWrapper from '../../components/layout/PageWrapper';
 import api from '../../lib/api.js';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Pagination from "../../components/search/Pagination";
@@ -9,12 +9,11 @@ import SearchSortHeader from "../../components/search/SearchSortHeader";
 import Head from "next/head";
 import SearchBoxMain from "../../components/search/SearchBoxMain";
 import Loader from "../../components/search/Loader";
-import formatDate from "../../lib/formatDate";
 import TwigTemplate from "../../lib/parse";
 import {useTranslation} from "next-i18next";
-import searchCard from '@components/components/fhrs/SearchCard/searchCard.html.twig';
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import {getSearchBoxOptions} from "../../lib/getInputFieldValues";
+import SearchCard from "../../components/search/SearchCard";
 
 export async function getStaticPaths () {
   const authorities = [];
@@ -29,14 +28,15 @@ export async function getStaticPaths () {
       params: {
         id: authority.LocalAuthorityId.toString(),
       }
-    }});
+    }
+  });
   return {
     paths,
     fallback: 'blocking',
   }
 }
 
-export async function getStaticProps (context) {
+export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
   const authorityId = context.params.id;
@@ -56,6 +56,7 @@ export async function getStaticProps (context) {
   ];
 
   const options = await getSearchBoxOptions(searchFields, context.locale);
+  const sortOptions = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('sortOptions').getResults();
 
   return {
     props: {
@@ -63,13 +64,14 @@ export async function getStaticProps (context) {
       locale: context.locale,
       authority: authority,
       options: options,
+      sortOptions: sortOptions.sortOptions,
       ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates'])),
     },
     revalidate: 21600,
   }
 }
 
-function LocalAuthoritySearch({authority, locale, options}) {
+function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
   const {t} = useTranslation(['searchPage', 'dates', 'common']);
   const pageTitle = `${t('page_title', {ns: 'searchPage'})} | ${t('title', {ns: 'common'})}`;
   const [results, setResults] = useState({});
@@ -78,6 +80,7 @@ function LocalAuthoritySearch({authority, locale, options}) {
 
   useEffect(() => {
     if (!isReady) return;
+
     async function getSearchResults(query) {
       const {
         "business-name-search": business_name_search,
@@ -115,9 +118,10 @@ function LocalAuthoritySearch({authority, locale, options}) {
         setResults(searchResults);
       } catch (e) {
         setStatus(false);
-      setResults(searchResults);
+        setResults(searchResults);
       }
     }
+
     getSearchResults(query)
   }, [isReady]);
 
@@ -141,14 +145,14 @@ function LocalAuthoritySearch({authority, locale, options}) {
 
   let resultsHeader = '';
   if (resultsMeta.totalResults) {
-    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta}/>;
+    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}/>;
   }
 
   const noResultsContent = {
     content: `<p class='search-no-results__title'>${t('no_results_title')}</p>`,
   }
 
-  const helpText = t('no_results_text', {ns:'searchPage'});
+  const helpText = t('no_results_text', {ns: 'searchPage'});
 
   return (
     <>
@@ -164,40 +168,12 @@ function LocalAuthoritySearch({authority, locale, options}) {
               <>
                 {resultsHeader}
                 <p>{helpText}</p>
-                {businesses.map((business) => {
-                  let formattedAddress = '';
-                  for (let i = 1; i <= 4; i++) {
-                    formattedAddress += business[`AddressLine${i}`] ? business[`AddressLine${i}`] + '<br>' : '';
-                  }
-                  formattedAddress = formattedAddress.replace(/<br>$/, '');
-
-                  const date = new Date(business.RatingDate);
-                  const formattedDate = formatDate(date, t, locale);
-
-                  const establishmentContent = {
-                    business_name: business.BusinessName,
-                    business_link: `${locale === 'cy' ? '/cy' : ''}/business/${business.FHRSID.toString()}/${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
-                    private: !formattedAddress,
-                    address: formattedAddress,
-                    post_code: business.PostCode,
-                    last_inspected: t('last_inspected'),
-                    rating_date: formattedDate,
-                    rating: business.RatingValue.toString().replace(' ', ''),
-                    private_address: t('private_address'),
-                    registered_with: t('registered_with'),
-                    local_authority_name: business.LocalAuthorityName,
-                    local_authority: t('local_authority'),
-                    business_say: t('business_say'),
-                    business_appeal: !!business.RightToReply,
-                    fhis: business.SchemeType === 'FHIS',
-                    wales_business: business.inWales,
-                    welsh: locale === 'cy',
-                    status_summary: business.NewRatingPending ? t('status_summary') : null,
-                    status_description: business.NewRatingPending ? t('status_description') : null,
-                  }
-                  return <TwigTemplate key={`${business.FHRSID.toString()}`} template={searchCard}
-                                       values={establishmentContent} attribs={[]}/>
-                })}
+                {businesses.map((business, index) => {
+                  return (
+                    <SearchCard key={`search-card-${index}`} business={business} locale={locale}/>
+                  )
+                })
+                }
                 {paginationBlock}
               </>
             ) : (
