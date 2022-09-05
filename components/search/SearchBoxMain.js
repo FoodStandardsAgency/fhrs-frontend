@@ -5,7 +5,7 @@ import {useTranslation} from "next-i18next";
 import { i18n } from 'next-i18next'
 
 function SearchBoxMain(props) {
-  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap} = props;
+  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, hideTitleOnMobile} = props;
   const isLocalAuthoritySearch = !!localAuthority;
   let localAuthorityId = null;
   let isScottishLocalAuthority = false;
@@ -208,6 +208,7 @@ function SearchBoxMain(props) {
     right: contentRight,
     show_map: showMap,
     initial_map_state: init_map_state,
+    hide_title_on_mobile: hideTitleOnMobile,
   }
   return (
     <>
