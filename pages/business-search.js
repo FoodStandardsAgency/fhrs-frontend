@@ -87,8 +87,10 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         page,
       } = query;
       let rating = null;
+      let scheme = null;
       if (hygiene_rating_or_status) {
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
+        scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
       const parameters = {
         name: business_name_search,
@@ -99,6 +101,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         sortOptionKey: sort,
         pageNumber: page ? page : 1,
         pageSize: 10,
+        schemeTypeKey: scheme,
       }
       let searchResults = {};
       let authorities = {};
