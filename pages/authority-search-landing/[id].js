@@ -17,8 +17,13 @@ import textBlock from '@components/components/article/TextBlock/textBlock.html.t
 import {getSearchBoxOptions} from "../../lib/getInputFieldValues";
 
 export async function getStaticPaths () {
+  const authorities = [];
+  /**
+  @TODO : reinstate when servers sorted.
   const data = await api.setType('authorities', {pageNumber: 1, pageSize: 1}).getResults();
   const authorities = data.authorities;
+  */
+  console.log("AUTHORITIES", authorities);
   const paths = authorities.map((authority) => {
     return {
       params: {
