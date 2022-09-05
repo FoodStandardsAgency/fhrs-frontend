@@ -22,7 +22,6 @@ export async function getStaticPaths () {
   const data = await api.setType('authorities', {pageNumber: 1, pageSize: 1}).getResults();
   const authorities = data.authorities;
   */
-  console.log("AUTHORITIES", authorities);
   const paths = authorities.map((authority) => {
     return {
       params: {
