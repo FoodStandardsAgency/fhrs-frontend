@@ -75,7 +75,7 @@ function Home({locale, options}) {
       </Head>
       <TwigTemplate template={hero} values={heroContent} attribs={[]}/>
       <LayoutCentered>
-         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} options={options} hideTitleOnMobile={true} />
+         <SearchBoxMain locale={locale} query={query} submit={'/business-search'} submitType={'input'} pageTitle={searchBoxTitle} options={options} isHomepage={true} />
       </LayoutCentered>
     </>
   )
