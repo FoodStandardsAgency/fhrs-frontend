@@ -52,6 +52,11 @@ export async function getStaticProps(context) {
       fieldName: 'ratingName',
       fieldKey: 'ratingKeyName',
     },
+    {
+      apiIndex: 'ratingOperators',
+      fieldName: 'ratingOperatorName',
+      fieldKey: 'ratingOperatorKey',
+    }
   ];
 
   const options = await getSearchBoxOptions(searchFields, context.locale);
@@ -89,6 +94,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
         hygiene_status,
         sort,
         page,
+        range,
       } = query;
       const rating = hygiene_status ? hygiene_status : hygiene_rating;
       const parameters = {
@@ -100,6 +106,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
         pageNumber: page ? page : 1,
         pageSize: 10,
         localAuthorityId: authority.LocalAuthorityId.toString(),
+        ratingOperatorKey: range,
       }
       let searchResults = {};
       let authorities = {};
