@@ -1,8 +1,7 @@
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
 import TwigTemplate from '../../lib/parse.js';
-import {useEffect, useState} from "react";
-import {useTranslation} from "next-i18next";
-import { i18n } from 'next-i18next'
+import {useEffect} from "react";
+import {i18n, useTranslation} from "next-i18next";
 
 function SearchBoxMain(props) {
   const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, isHomepage} = props;
@@ -28,8 +27,7 @@ function SearchBoxMain(props) {
       }
       const mapState = mapToggle ? mapToggle.getAttribute('aria-checked') === 'true' : false;
       mapState ? searchParams.append('init_map_state', true) : null;
-      const updatedUrl = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
-      window.location.href = updatedUrl;
+      window.location.href = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
     });
     i18n.addResourceBundle(locale, 'ratingsSearchBox')
   }, []);
@@ -46,9 +44,12 @@ function SearchBoxMain(props) {
     init_map_state,
   } = query;
 
-  let defaultRating = null;
+  let defaultRating;
   if (hygiene_rating_or_status) {
     defaultRating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
+  }
+  else {
+    defaultRating = hygiene_status ? hygiene_status : hygiene_rating;
   }
 
   const {t} = useTranslation(['ratingsSearchBox']);
@@ -82,6 +83,16 @@ function SearchBoxMain(props) {
       ]);
     }
     else {
+      contentLeft = contentLeft.concat([
+        {
+          type: "dropdown",
+          title: t('range_label'),
+          name: "range",
+          id: "range",
+          options: options.ratingOperators,
+          default: range ? range : "Equal",
+        },
+      ]);
       contentRight = contentRight.concat([
         {
           type: "dropdown",
@@ -125,21 +136,8 @@ function SearchBoxMain(props) {
         title: t('range_label'),
         name: "range",
         id: "range",
-        options: [
-          {
-            text: t('range_equal'),
-            value: "equal"
-          },
-          {
-            text: t('range_greater_than'),
-            value: "gtoe"
-          },
-          {
-            text: t('range_less_than'),
-            value: "ltoe"
-          }
-        ],
-        default: range ? range : "equal",
+        options: options.ratingOperators,
+        default: range ? range : "Equal",
       },
     ]);
     contentRight = contentRight.concat([

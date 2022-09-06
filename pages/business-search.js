@@ -42,6 +42,11 @@ export async function getStaticProps(context) {
       fieldName: 'ratingName',
       fieldKey: 'ratingKeyName',
     },
+    {
+      apiIndex: 'ratingOperators',
+      fieldName: 'ratingOperatorName',
+      fieldKey: 'ratingOperatorKey',
+    }
   ];
 
   const options = await getSearchBoxOptions(searchFields, context.locale);
@@ -84,6 +89,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         country_or_la,
         hygiene_status,
         sort,
+        range,
         page,
       } = query;
       let rating = null;
@@ -102,6 +108,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         pageNumber: page ? page : 1,
         pageSize: 10,
         schemeTypeKey: scheme,
+        ratingOperatorKey: range,
       }
       let searchResults = {};
       let authorities = {};
