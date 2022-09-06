@@ -11,7 +11,10 @@ import updateParams from "../../lib/updateParams";
 
 function getDisplayedResults(totalResults, pageSize, pageNumber) {
   const offset = (pageNumber - 1) * pageSize + 1;
-  const last = offset + pageSize - 1;
+  let last = offset + pageSize - 1;
+  if (last > totalResults) {
+    last = totalResults;
+  }
   return `${offset} - ${last}`;
 }
 
