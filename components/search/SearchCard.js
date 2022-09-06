@@ -12,7 +12,7 @@ function SearchCard(props) {
     i18n.addResourceBundle(locale, 'searchPage')
   }, [locale]);
 
-  const {t} = useTranslation(['searchPage']);
+  const {t} = useTranslation(['searchPage', 'common']);
 
   let formattedAddress = '';
   for (let i = 1; i <= 4; i++) {
@@ -44,6 +44,14 @@ function SearchCard(props) {
     pin_number: business.mapDetails ? business.mapDetails.pinNumber : null,
     latitude: business.mapDetails ? business.mapDetails.latitude : null,
     longitude: business.mapDetails ? business.mapDetails.longitude : null,
+  }
+
+  if (business.NewRatingPending) {
+    const statusDetails = {
+      status_summary: t('ss_recently_inspected', {ns: 'common'}),
+      status_description: t('sd_recently_inspected', {ns: 'common'}),
+    }
+    Object.assign(establishmentContent, statusDetails);
   }
 
   return (

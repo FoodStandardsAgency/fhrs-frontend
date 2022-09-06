@@ -121,6 +121,14 @@ function BusinessPage({business, scores, locale, bing_key}) {
   const isPrivate = !formattedAddress;
   const noMap = !latitude || !longitude;
 
+  let statusDetails = null;
+  if (business.NewRatingPending) {
+    statusDetails = {
+      summary: t('ss_recently_inspected', {ns: 'common'}),
+      description: t('sd_recently_inspected', {ns: 'common'}),
+    }
+  }
+
   // Generate hero data
   const heroData = {
     name: business.BusinessName,
@@ -149,6 +157,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     show_map: t('show_map', {ns: 'businessHero'}),
     hide_map: t('hide_map', {ns: 'businessHero'}),
     fhis: business.SchemeType === 'FHIS',
+    status_details: statusDetails,
   }
 
   const foodSafetyText = {
