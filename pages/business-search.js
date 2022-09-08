@@ -175,7 +175,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 options: {
                   icon: `./images/map-icons/pin--${mapPinNumber}.svg`,
                   hoverIcon: `./images/map-icons/pin--${mapPinNumber}--hover.svg`,
-                  anchor: {x: 60 , y: 25},
+                  anchor: {x: 20 , y: 40},
                 },
                 infoboxHtml: renderToString(<TwigTemplate template={mapInfoBox} values={infoBoxValues} attribs={[]}/>),
               }
