@@ -11,7 +11,7 @@ import api from '../../../lib/api.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
-import BingMapsReact from "bingmaps-react";
+import BingMapsReact from "../../../lib/bing-maps";
 import * as ReactDOM from "react-dom";
 import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
@@ -69,9 +69,10 @@ function BusinessPage({business, scores, locale, bing_key}) {
   const {latitude, longitude} = business.geocode;
 
   useEffect(() => {
-    const mapWrapper = document.querySelector('.business-hero__map__wrapper');
+    const mapWrapper = document.querySelector('.business-hero__map__wrapper .inner');
     if (mapWrapper) {
-      ReactDOM.render(<BingMapsReact
+      ReactDOM.render(
+  <BingMapsReact
         bingMapsKey={bing_key}
         mapOptions={{
           navigationBarMode: 'round',
@@ -91,9 +92,14 @@ function BusinessPage({business, scores, locale, bing_key}) {
             }
           }
         ]}
-      />, mapWrapper)
+        mapClassName="business"
+        mapWrapper={mapWrapper}
+     />
+, mapWrapper)
     }
+  });
 
+  useEffect(() => {
     async function localAuthorityDetails(localAuthorityCode) {
       const authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
       const authority = authorities.authorities.filter((la) => {

@@ -19,7 +19,7 @@ import Head from "next/head";
 import {getSearchBoxOptions} from "../lib/getInputFieldValues";
 import SearchCard from "../components/search/SearchCard";
 import * as ReactDOM from "react-dom";
-import BingMapsReact from "bingmaps-react";
+import BingMapsReact from "../lib/bing-maps";
 import { renderToString } from 'react-dom/server'
 
 export async function getStaticProps(context) {
@@ -200,7 +200,9 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           ReactDOM.render(<BingMapsReact
             bingMapsKey={bingKey}
             mapOptions={{
-              navigationBarMode: 'round',
+              navigationBarMode: 'default',
+              allowInfoboxOverflow: true,
+              backgroundColor: '#ff0000',
             }}
             pushPinsWithInfoboxes={pushPins}
             viewOptions={{
@@ -210,6 +212,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               center: center,
               zoom: center ? 15 : null,
             }}
+            mapClassName="search"
+            mapWrapper={mapWrapper}
           />, mapWrapper)
         }
         setStatus(false);
