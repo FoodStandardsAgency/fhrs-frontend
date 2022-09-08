@@ -16,14 +16,15 @@ import * as ReactDOM from "react-dom";
 import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
 import parse from 'html-react-parser';
+import {useHistory} from '../../../context/History'
 
 export async function getStaticPaths() {
   const establishments = [];
-  /** 
-  @TODO : reinstate when servers sorted
-  const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 1}).getResults();
-  const establishments = data.establishments;
-  */
+  /**
+   @TODO : reinstate when servers sorted
+   const data = await api.setType('establishments', {basic: true, pageNumber: 1, pageSize: 1}).getResults();
+   const establishments = data.establishments;
+   */
   const paths = establishments.map((establishment) => {
     let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
     if (!bn.length) bn = "unknown";
@@ -60,8 +61,10 @@ export async function getStaticProps(context) {
 }
 
 function BusinessPage({business, scores, locale, bing_key}) {
+  const {previous} = useHistory();
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage']);
   const [inWales, setInWales] = useState(false);
+  const [localAuthorityId, setLocalAuthorityId] = useState(null);
 
   const {latitude, longitude} = business.geocode;
 
@@ -91,15 +94,16 @@ function BusinessPage({business, scores, locale, bing_key}) {
       />, mapWrapper)
     }
 
-    async function isInWales(localAuthorityCode) {
+    async function localAuthorityDetails(localAuthorityCode) {
       const authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
       const authority = authorities.authorities.filter((la) => {
         return la.LocalAuthorityIdCode === localAuthorityCode;
       });
       setInWales(authority[0].RegionName === 'Wales');
+      setLocalAuthorityId(authority[0].LocalAuthorityId);
     }
 
-    isInWales(business.LocalAuthorityCode);
+    localAuthorityDetails(business.LocalAuthorityCode);
   }, []);
 
   const pageTitle = `${business.BusinessName ? business.BusinessName : 'unknown'} | ${t('page_title', {ns: 'businessPage'})} | ${t('title', {ns: 'common'})}`;
@@ -132,11 +136,11 @@ function BusinessPage({business, scores, locale, bing_key}) {
   // Generate hero data
   const heroData = {
     name: business.BusinessName,
-    back_link: '#',
+    back_link: previous ? locale === 'cy' ? `/cy${previous}` : previous : locale === 'cy' ? '/cy' : '/',
     back_to_search_results: t('back_to_search_results', {ns: 'businessHero'}),
-    search_local_link: '#',
+    search_local_link: `${locale === 'cy' ? '/cy' : ''}/authority-search-landing/${localAuthorityId}`,
     search_this_local_authority_area: t('search_this_local_authority_area', {ns: 'businessHero'}),
-    search_all_link: '#',
+    search_all_link: locale === 'cy' ? '/cy' : '/',
     search_all_data: t('search_all_data', {ns: 'businessHero'}),
     address_title: t('address_title', {ns: 'businessHero'}),
     private: isPrivate,
@@ -187,7 +191,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
   let noMapAvailableSection = '';
   if (isPrivate || noMap) {
     const noMapAvailable = {
-        content: isPrivate ? t('private_no_map_available', {ns: 'businessPage'}) : t('no_map_available', {ns: 'businessPage'}),
+      content: isPrivate ? t('private_no_map_available', {ns: 'businessPage'}) : t('no_map_available', {ns: 'businessPage'}),
     }
     noMapAvailableSection =
       <>
