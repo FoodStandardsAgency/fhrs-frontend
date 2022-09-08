@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "cp node_modules/fsa-pattern-library-assets/dist/main.js public/; next dev",
-    "build": "rm public/main.js && cp node_modules/fsa-pattern-library-assets/dist/main.js public/ && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "menu": "node menu-write.js"
+    "menu": "node menu-write.js",
+    "update-pl": "yarn upgrade fsa-pattern-library-source"
   },
   "dependencies": {
     "axios": "^0.27.2",
