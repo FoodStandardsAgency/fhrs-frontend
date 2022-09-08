@@ -204,6 +204,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               allowInfoboxOverflow: true,
               backgroundColor: '#ff0000',
             }}
+            onMapReady={() => {mapWrapper.querySelector('.MicrosoftMap div:last-of-type').style.removeProperty('overflow');}}
             pushPinsWithInfoboxes={pushPins}
             viewOptions={{
               mapTypeId: 'road',

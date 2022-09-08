@@ -112,7 +112,7 @@ export default function BingMapsReact({
 
     // only make a new map if one doesn't already exist
     if (!map.current) {
-      map.current = new Maps.Map(mapWrapper, {
+      map.current = new Maps.Map(mapWrapper.querySelector("div"), {
         credentials: bingMapsKey,
       });
     }

@@ -69,7 +69,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
   const {latitude, longitude} = business.geocode;
 
   useEffect(() => {
-    const mapWrapper = document.querySelector('.business-hero__map__wrapper .inner');
+    const mapWrapper = document.querySelector('.business-hero__map__wrapper');
     if (mapWrapper) {
       ReactDOM.render(
   <BingMapsReact
