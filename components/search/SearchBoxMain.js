@@ -1,6 +1,6 @@
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
 import TwigTemplate from '../../lib/parse.js';
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {i18n, useTranslation} from "next-i18next";
 
 function SearchBoxMain(props) {
@@ -12,6 +12,9 @@ function SearchBoxMain(props) {
     localAuthorityId = localAuthority.LocalAuthorityId.toString();
     isScottishLocalAuthority = localAuthority.RegionName === 'Scotland';
   }
+
+  const [selectInit, setSelectInit] = useState(true);
+
   useEffect(() => {
     const form = document.querySelector('.ratings-search-box');
     const submit = form.querySelector('input[type="submit"]');
@@ -29,6 +32,57 @@ function SearchBoxMain(props) {
       mapState ? searchParams.append('init_map_state', true) : null;
       window.location.href = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
     });
+
+    const localAuthoritySelect = form.querySelector('#country_or_la');
+    const hygiene_rating = form.querySelector('.ratings-search-box__additional-options__left fieldset');
+    const hygiene_status = form.querySelector('.ratings-search-box__additional-options__right fieldset');
+
+    let hygiene_rating_radio;
+    let hygiene_status_radio;
+
+    /*
+     * Disable the status or rating fieldset based on the selected country or local authority
+     * e.g. if a Scottish LA is selected, disable the hygiene rating fieldset.
+     */
+    function disableFieldset(locationSelect, selectInit = false) {
+      let selected;
+      if (selectInit) {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        selected = urlParams.get('country_or_la');
+        setSelectInit(false);
+      }
+      else {
+        selected = locationSelect.value;
+      }
+      const scheme = selected ? selected.split('-')[1] : null;
+      if (scheme === 'fhis') {
+        hygiene_status.disabled = false;
+        hygiene_rating.disabled = true;
+        hygiene_rating_radio.checked = false;
+      }
+      else if (scheme === 'fhrs') {
+        hygiene_status.disabled = true;
+        hygiene_rating.disabled = false;
+        hygiene_status_radio.checked = false;
+      }
+      else {
+        hygiene_status.disabled = false;
+        hygiene_rating.disabled = false;
+      }
+    }
+    if (localAuthoritySelect) {
+      if (hygiene_rating) {
+        hygiene_rating_radio = hygiene_rating.querySelector('input[type="radio"]');
+      }
+      if(hygiene_status) {
+        hygiene_status_radio = hygiene_status.querySelector('input[type="radio"]');
+      }
+      disableFieldset(localAuthoritySelect, selectInit);
+      localAuthoritySelect.addEventListener('change', () => {
+        disableFieldset(localAuthoritySelect)
+      })
+    }
     i18n.addResourceBundle(locale, 'ratingsSearchBox')
   }, []);
 
@@ -43,6 +97,12 @@ function SearchBoxMain(props) {
     range,
     init_map_state,
   } = query;
+
+  let countries_and_la;
+
+  if (options.countries && options.authorities) {
+    countries_and_la = options.countries.concat(options.authorities);
+  }
 
   let defaultRating;
   if (hygiene_rating_or_status) {
@@ -146,7 +206,7 @@ function SearchBoxMain(props) {
         title: t('country_or_la_label'),
         name: "country_or_la",
         id: "country_or_la",
-        options: options.countries,
+        options: countries_and_la ? countries_and_la.filter((v,i,a)=>a.findIndex(v2=>(v2.value===v.value))===i) : null,
         default: country_or_la ? country_or_la : 'all',
       },
       {

@@ -35,7 +35,12 @@ export async function getStaticProps(context) {
     {
       apiIndex: 'countries',
       fieldName: 'name',
-      fieldKey: 'id',
+      fieldKey: 'nameKey',
+    },
+    {
+      apiIndex: 'authorities',
+      fieldName: 'Name',
+      fieldKey: 'LocalAuthorityId',
     },
     {
       apiIndex: 'ratings',
@@ -78,7 +83,9 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   useEffect(() => {
     if (!isReady) return;
     const mapWrapper = document.querySelector('.ratings-search-box__map');
-
+    const countries = options.countries.map((country) => {
+      return country.value;
+    });
     async function getSearchResults(query, mapWrapper = null) {
       const {
         "business-name-search": business_name_search,
@@ -94,16 +101,34 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       } = query;
       let rating = null;
       let scheme = null;
+      let countryId = null;
+      let localAuthorityId = null;
       if (hygiene_rating_or_status) {
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
         scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
+      // Get scheme information from value (format place-scheme)
+      const locationDetails = country_or_la ? country_or_la.split('-') : null;
+      if (locationDetails) {
+        if (countries.includes(country_or_la)) {
+          const countries = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('countries').getResults();
+          countryId = countries.countries.filter((country) => {
+            return country.nameKey === locationDetails[0];
+          }).map((country) => {
+            return country.id;
+          })
+        } else {
+          localAuthorityId = locationDetails[0];
+        }
+      }
+
       const parameters = {
         name: business_name_search,
         address: address_search,
         businessTypeId: business_type,
         ratingKey: rating,
-        countryId: country_or_la,
+        countryId: countryId ? countryId[0] : null,
+        localAuthorityId: localAuthorityId,
         sortOptionKey: sort,
         pageNumber: page ? page : 1,
         pageSize: 10,
