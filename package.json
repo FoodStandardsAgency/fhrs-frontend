@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "menu": "node menu-write.js",
-    "update-pl": "yarn upgrade fsa-pattern-library-source"
+    "update-pl": "yarn upgrade fsa-pattern-library-assets"
   },
   "dependencies": {
     "axios": "^0.27.2",
