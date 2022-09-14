@@ -182,6 +182,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         setResults(searchResults);
       } catch (e) {
         setStatus(false);
+        setResults(searchResults);
         // TODO: add error state for no results
       }
     }
@@ -232,6 +233,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   const searchBoxTitle = t('search_box_title');
 
+  const showMap  = businesses ? businesses.length > 0 : false;
+
   function updateCardState() {
     if (!cardsLoaded) {
       setCardsLoaded(true);
@@ -239,7 +242,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   }
 
   return (
-    <div>
+    <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
@@ -247,7 +250,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
       </LayoutFullWidth>
       <LayoutCentered>
-        <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options} showMap={true}/>
+        <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options} showMap={showMap}/>
         {
           Object.keys(query).length !== 0 && loading ?
             <Loader/> :
@@ -271,7 +274,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
             ) : ''
         }
       </LayoutCentered>
-    </div>
+    </>
   )
 }
 

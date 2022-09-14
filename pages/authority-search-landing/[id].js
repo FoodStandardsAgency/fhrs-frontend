@@ -197,6 +197,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
 
   const helpText = t('no_results_text', {ns: 'searchPage'});
 
+  const showMap  = businesses ? businesses.length > 0 : false;
+
   function updateCardState() {
     if (!cardsLoaded) {
       setCardsLoaded(true);
@@ -209,7 +211,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         <title>{pageTitle}</title>
       </Head>
       <LayoutCentered>
-        <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options}/>
+        <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options} showMap={showMap}/>
         {
           Object.keys(query).length !== 0 && loading ?
             <Loader/> :
