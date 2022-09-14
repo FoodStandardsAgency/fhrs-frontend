@@ -59,7 +59,7 @@ function SearchSortHeader(props) {
   }
 
   const sortByContent = {
-    sort_by: "Sort by",
+    sort_by: t('sort_by'),
     options: getSortOptions(sortOptions),
     default: sortType,
   }
