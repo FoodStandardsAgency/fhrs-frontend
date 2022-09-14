@@ -25,7 +25,7 @@ function SearchBoxMain(props) {
       const searchParams = new URLSearchParams();
       for (const entry of formData.entries()) {
         if (entry[1]) {
-          searchParams.append(entry[0], entry[1]);
+          searchParams.append(entry[0], entry[1].trim());
         }
       }
       const mapState = mapToggle ? mapToggle.getAttribute('aria-checked') === 'true' : false;
