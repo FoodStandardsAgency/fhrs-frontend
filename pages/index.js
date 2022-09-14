@@ -27,13 +27,23 @@ export async function getStaticProps(context) {
     {
       apiIndex: 'countries',
       fieldName: 'name',
-      fieldKey: 'id',
+      fieldKey: 'nameKey',
+    },
+    {
+      apiIndex: 'authorities',
+      fieldName: 'Name',
+      fieldKey: 'LocalAuthorityId',
     },
     {
       apiIndex: 'ratings',
       fieldName: 'ratingName',
       fieldKey: 'ratingKeyName',
     },
+    {
+      apiIndex: 'ratingOperators',
+      fieldName: 'ratingOperatorName',
+      fieldKey: 'ratingOperatorKey',
+    }
   ];
 
   const options = await getSearchBoxOptions(searchFields, context.locale);

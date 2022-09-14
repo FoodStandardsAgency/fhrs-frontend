@@ -14,14 +14,15 @@ import {useTranslation} from "next-i18next";
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import {getSearchBoxOptions} from "../../lib/getInputFieldValues";
 import SearchCard from "../../components/search/SearchCard";
+import {getPushPin, initMapPins, renderMap} from "../../lib/bingMapHelpers";
 
-export async function getStaticPaths () {
+export async function getStaticPaths() {
   const authorities = [];
   /**
-  @TODO : reinstate when servers sorted.
-  const data = await api.setType('authorities', {pageNumber: 1, pageSize: 1}).getResults();
-  const authorities = data.authorities;
-  */
+   @TODO : reinstate when servers sorted.
+   const data = await api.setType('authorities', {pageNumber: 1, pageSize: 1}).getResults();
+   const authorities = data.authorities;
+   */
   const paths = authorities.map((authority) => {
     return {
       params: {
@@ -69,23 +70,32 @@ export async function getStaticProps(context) {
       authority: authority,
       options: options,
       sortOptions: sortOptions.sortOptions,
+      bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates'])),
     },
     revalidate: 21600,
   }
 }
 
-function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
+function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}) {
+
   const {t} = useTranslation(['searchPage', 'dates', 'common']);
+
   const pageTitle = `${t('page_title', {ns: 'searchPage'})} | ${t('title', {ns: 'common'})}`;
+
   const [results, setResults] = useState({});
   const [loading, setStatus] = useState(true);
+  const [center, setCenter] = useState(null);
+  const [cardsLoaded, setCardsLoaded] = useState(false);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
     if (!isReady) return;
 
-    async function getSearchResults(query) {
+    const mapWrapper = document.querySelector('.ratings-search-box__map');
+    const mapToggle = document.querySelector('#map-toggle');
+
+    async function getSearchResults(query, mapWrapper = null) {
       const {
         "business-name-search": business_name_search,
         "address-search": address_search,
@@ -110,17 +120,44 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
       }
       let searchResults = {};
       let authorities = {};
+      let pushPins = [];
+      let locations = [];
       try {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
         authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
-        setStatus(false);
-        searchResults.establishments = searchResults.establishments.map(establishment => {
+        searchResults.establishments = searchResults.establishments.map((establishment, index) => {
           const authority = authorities.authorities.filter((la) => {
             return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
           });
           establishment.inWales = authority[0].RegionName === 'Wales';
+          const {latitude, longitude} = establishment.geocode;
+          let mapDetails = {};
+          if (latitude && longitude) {
+            const mapPinNumber = index + 1;
+            mapDetails = {
+              pinNumber: mapPinNumber,
+              longitude: longitude,
+              latitude: latitude,
+            }
+            pushPins.push(getPushPin(establishment, mapPinNumber))
+            locations.push({
+              latitude: latitude,
+              longitude: longitude,
+            })
+          }
+          establishment.mapDetails = mapDetails;
           return establishment;
         })
+        if (mapWrapper) {
+          renderMap(mapWrapper, pushPins, locations, center, bingKey)
+        }
+        if (mapToggle && cardsLoaded) {
+          initMapPins(mapWrapper, setCenter);
+          mapToggle.addEventListener('click', () => {
+            initMapPins(mapWrapper, setCenter);
+          });
+        }
+        setStatus(false);
         setResults(searchResults);
       } catch (e) {
         setStatus(false);
@@ -128,8 +165,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
       }
     }
 
-    getSearchResults(query)
-  }, [isReady]);
+    getSearchResults(query, mapWrapper)
+  }, [isReady, center, cardsLoaded]);
 
   const businesses = results.establishments;
 
@@ -160,6 +197,12 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
 
   const helpText = t('no_results_text', {ns: 'searchPage'});
 
+  function updateCardState() {
+    if (!cardsLoaded) {
+      setCardsLoaded(true);
+    }
+  }
+
   return (
     <>
       <Head>
@@ -175,6 +218,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions}) {
                 {resultsHeader}
                 <p>{helpText}</p>
                 {businesses.map((business, index) => {
+                  updateCardState();
                   return (
                     <SearchCard key={`search-card-${index}`} business={business} locale={locale}/>
                   )

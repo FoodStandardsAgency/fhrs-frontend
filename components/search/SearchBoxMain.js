@@ -39,6 +39,8 @@ function SearchBoxMain(props) {
 
     let hygiene_rating_radio;
     let hygiene_status_radio;
+    let hygiene_rating_range;
+    let hygiene_rating_range_parent;
 
     /*
      * Disable the status or rating fieldset based on the selected country or local authority
@@ -56,24 +58,33 @@ function SearchBoxMain(props) {
         selected = locationSelect.value;
       }
       const scheme = selected ? selected.split('-')[1] : null;
+      hygiene_rating_range.disabled = true;
       if (scheme === 'fhis') {
         hygiene_status.disabled = false;
         hygiene_rating.disabled = true;
         hygiene_rating_radio.checked = false;
+        hygiene_rating_range.disabled = true;
+        hygiene_rating_range_parent.classList.add('ratings-search-box__dropdown--disabled');
       }
       else if (scheme === 'fhrs') {
         hygiene_status.disabled = true;
         hygiene_rating.disabled = false;
         hygiene_status_radio.checked = false;
+        hygiene_rating_range.disabled = false;
+        hygiene_rating_range_parent.classList.remove('ratings-search-box__dropdown--disabled');
       }
       else {
         hygiene_status.disabled = false;
         hygiene_rating.disabled = false;
+        hygiene_rating_range.disabled = false;
+        hygiene_rating_range_parent.classList.remove('ratings-search-box__dropdown--disabled');
       }
     }
     if (localAuthoritySelect) {
       if (hygiene_rating) {
         hygiene_rating_radio = hygiene_rating.querySelector('input[type="radio"]');
+        hygiene_rating_range = form.querySelector('.ratings-search-box__dropdown #range');
+        hygiene_rating_range_parent = hygiene_rating_range.closest('.ratings-search-box__dropdown');
       }
       if(hygiene_status) {
         hygiene_status_radio = hygiene_status.querySelector('input[type="radio"]');

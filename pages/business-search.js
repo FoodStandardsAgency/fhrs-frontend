@@ -3,7 +3,6 @@ import LayoutCentered from '../components/layout/LayoutCentered';
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.html.twig';
-import mapInfoBox from '@components/components/fhrs/MapInfobox/mapInfobox.html.twig';
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import SearchSortHeader from "../components/search/SearchSortHeader";
@@ -18,9 +17,7 @@ import Loader from "../components/search/Loader/Loader"
 import Head from "next/head";
 import {getSearchBoxOptions} from "../lib/getInputFieldValues";
 import SearchCard from "../components/search/SearchCard";
-import * as ReactDOM from "react-dom";
-import BingMapsReact from "../lib/bing-maps";
-import { renderToString } from 'react-dom/server'
+import {getPushPin, initMapPins, renderMap} from "../lib/bingMapHelpers";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -78,11 +75,15 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [results, setResults] = useState({});
   const [loading, setStatus] = useState(true);
   const [center, setCenter] = useState(null);
+  const [cardsLoaded, setCardsLoaded] = useState(false);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
     if (!isReady) return;
+
     const mapWrapper = document.querySelector('.ratings-search-box__map');
+    const mapToggle = document.querySelector('#map-toggle');
+
     const countries = options.countries.map((country) => {
       return country.value;
     });
@@ -144,21 +145,14 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
         authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
         searchResults.establishments = searchResults.establishments.map((establishment, index) => {
+          const authority = authorities.authorities.filter((la) => {
+            return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
+          });
+          establishment.inWales = authority[0].RegionName === 'Wales';
+
           const {latitude, longitude} = establishment.geocode;
           let mapDetails = {};
-          let formattedAddress = '';
-          for (let i = 1; i <= 4; i++) {
-            formattedAddress += establishment[`AddressLine${i}`] ? establishment[`AddressLine${i}`] + '<br>' : '';
-          }
-          formattedAddress += establishment.PostCode;
-          formattedAddress = formattedAddress.replace(/<br>$/, '');
-          const infoBoxValues = {
-            title: establishment.BusinessName ? establishment.BusinessName : 'Unknown',
-            address: formattedAddress,
-            rating: establishment.RatingValue,
-            welsh: false,
-            fhis: establishment.SchemeType === 'FHIS',
-          }
+
           if (latitude && longitude) {
             const mapPinNumber = index + 1;
             mapDetails = {
@@ -166,78 +160,33 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               longitude: longitude,
               latitude: latitude,
             }
-            pushPins.push(
-              {
-                center: {
-                  latitude: latitude,
-                  longitude: longitude,
-                },
-                options: {
-                  icon: `./images/map-icons/pin--${mapPinNumber}.svg`,
-                  hoverIcon: `./images/map-icons/pin--${mapPinNumber}--hover.svg`,
-                  anchor: {x: 20 , y: 40},
-                },
-                infoboxHtml: renderToString(<TwigTemplate template={mapInfoBox} values={infoBoxValues} attribs={[]}/>),
-              }
-            )
-            locations.push(
-              {
-                latitude: latitude,
-                longitude: longitude,
-              }
-            )
+            pushPins.push(getPushPin(establishment, mapPinNumber))
+            locations.push({
+              latitude: latitude,
+              longitude: longitude,
+            })
           }
-          const authority = authorities.authorities.filter((la) => {
-            return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
-          });
-          establishment.inWales = authority[0].RegionName === 'Wales';
           establishment.mapDetails = mapDetails;
           return establishment;
         })
         if (mapWrapper) {
-          const map = Microsoft.Maps;
-          const bounds = map.LocationRect.fromLocations(locations);
-          ReactDOM.render(<BingMapsReact
-            bingMapsKey={bingKey}
-            mapOptions={{
-              navigationBarMode: 'default',
-              allowInfoboxOverflow: true,
-              backgroundColor: '#ff0000',
-            }}
-            onMapReady={() => {mapWrapper.querySelector('.MicrosoftMap div:last-of-type').style.removeProperty('overflow');}}
-            pushPinsWithInfoboxes={pushPins}
-            viewOptions={{
-              mapTypeId: 'road',
-              bounds:  center ? null : bounds,
-              padding: 0,
-              center: center,
-              zoom: center ? 15 : null,
-            }}
-            mapClassName="search"
-            mapWrapper={mapWrapper}
-          />, mapWrapper)
+          renderMap(mapWrapper, pushPins, locations, center, bingKey)
+        }
+        if (mapToggle && cardsLoaded) {
+          initMapPins(mapWrapper, setCenter);
+          mapToggle.addEventListener('click', () => {
+            initMapPins(mapWrapper, setCenter);
+          });
         }
         setStatus(false);
         setResults(searchResults);
-        const mapPins = document.querySelectorAll('.fhrs-search-card__map-pin');
-        if (mapPins) {
-          mapPins.forEach((pin) => {
-            pin.addEventListener('click', (e) => {
-              e.preventDefault();
-              const latitude = pin.getAttribute('data-latitude');
-              const longitude = pin.getAttribute('data-longitude');
-              setCenter({latitude: latitude, longitude: longitude});
-              mapWrapper.scrollIntoView();
-            });
-          })
-        }
       } catch (e) {
         setStatus(false);
         // TODO: add error state for no results
       }
     }
     getSearchResults(query, mapWrapper);
-  }, [isReady, center]);
+  }, [isReady, center, cardsLoaded]);
 
   const businesses = results.establishments;
 
@@ -283,6 +232,12 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   const searchBoxTitle = t('search_box_title');
 
+  function updateCardState() {
+    if (!cardsLoaded) {
+      setCardsLoaded(true);
+    }
+  }
+
   return (
     <div>
       <Head>
@@ -301,6 +256,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 {resultsHeader}
                 <p>{helpText}</p>
                 {businesses.map((business, index) => {
+                  updateCardState();
                   return (
                     <SearchCard key={`search-card-${index}`} business={business} locale={locale}/>
                   )

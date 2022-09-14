@@ -23,6 +23,9 @@ function SearchCard(props) {
   const date = new Date(business.RatingDate);
   const formattedDate = formatDate(date, t, locale);
 
+  const query = window.location.search;
+  const params = new URLSearchParams(query);
+
   const establishmentContent = {
     business_name: business.BusinessName,
     business_link: `${locale === 'cy' ? '/cy' : ''}/business/${business.FHRSID.toString()}/${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
@@ -44,6 +47,7 @@ function SearchCard(props) {
     pin_number: business.mapDetails ? business.mapDetails.pinNumber : null,
     latitude: business.mapDetails ? business.mapDetails.latitude : null,
     longitude: business.mapDetails ? business.mapDetails.longitude : null,
+    show_pin: params.get('init_map_state'),
   }
 
   if (business.NewRatingPending) {
