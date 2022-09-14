@@ -48,11 +48,11 @@ export default function BingMapsReact({
             htmlContent: pushPin.infobox?.infoboxHtml || pushPin.infoboxHtml,
             location: newPin.getLocation(),
             visible: !infobox.getOptions().visible,
-            offset: dir === 'left' ? new Microsoft.Maps.Point(40, 0) : new Microsoft.Maps.Point(-289, 0),
+            offset: dir === 'left' ? new Microsoft.Maps.Point(20, 0) : new Microsoft.Maps.Point(-330, 0),
             ...pushPin.infobox,
           });
           const infoBoxDom = document.querySelector('.map-infobox');
-          dir === "right" ? infoBoxDom.classList.add('map-infobox--right') : infoBoxDom.classList.remove('map-infobox--right');
+          dir === "right" ? infoBoxDom.classList.add('map-infobox--right') : infoBoxDom.classList.remove('map-infobox--left');
         });
         map.entities.push(newPin);
       });
