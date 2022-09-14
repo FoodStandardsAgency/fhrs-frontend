@@ -80,6 +80,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
         viewOptions={{
           center: {latitude: latitude, longitude: longitude},
           mapTypeId: 'road',
+          zoom: 13,
         }}
         pushPins={[
           {
@@ -213,7 +214,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
 
   const getCodeText = {
     type: 'general',
-    wysiwyg_content: `<h2>${t('get_code_title', {ns: 'businessPage'})}</h2><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
+    wysiwyg_content: `<h3>${t('get_code_title', {ns: 'businessPage'})}</h3><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
     link_text: t('get_code_link_text', {ns: 'businessPage'}),
     link_url: '#',
   }

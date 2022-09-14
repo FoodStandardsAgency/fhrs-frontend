@@ -39,22 +39,27 @@ export default function BingMapsReact({
         newPin.metadata = {
           ...pushPin.options,
         };
-        Maps.Events.addHandler(newPin, "mouseover", (e) => {
+        Maps.Events.addHandler(newPin, "click", (e) => {
+          const loc = map.tryLocationToPixel(newPin.getLocation());
+          const dir = loc.x > 0 ? 'right' : 'left';
           infobox.setOptions({
             title: e.target.metadata.title,
             description: e.target.metadata.description,
             htmlContent: pushPin.infobox?.infoboxHtml || pushPin.infoboxHtml,
             location: newPin.getLocation(),
-            visible: true,
+            visible: !infobox.getOptions().visible,
+            offset: dir === 'left' ? new Microsoft.Maps.Point(40, 0) : new Microsoft.Maps.Point(-289, 0),
             ...pushPin.infobox,
           });
-        });
-        Maps.Events.addHandler(newPin, "mouseout", (e) => {
-          infobox.setOptions({
-            visible: false,
-          });
+          const infoBoxDom = document.querySelector('.map-infobox');
+          dir === "right" ? infoBoxDom.classList.add('map-infobox--right') : infoBoxDom.classList.remove('map-infobox--right');
         });
         map.entities.push(newPin);
+      });
+      Maps.Events.addHandler(map, "click", (e) => {
+        infobox.setOptions({
+          visible: false,
+        });
       });
     },
     []
