@@ -19,6 +19,8 @@ function SearchBoxMain(props) {
     const form = document.querySelector('.ratings-search-box');
     const submit = form.querySelector('input[type="submit"]');
     const mapToggle = form.querySelector('#map-toggle');
+    const locationToggle = form.querySelector('#location-toggle');
+    const locationField = form.querySelector('.ratings-search-box__location');
     submit.addEventListener('click', (e) => {
       e.preventDefault();
       const formData = new FormData(form);
@@ -29,6 +31,14 @@ function SearchBoxMain(props) {
         }
       }
       const mapState = mapToggle ? mapToggle.getAttribute('aria-checked') === 'true' : false;
+      const locationState = locationToggle ? locationToggle.getAttribute('aria-checked') === 'true' : false;
+      if (locationState && locationField) {
+        const location = locationField.value.split(',')
+        searchParams.append('latitude', location[0]);
+        searchParams.append('longitude', location[1]);
+        // If the sort isn't set, default to distance
+        !searchParams.get('sort') ? searchParams.append('sort', 'distance') : null;
+      }
       mapState ? searchParams.append('init_map_state', true) : null;
       window.location.href = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
     });
@@ -107,6 +117,8 @@ function SearchBoxMain(props) {
     hygiene_status,
     range,
     init_map_state,
+    latitude,
+    longitude
   } = query;
 
   let countries_and_la;
@@ -277,6 +289,7 @@ function SearchBoxMain(props) {
     right: contentRight,
     show_map: showMap,
     initial_map_state: init_map_state,
+    initial_location_state: !!(latitude && longitude),
     is_homepage: isHomepage,
   }
   return (

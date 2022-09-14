@@ -99,6 +99,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         sort,
         range,
         page,
+        latitude,
+        longitude
       } = query;
       let rating = null;
       let scheme = null;
@@ -135,6 +137,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         pageSize: 10,
         schemeTypeKey: scheme,
         ratingOperatorKey: range,
+        latitude: latitude,
+        longitude: longitude,
       }
       let searchResults = {};
       let authorities = {};

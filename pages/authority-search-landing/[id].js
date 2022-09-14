@@ -105,6 +105,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         sort,
         page,
         range,
+        latitude,
+        longitude,
       } = query;
       const rating = hygiene_status ? hygiene_status : hygiene_rating;
       const parameters = {
@@ -117,6 +119,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         pageSize: 10,
         localAuthorityId: authority.LocalAuthorityId.toString(),
         ratingOperatorKey: range,
+        latitude: latitude,
+        longitude: longitude,
       }
       let searchResults = {};
       let authorities = {};
