@@ -279,7 +279,7 @@ function SearchBoxMain(props) {
     welsh: locale === 'cy',
     search_all_data_link: searchAllData,
     local_authority_link: {
-      url: '#',
+      url: `${locale === 'cy' ? '/cy' : ''}/search-a-local-authority-area`,
       title: isLocalAuthoritySearch ? t('search_a_different_area') : t('local_authority_link_title'),
     },
     submit_button_label: t('submit_button_label'),
