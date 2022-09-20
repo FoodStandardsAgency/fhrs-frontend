@@ -24,6 +24,7 @@
     "twigjs-loader": "^1.0.2"
   },
   "devDependencies": {
+    "copy-file-plugin": "^1.0.4",
     "eslint": "8.12.0",
     "eslint-config-next": "12.1.2"
   }
