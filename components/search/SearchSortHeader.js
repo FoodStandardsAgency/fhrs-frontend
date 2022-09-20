@@ -6,7 +6,6 @@ import {useEffect, useState} from "react";
 import {useTranslation} from "next-i18next";
 import { i18n } from 'next-i18next'
 import {useRouter} from "next/router";
-import api from "../../lib/api";
 import updateParams from "../../lib/updateParams";
 
 function getDisplayedResults(totalResults, pageSize, pageNumber) {
@@ -18,9 +17,12 @@ function getDisplayedResults(totalResults, pageSize, pageNumber) {
   return `${offset} - ${last}`;
 }
 
-function getSortOptions(options) {
+function getSortOptions(options, location = false) {
   let sortOptions = [];
   options.forEach(option => {
+    if (!location && option.sortOptionName === 'Distance') {
+      return;
+    }
     sortOptions.push({
       text: option.sortOptionName,
       value: option.sortOptionKey,
@@ -35,9 +37,9 @@ function SearchSortHeader(props) {
 
   const [sortType, setSortType] = useState({});
 
+  const { sort, latitude, longitude } = query;
   useEffect(() => {
     if(!isReady) return;
-    const { sort } = query;
     const sortSelect = document.querySelector('.sort__select');
     sortSelect.addEventListener('change', (e) => {
       e.preventDefault();
@@ -58,9 +60,10 @@ function SearchSortHeader(props) {
     total_results: resultsMeta.totalResults,
   }
 
+  const locationSearch = latitude && longitude ? true : false;
   const sortByContent = {
     sort_by: t('sort_by'),
-    options: getSortOptions(sortOptions),
+    options: getSortOptions(sortOptions, locationSearch),
     default: sortType,
   }
 
