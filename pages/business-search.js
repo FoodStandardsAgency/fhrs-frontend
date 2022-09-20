@@ -87,6 +87,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
     const countries = options.countries.map((country) => {
       return country.value;
     });
+
     async function getSearchResults(query, mapWrapper = null) {
       const {
         "business-name-search": business_name_search,
@@ -190,6 +191,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         // TODO: add error state for no results
       }
     }
+
     getSearchResults(query, mapWrapper);
   }, [isReady, center, cardsLoaded]);
 
@@ -216,11 +218,12 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
     resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}/>;
   }
 
-  const noResultsContent = {
-    content: `<p class='search-no-results__title'>${t('no_results_title')}</p>`,
-  }
-
   const helpText = t('no_results_text');
+
+  const noResultsContent = {
+    content: `<p class='search-no-results__title--h4'>${t('no_results_title')}</p>
+              <p class="search-no-results__content--h4">${helpText}</p>`,
+  }
 
   const breadcrumbContent = {
     items: [
@@ -237,7 +240,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   const searchBoxTitle = t('search_box_title');
 
-  const showMap  = businesses ? businesses.length > 0 : false;
+  const showMap = businesses ? businesses.length > 0 : false;
 
   function updateCardState() {
     if (!cardsLoaded) {
@@ -254,7 +257,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
       </LayoutFullWidth>
       <LayoutCentered>
-        <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options} showMap={showMap}/>
+        <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options}
+                       showMap={showMap}/>
         {
           Object.keys(query).length !== 0 && loading ?
             <Loader/> :
@@ -273,7 +277,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
             ) : (
               <>
                 <TwigTemplate template={textBlock} values={noResultsContent} attribs={[]}/>
-                {helpText}
               </>
             ) : ''
         }

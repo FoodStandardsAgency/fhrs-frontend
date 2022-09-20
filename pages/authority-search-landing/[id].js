@@ -195,11 +195,12 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
     resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}/>;
   }
 
-  const noResultsContent = {
-    content: `<p class='search-no-results__title'>${t('no_results_title')}</p>`,
-  }
+  const helpText = t('no_results_text');
 
-  const helpText = t('no_results_text', {ns: 'searchPage'});
+  const noResultsContent = {
+    content: `<p class='search-no-results__title--h4'>${t('no_results_title')}</p>
+              <p class="search-no-results__content--h4">${helpText}</p>`,
+  }
 
   const showMap  = businesses ? businesses.length > 0 : false;
 
@@ -235,7 +236,6 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
             ) : (
               <>
                 <TwigTemplate template={textBlock} values={noResultsContent} attribs={[]}/>
-                {helpText}
               </>
             ) : ''
         }
