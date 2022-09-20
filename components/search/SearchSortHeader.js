@@ -57,7 +57,7 @@ function SearchSortHeader(props) {
     of: t('of'),
     results: t('results'),
     displayed_results: getDisplayedResults(resultsMeta.totalResults, resultsMeta.pageSize, resultsMeta.pageNumber),
-    total_results: resultsMeta.totalResults,
+    total_results: resultsMeta.totalResults.toLocaleString(),
   }
 
   const locationSearch = latitude && longitude ? true : false;
