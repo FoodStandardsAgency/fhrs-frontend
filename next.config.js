@@ -1,5 +1,6 @@
 const path = require('path');
 const { i18n } = require('./next-i18next.config');
+const CopyFilePlugin = require('copy-file-plugin')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -12,6 +13,14 @@ const nextConfig = {
         loader: 'twigjs-loader',
       }
     });
+    config.plugins.push(
+      new CopyFilePlugin(
+         [
+          { from: "node_modules/fsa-pattern-library-assets/dist/main.js", to: "public/main.js" },
+        ],
+      ),
+    )
+    console.log(config.plugins);
     config.resolve.alias['@components'] = path.join(__dirname, 'node_modules', 'fsa-pattern-library-assets', 'dist');
 
     return config
