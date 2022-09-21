@@ -20,7 +20,7 @@ const nextConfig = {
         ],
       ),
     )
-    console.log(config.plugins);
+    config.output.publicPath = '/';
     config.resolve.alias['@components'] = path.join(__dirname, 'node_modules', 'fsa-pattern-library-assets', 'dist');
 
     return config
@@ -30,6 +30,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     domains: ['www.rct.uk']
   },
+  assetPrefix: undefined
 }
 
 module.exports = nextConfig
