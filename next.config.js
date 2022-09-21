@@ -1,6 +1,7 @@
 const path = require('path');
 const { i18n } = require('./next-i18next.config');
 const CopyFilePlugin = require('copy-file-plugin')
+const util = require('util')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -20,9 +21,10 @@ const nextConfig = {
         ],
       ),
     )
-    console.log(config);
     config.output.publicPath = '/';
     config.resolve.alias['@components'] = path.join(__dirname, 'node_modules', 'fsa-pattern-library-assets', 'dist');
+    config.module.generator.asset.publicPath = "/_next/";
+    console.log(util.inspect(config, false, null, true /* enable colors */))
 
     return config
   },
