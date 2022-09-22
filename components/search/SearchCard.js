@@ -34,7 +34,7 @@ function SearchCard(props) {
     post_code: business.PostCode,
     last_inspected: t('last_inspected'),
     rating_date: formattedDate,
-    rating: business.RatingValue.toString().replace(' ', ''),
+    rating: business.RatingValue === 'Pass and Eat Safe' ? 'PassEatSafe' : business.RatingValue.toString().replace(' ', ''),
     private_address: t('private_address'),
     registered_with: t('registered_with'),
     local_authority_name: business.LocalAuthorityName,

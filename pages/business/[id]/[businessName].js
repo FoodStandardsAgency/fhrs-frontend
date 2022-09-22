@@ -161,7 +161,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     business_type_content: business.BusinessType,
     date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
-    rating: business.RatingValue,
+    rating: business.RatingValue === 'Pass and Eat Safe' ? 'PassEatSafe' : business.RatingValue.toString().replace(' ', ''),
     welsh: locale === 'cy',
     wales_business: inWales,
     map: !isPrivate && !noMap,
