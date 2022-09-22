@@ -54,7 +54,7 @@ export default function PageWrapper(Component, options) {
         const text = {
           title: t('promo_group_title'),
           description: t('promo_group_description'),
-          description_link_url: '#',
+          description_link_url: locale === 'cy' ? 'https://www.food.gov.uk/cy/canllawiau-defnyddiwr/cynllun-sgorio-hylendid-bwyd' : 'https://www.food.gov.uk/safety-hygiene/food-hygiene-rating-scheme',
           description_link_label: t('promo_group_link'),
         };
         promoGroupContent = {...promoGroupContent, ...text};
