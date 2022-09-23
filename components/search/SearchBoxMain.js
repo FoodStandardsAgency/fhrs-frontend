@@ -121,6 +121,8 @@ function SearchBoxMain(props) {
     longitude
   } = query;
 
+  const advancedOptionsOpen = business_type && business_type !== '-1' || country_or_la  && country_or_la !== 'all' || hygiene_rating_or_status;
+
   let countries_and_la;
 
   if (options.countries && options.authorities) {
@@ -291,6 +293,7 @@ function SearchBoxMain(props) {
     initial_map_state: init_map_state,
     initial_location_state: !!(latitude && longitude),
     is_homepage: isHomepage,
+    advanced_options_open: advancedOptionsOpen,
   }
   return (
     <>
