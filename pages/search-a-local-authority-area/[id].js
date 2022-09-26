@@ -99,15 +99,15 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
     const name = region.name;
     formattedRegions[nameKey] = {
       name: name,
-      link: '/search-a-local-authority-area/' + id,
+      link: `${locale === 'cy' ? '/cy' : ''}/search-a-local-authority-area/${id}`,
     }
   });
 
   const formattedAuthorities = authorities.map(authority => {
     return {
       local_authority: authority.Name,
-      local_authority_link: '/authority-search-landing/' + authority.LocalAuthorityId,
-      number_of_businesses: authority.EstablishmentCount,
+      local_authority_link: `${locale === 'cy' ? '/cy' : ''}/authority-search-landing/${authority.LocalAuthorityId}`,
+      number_of_businesses: authority.EstablishmentCount.toLocaleString(),
     }
   });
 
