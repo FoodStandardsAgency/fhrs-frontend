@@ -40,33 +40,23 @@ export default function BingMapsReact({
           ...pushPin.options,
         };
         Maps.Events.addHandler(newPin, "click", (e) => {
-          const loc = map.tryLocationToPixel(newPin.getLocation());
-          const dir = loc.x > 0 ? 'right' : 'left';
           infobox.setOptions({
             title: e.target.metadata.title,
             description: e.target.metadata.description,
             htmlContent: pushPin.infobox?.infoboxHtml || pushPin.infoboxHtml,
             location: newPin.getLocation(),
             visible: !infobox.getOptions().visible,
-            offset: dir === 'left' ? new Microsoft.Maps.Point(20, 0) : new Microsoft.Maps.Point(-330, 0),
+            offset: new Microsoft.Maps.Point(20, 0),
             ...pushPin.infobox,
           });
-          const buffer = 25;
+          const buffer = 18;
 
           // See https://blogs.bing.com/maps/2011/09/16/dev-tip-repositioning-an-infobox/
-
-          const infoboxOffset = infobox.getOffset();
-          console.log('offset', infoboxOffset);
           const infoboxAnchor = infobox.getAnchor();
-          console.log('anchor', infoboxOffset);
           const infoboxLocation = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
-          console.log('location', infoboxOffset);
 
-          let dx = infoboxLocation.x + infoboxOffset.x - infoboxAnchor.x;
+          let dx;
           let dy = infoboxLocation.y - buffer - infoboxAnchor.y;
-
-          console.log('dx', dx);
-          console.log('dy', dy);
 
           if (dy < buffer) {
             dy *= -1;
@@ -77,23 +67,15 @@ export default function BingMapsReact({
           }
 
           dx = map.getWidth() - infoboxLocation.x + infoboxAnchor.x - infobox.getWidth();
-          console.log('width', map.getWidth());
           if (dx > buffer) {
             dx = 0;
           } else {
             dx -= buffer;
           }
 
-
           if (dx !== 0 || dy !== 0) {
             map.setView({centerOffset: new Microsoft.Maps.Point(dx, dy), center: map.getCenter()});
           }
-
-          console.log('dx', dx);
-          console.log('dy', dy);
-
-          const infoBoxDom = document.querySelector('.map-infobox');
-          dir === "right" ? infoBoxDom.classList.add('map-infobox--right') : infoBoxDom.classList.remove('map-infobox--left');
         });
         map.entities.push(newPin);
       });
