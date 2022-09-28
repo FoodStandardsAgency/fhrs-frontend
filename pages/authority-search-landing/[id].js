@@ -12,9 +12,11 @@ import Loader from "../../components/search/Loader";
 import TwigTemplate from "../../lib/parse";
 import {useTranslation} from "next-i18next";
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
+import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.html.twig';
 import {getSearchBoxOptions} from "../../lib/getInputFieldValues";
 import SearchCard from "../../components/search/SearchCard";
 import {getPushPin, initMapPins, renderMap} from "../../lib/bingMapHelpers";
+import generateBreadcrumbs from "../../lib/breadcrumbs";
 
 export async function getStaticPaths() {
   const authorities = [];
@@ -79,9 +81,9 @@ export async function getStaticProps(context) {
 
 function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}) {
 
-  const {t} = useTranslation(['searchPage', 'dates', 'common']);
+  const {t} = useTranslation(['searchPage', 'dates', 'common', 'ratingsSearchBox']);
 
-  const pageTitle = `${t('page_title', {ns: 'searchPage'})} | ${t('title', {ns: 'common'})}`;
+  const pageTitle = `${t('local_authority_link_title', {ns: 'ratingsSearchBox'})} - ${authority.Name}  | ${t('title', {ns: 'common'})}`;
 
   const [results, setResults] = useState({});
   const [loading, setStatus] = useState(true);
@@ -210,12 +212,27 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
     }
   }
 
+
+  const breadcrumbLinks = [
+    {
+      'text': t('local_authority_link_title', {ns: 'ratingsSearchBox'}),
+      'url': '/search-a-local-authority-area',
+    },
+    {
+      'text': authority.Name,
+      'url': null,
+    }
+  ];
+
+  const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
+
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
       <LayoutCentered>
+        <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
         <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options} showMap={showMap}/>
         {
           Object.keys(query).length !== 0 && loading ?

@@ -10,6 +10,7 @@ import businessHero from '@components/components/fhrs/BusinessHero/businessHero.
 import textBlock from '@components/components/article/TextBlock/textBlock.html.twig';
 import localAuthorityMap from '@components/components/fhrs/LocalAuthorityMap/localAuthorityMap.html.twig';
 import {useTranslation} from "next-i18next";
+import generateBreadcrumbs from "../../lib/breadcrumbs";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -44,18 +45,14 @@ function LocalAuthoritySearchLander({locale, regions}) {
     }
   });
 
-  const breadcrumbContent = {
-    items: [
-      {
-        'text': t('home', {ns: 'common'}),
-        'url': '/'
-      },
-      {
-        'text': t('page_title', {ns: 'localAuthorityLander'}),
-        'url': null,
-      },
-    ],
-  }
+  const breadcrumbLinks = [
+    {
+      'text': t('page_title', {ns: 'localAuthorityLander'}),
+      'url': null,
+    },
+  ]
+
+  const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
 
   const businessHeroContent = {
     name: t('page_title', {ns: 'localAuthorityLander'}),

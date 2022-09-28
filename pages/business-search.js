@@ -18,6 +18,7 @@ import Head from "next/head";
 import {getSearchBoxOptions} from "../lib/getInputFieldValues";
 import SearchCard from "../components/search/SearchCard";
 import {getPushPin, initMapPins, renderMap} from "../lib/bingMapHelpers";
+import generateBreadcrumbs from "../lib/breadcrumbs";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -225,18 +226,14 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               <p class="search-no-results__content--h4">${helpText}</p>`,
   }
 
-  const breadcrumbContent = {
-    items: [
-      {
-        'text': 'Home',
-        'url': '/'
-      },
-      {
-        'text': 'Business search',
-        'url': null,
-      },
-    ],
-  }
+  const breadcrumbLinks = [
+    {
+      'text': t('page_title', {ns: 'searchPage'}),
+      'url': null,
+    }
+  ];
+
+  const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
 
   const searchBoxTitle = t('search_box_title');
 

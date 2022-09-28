@@ -2,6 +2,7 @@ import textBlock from '@components/components/article/TextBlock/textBlock.html.t
 import businessHero from '@components/components/fhrs/BusinessHero/businessHero.html.twig';
 import titleAndText from '@components/components/form/TitleAndText/titleAndText.html.twig';
 import explanationBlock from '@components/components/article/ExplanationBlock/explanationBlock.html.twig';
+import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.html.twig';
 import LayoutCentered from '../../../components/layout/LayoutCentered';
 import StandardsTable from '../../../components/business/StandardsTable';
 import LocalAuthority from '../../../components/business/LocalAuthority';
@@ -17,6 +18,7 @@ import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
 import parse from 'html-react-parser';
 import {useHistory} from '../../../context/History'
+import generateBreadcrumbs from "../../../lib/breadcrumbs";
 
 export async function getStaticPaths() {
   const establishments = [];
@@ -54,7 +56,7 @@ export async function getStaticProps(context) {
       menus: menus,
       locale: context.locale,
       bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage'])),
+      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox'])),
     },
     revalidate: 21600,
   }
@@ -62,7 +64,7 @@ export async function getStaticProps(context) {
 
 function BusinessPage({business, scores, locale, bing_key}) {
   const {previous} = useHistory();
-  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage']);
+  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
 
@@ -239,12 +241,22 @@ function BusinessPage({business, scores, locale, bing_key}) {
     st_standards_title: t('st_standards_title', {ns: 'businessPage'}),
   }
 
+  const breadcrumbLinks = [
+    {
+      'text': previous.includes('business-search') ? t('page_title', {ns: 'searchPage'}) : t('local_authority_link_title', {ns: 'ratingsSearchBox'}),
+      'url': previous.includes('business-search') ? '/business-search' : '/search-a-local-authority-area',
+    },
+  ]
+
+  const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
+
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
       <LayoutCentered>
+        <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
         <TwigTemplate template={businessHero} values={heroData} attribs={[]}/>
         {noMapAvailableSection}
         <StandardsTable scores={scores} translations={standardsTableText}/>

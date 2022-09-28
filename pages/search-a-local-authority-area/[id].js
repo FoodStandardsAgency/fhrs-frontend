@@ -13,6 +13,7 @@ import {useEffect} from "react";
 import updateParams from "../../lib/updateParams";
 import {i18n, useTranslation} from "next-i18next";
 import {useRouter} from "next/router";
+import generateBreadcrumbs from "../../lib/breadcrumbs";
 
 export async function getStaticPaths() {
   const regions = [];
@@ -111,23 +112,18 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
     }
   });
 
+  const breadcrumbLinks = [
+    {
+      'text': t('page_title', {ns: 'localAuthorityLander'}),
+      'url': `/search-a-local-authority-area`,
+    },
+    {
+      'text': selectedRegion.name,
+      'url': null,
+    },
+  ]
 
-  const breadcrumbContent = {
-    items: [
-      {
-        'text': t('home', {ns: 'common'}),
-        'url': '/'
-      },
-      {
-        'text': t('page_title', {ns: 'localAuthorityLander'}),
-        'url': `${locale === 'cy' ? '/cy' : ''}/search-a-local-authority-area`,
-      },
-      {
-        'text': selectedRegion.name,
-        'url': null,
-      },
-    ],
-  }
+  const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
 
   const businessHeroContent = {
     name: t('page_title', {ns: 'localAuthorityLander'}),
