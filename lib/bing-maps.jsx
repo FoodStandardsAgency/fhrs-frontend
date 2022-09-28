@@ -40,19 +40,42 @@ export default function BingMapsReact({
           ...pushPin.options,
         };
         Maps.Events.addHandler(newPin, "click", (e) => {
-          const loc = map.tryLocationToPixel(newPin.getLocation());
-          const dir = loc.x > 0 ? 'right' : 'left';
           infobox.setOptions({
             title: e.target.metadata.title,
             description: e.target.metadata.description,
             htmlContent: pushPin.infobox?.infoboxHtml || pushPin.infoboxHtml,
             location: newPin.getLocation(),
-            visible: !infobox.getOptions().visible,
-            offset: dir === 'left' ? new Microsoft.Maps.Point(20, 0) : new Microsoft.Maps.Point(-330, 0),
+            visible: true,
+            offset: new Microsoft.Maps.Point(20, 0),
             ...pushPin.infobox,
           });
-          const infoBoxDom = document.querySelector('.map-infobox');
-          dir === "right" ? infoBoxDom.classList.add('map-infobox--right') : infoBoxDom.classList.remove('map-infobox--left');
+          const buffer = 18;
+
+          // See https://blogs.bing.com/maps/2011/09/16/dev-tip-repositioning-an-infobox/
+          const infoboxAnchor = infobox.getAnchor();
+          const infoboxLocation = map.tryLocationToPixel(e.target.getLocation(), Microsoft.Maps.PixelReference.control);
+
+          let dx;
+          let dy = infoboxLocation.y - buffer - infoboxAnchor.y;
+
+          if (dy < buffer) {
+            dy *= -1;
+            dy +=buffer;
+          }
+          else {
+            dy = 0;
+          }
+
+          dx = map.getWidth() - infoboxLocation.x + infoboxAnchor.x - infobox.getWidth();
+          if (dx > buffer) {
+            dx = 0;
+          } else {
+            dx -= buffer;
+          }
+
+          if (dx !== 0 || dy !== 0) {
+            map.setView({centerOffset: new Microsoft.Maps.Point(dx, dy), center: map.getCenter()});
+          }
         });
         map.entities.push(newPin);
       });
