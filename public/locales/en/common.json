@@ -12,5 +12,6 @@
   "be_updated_description": "Get email and text updates. Follow us",
   "opens_in_new_tab_label": "(Opens in a new tab)",
   "ss_recently_inspected": "Recently inspected",
-  "sd_recently_inspected": "New rating to be published soon"
+  "sd_recently_inspected": "New rating to be published soon",
+  "feedback_content": "<p>To comment on our <a href=\"/\">food hygiene ratings search service</a>, please email <a href=\"mailto:hygieneratings@food.gov.uk\">hygieneratings@food.gov.uk</a></p>"
 }

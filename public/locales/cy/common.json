@@ -12,5 +12,6 @@
   "be_updated_description": "Yr wybodaeth ddiweddaraf dros e-bost a neges destun. Dilynwch ni",
   "opens_in_new_tab_label": "(Yn agor mewn tab newydd)",
   "ss_recently_inspected": "Wedi’i arolygu’n ddiweddar",
-  "sd_recently_inspected": "Sgôr newydd i’w chyhoeddi’n fuan"
+  "sd_recently_inspected": "Sgôr newydd i’w chyhoeddi’n fuan",
+  "feedback_content": "<p>I wneud sylwadau ar ein <a href=\"/\">gwasanaeth chwilio sgoriau hylendid bwyd</a>, anfonwch e-bost at <a href=\"mailto:hygieneratings@food.gov.uk\">hygieneratings@food.gov.uk</a></p>"
 }

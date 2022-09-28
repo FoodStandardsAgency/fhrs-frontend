@@ -3,6 +3,7 @@ import footer from '@components/components/general/Footer/footer.html.twig';
 import TwigTemplate from '../../lib/parse.js';
 import InitLanguageSwitcher from '../../lib/languageSwitcher';
 import promoGroup from '@components/components/landing/PromoGroup/promoGroup.html.twig';
+import feedback from '@components/components/general/Feedback/feedback.html.twig';
 import {useEffect} from "react";
 import {i18n, useTranslation} from "next-i18next";
 
@@ -60,6 +61,9 @@ export default function PageWrapper(Component, options) {
         promoGroupContent = {...promoGroupContent, ...text};
       }
     }
+    const feedbackSectionContent = {
+      feedback_rich_text: t('feedback_content'),
+    }
   InitLanguageSwitcher(props.menus.header);
     return (
       <>
@@ -68,6 +72,7 @@ export default function PageWrapper(Component, options) {
           <Component {...props} />
           <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
         </main>
+        <TwigTemplate template={feedback} values={feedbackSectionContent} attribs={[]}/>
         <TwigTemplate template={footer} values={props.menus.footer} attribs={[]}/>
       </>
     );
