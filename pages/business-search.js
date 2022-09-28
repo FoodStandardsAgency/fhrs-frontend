@@ -166,7 +166,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               longitude: longitude,
               latitude: latitude,
             }
-            pushPins.push(getPushPin(establishment, mapPinNumber))
+            pushPins.push(getPushPin(establishment, mapPinNumber, locale))
             locations.push({
               latitude: latitude,
               longitude: longitude,
