@@ -6,7 +6,7 @@ import searchCard from '@components/components/fhrs/SearchCard/searchCard.html.t
 import {i18n, useTranslation} from "next-i18next";
 
 function SearchCard(props) {
-  const {business, locale} = props;
+  const {business, locale, distance} = props;
 
   useEffect(() => {
     i18n.addResourceBundle(locale, 'searchPage')
@@ -48,6 +48,8 @@ function SearchCard(props) {
     latitude: business.mapDetails ? business.mapDetails.latitude : null,
     longitude: business.mapDetails ? business.mapDetails.longitude : null,
     show_pin: params.get('init_map_state'),
+    miles_away: t('miles_away'),
+    distance: distance && business.Distance ? business.Distance.toFixed(1) : null,
   }
 
   if (business.NewRatingPending) {

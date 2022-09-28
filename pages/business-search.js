@@ -244,6 +244,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       setCardsLoaded(true);
     }
   }
+  const {latitude, longitude} = query;
+  const distance = latitude && longitude;
 
   return (
     <>
@@ -266,7 +268,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 {businesses.map((business, index) => {
                   updateCardState();
                   return (
-                    <SearchCard key={`search-card-${index}`} business={business} locale={locale}/>
+                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} distance={distance}/>
                   )
                 })}
                 {paginationBlock}

@@ -5,9 +5,10 @@
   "no_results_text": "Cannot find a business? Try searching using just the business name or with the first part of the postcode.",
   "food_hygiene_rating_text": "Were you looking for the",
   "food_hygiene_rating_link_text": "Local Authority Search",
-  "last_inspected": "Last inspected",
+  "last_inspected": "Last inspection",
   "private_address": "Private address",
   "registered_with": "Registered with",
   "local_authority": "local authority",
-  "business_say": "What the business says"
+  "business_say": "What the business says",
+  "miles_away": "miles away"
 }
