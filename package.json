@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "menu": "node menu-write.js",
-    "update-pl": "yarn upgrade fsa-pattern-library-assets"
+    "update-pl": "yarn upgrade fsa-pattern-library-assets",
+    "embed": "webpack",
+    "embed-dev": "webpack --watch"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -24,9 +26,14 @@
     "twigjs-loader": "^1.0.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.19.3",
+    "@babel/preset-env": "^7.19.3",
+    "babel-loader": "^8.2.5",
     "copy-file-plugin": "^1.0.4",
     "eslint": "8.12.0",
-    "eslint-config-next": "12.1.2"
+    "eslint-config-next": "12.1.2",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
   },
   "packageManager": "yarn@1.22.19"
 }

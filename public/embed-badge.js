@@ -7,8 +7,26 @@
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
 /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./embed/index.js":
+/*!************************!*\
+  !*** ./embed/index.js ***!
+  \************************/
+/***/ (() => {
+
+eval("function component() {\n  var element = document.createElement('div');\n  element.innerHTML = \"hello webpack - \" + document.currentScript.getAttribute('data-rating-style');\n  return element;\n}\n\ndocument.currentScript.parentNode.insertAdjacentHTML(\"beforebegin\", component().outerHTML);\n\n//# sourceURL=webpack://fhrs/./embed/index.js?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
 /******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = {};
+/******/ 	__webpack_modules__["./embed/index.js"]();
 /******/ 	
 /******/ })()
 ;
