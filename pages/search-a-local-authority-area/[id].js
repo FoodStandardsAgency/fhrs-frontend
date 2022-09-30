@@ -88,8 +88,9 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
   const currentPage = page ? page : 1;
 
   if (selectedAuthorities) {
-    authorities = selectedAuthorities.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-    totalPages = Math.ceil(selectedAuthorities.length/pageSize);
+    const sorted = selectedAuthorities.sort((a,b) => a.Name.localeCompare(b.Name))
+    authorities = sorted.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    totalPages = Math.ceil(sorted.length/pageSize);
   }
 
   const formattedRegions = {};
@@ -131,7 +132,7 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
   }
 
   const textBlockContent = {
-    content: `<p><a href="/">${t('search_all_data', {ns: 'localAuthorityLander'})}</a></p>`,
+    content: `<p><a href="${locale === 'cy' ? '/cy' : '/'}">${t('search_all_data', {ns: 'localAuthorityLander'})}</a></p>`,
   }
 
   const localAuthorityMapContent = {
@@ -142,7 +143,10 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
     number_of_businesses_label: t('number_of_businesses', {ns: 'localAuthorityLander'}),
     regions: formattedRegions,
     selected_results_data: formattedAuthorities,
-    selected_region: selectedRegion.nameKey.replace(/\s+/g, '-').toLowerCase(),
+    selected_region: {
+      name: selectedRegion.name,
+      key: selectedRegion.nameKey.replace(/\s+/g, '-').toLowerCase(),
+    },
     page: currentPage,
     total_pages: totalPages,
     default_image_link: '/images/fhrs-map.svg',
