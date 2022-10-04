@@ -63,40 +63,39 @@ function SearchBoxMain(props) {
         const urlParams = new URLSearchParams(queryString);
         selected = urlParams.get('country_or_la');
         setSelectInit(false);
-      }
-      else {
+      } else {
         selected = locationSelect.value;
       }
       const scheme = selected ? selected.split('-')[1] : null;
       hygiene_rating_range.disabled = true;
+      const hiddenClass = 'ratings-search-box__field--hidden';
       if (scheme === 'fhis') {
-        hygiene_status.disabled = false;
-        hygiene_rating.disabled = true;
+        hygiene_status.classList.remove(hiddenClass);
+        hygiene_rating.classList.add(hiddenClass);
         hygiene_rating_radio.checked = false;
         hygiene_rating_range.disabled = true;
-        hygiene_rating_range_parent.classList.add('ratings-search-box__dropdown--disabled');
-      }
-      else if (scheme === 'fhrs') {
-        hygiene_status.disabled = true;
-        hygiene_rating.disabled = false;
+        hygiene_rating_range_parent.classList.add(hiddenClass);
+      } else if (scheme === 'fhrs') {
+        hygiene_status.classList.add(hiddenClass);
+        hygiene_rating.classList.remove(hiddenClass);
         hygiene_status_radio.checked = false;
         hygiene_rating_range.disabled = false;
-        hygiene_rating_range_parent.classList.remove('ratings-search-box__dropdown--disabled');
-      }
-      else {
-        hygiene_status.disabled = false;
-        hygiene_rating.disabled = false;
+        hygiene_rating_range_parent.classList.remove(hiddenClass);
+      } else {
+        hygiene_status.classList.remove(hiddenClass);
+        hygiene_rating.classList.remove(hiddenClass);
         hygiene_rating_range.disabled = false;
-        hygiene_rating_range_parent.classList.remove('ratings-search-box__dropdown--disabled');
+        hygiene_rating_range_parent.classList.remove(hiddenClass);
       }
     }
+
     if (localAuthoritySelect) {
       if (hygiene_rating) {
         hygiene_rating_radio = hygiene_rating.querySelector('input[type="radio"]');
         hygiene_rating_range = form.querySelector('.ratings-search-box__dropdown #range');
         hygiene_rating_range_parent = hygiene_rating_range.closest('.ratings-search-box__dropdown');
       }
-      if(hygiene_status) {
+      if (hygiene_status) {
         hygiene_status_radio = hygiene_status.querySelector('input[type="radio"]');
       }
       disableFieldset(localAuthoritySelect, selectInit);
@@ -121,7 +120,7 @@ function SearchBoxMain(props) {
     longitude
   } = query;
 
-  const advancedOptionsOpen = business_type && business_type !== '-1' || country_or_la  && country_or_la !== 'all' || hygiene_rating_or_status;
+  const advancedOptionsOpen = business_type && business_type !== '-1' || country_or_la && country_or_la !== 'all' || hygiene_rating_or_status;
 
   let countries_and_la;
 
@@ -132,31 +131,33 @@ function SearchBoxMain(props) {
   let defaultRating;
   if (hygiene_rating_or_status) {
     defaultRating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
-  }
-  else {
+  } else {
     defaultRating = hygiene_status ? hygiene_status : hygiene_rating;
   }
 
   const {t} = useTranslation(['ratingsSearchBox']);
   let searchAllData = {};
-  let contentLeft = [
-    {
-      type: "dropdown",
-      title: t('business_type_label'),
-      name: "business_type",
-      id: "business_type",
-      options: options.businessTypes,
-      default: business_type ? business_type : 'all',
-    },
-  ];
-  let contentRight = [];
+  let rows = [];
+  rows.push({
+    left: [
+      {
+        type: "dropdown",
+        title: t('business_type_label'),
+        name: "business_type",
+        id: "business_type",
+        options: options.businessTypes,
+        default: business_type ? business_type : 'all',
+      },
+    ],
+    right: [],
+  })
   if (isLocalAuthoritySearch) {
     searchAllData = {
       url: `${locale === 'cy' ? '/cy' : ''}/business-search`,
       title: t('search_all_data_label'),
     };
     if (isScottishLocalAuthority) {
-      contentRight = contentRight.concat([
+      rows[0].right = [
         {
           type: "dropdown",
           title: t('hygiene_status_header'),
@@ -165,20 +166,9 @@ function SearchBoxMain(props) {
           options: options.ratingsFHIS,
           default: hygiene_status ? hygiene_status : '',
         }
-      ]);
-    }
-    else {
-      contentLeft = contentLeft.concat([
-        {
-          type: "dropdown",
-          title: t('range_label'),
-          name: "range",
-          id: "range",
-          options: options.ratingOperators,
-          default: range ? range : "Equal",
-        },
-      ]);
-      contentRight = contentRight.concat([
+      ];
+    } else {
+      rows[0].right = [
         {
           type: "dropdown",
           title: t('hygiene_rating_header'),
@@ -187,78 +177,89 @@ function SearchBoxMain(props) {
           options: options.ratingsFHRS,
           default: defaultRating ? defaultRating : 'all',
         },
-      ]);
+        {
+          type: "dropdown",
+          title: t('range_label'),
+          name: "range",
+          id: "range",
+          options: options.ratingOperators,
+          default: range ? range : "Equal",
+          hide_label: true,
+        },
+      ]
     }
-  }
-  else {
-    contentLeft = contentLeft.concat([
-      {
-        type: "fieldset",
-        legend: t('hygiene_rating_header'),
-        fields: [
-          {
-            type: "single-radio",
-            title: t('hygiene_rating_header'),
-            name: "hygiene_rating_or_status",
-            value: "rating",
-            label: t('hygiene_rating_label'),
-            id: "rating",
-            default: hygiene_rating_or_status ? hygiene_rating_or_status : '',
-          },
-          {
-            type: "dropdown",
-            hide_label: true,
-            title: t('hygiene_rating_header'),
-            name: "hygiene_rating",
-            id: "hygiene_rating",
-            options: options.ratingsFHRS,
-            default: defaultRating ? defaultRating : 'all',
-          },
-        ],
-      },
-      {
-        type: "dropdown",
-        title: t('range_label'),
-        name: "range",
-        id: "range",
-        options: options.ratingOperators,
-        default: range ? range : "Equal",
-      },
-    ]);
-    contentRight = contentRight.concat([
-      {
-        type: "dropdown",
-        title: t('country_or_la_label'),
-        name: "country_or_la",
-        id: "country_or_la",
-        options: countries_and_la ? countries_and_la.filter((v,i,a)=>a.findIndex(v2=>(v2.value===v.value))===i) : null,
-        default: country_or_la ? country_or_la : 'all',
-      },
-      {
-        type: "fieldset",
-        legend: t('hygiene_status_header'),
-        fields: [
-          {
-            type: "single-radio",
-            name: "hygiene_rating_or_status",
-            title: t('hygiene_status_header'),
-            value: "status",
-            label: t('hygiene_status_label'),
-            id: "status",
-            default: hygiene_rating_or_status ? hygiene_rating_or_status : '',
-          },
-          {
-            type: "dropdown",
-            title: t('hygiene_status_header'),
-            name: "hygiene_status",
-            id: "hygiene-status",
-            hide_label: true,
-            options: options.ratingsFHIS,
-            default: hygiene_status ? hygiene_status : '',
-          }
-        ]
-      }
-    ]);
+  } else {
+    rows[0].right.push({
+      type: "dropdown",
+      title: t('country_or_la_label'),
+      name: "country_or_la",
+      id: "country_or_la",
+      options: countries_and_la ? countries_and_la.filter((v, i, a) => a.findIndex(v2 => (v2.value === v.value)) === i) : null,
+      default: country_or_la ? country_or_la : 'all',
+    },)
+    rows.push({
+      left: [
+        {
+          type: "fieldset",
+          legend: t('hygiene_rating_header'),
+          fields: [
+            {
+              type: "single-radio",
+              title: t('hygiene_rating_header'),
+              name: "hygiene_rating_or_status",
+              value: "rating",
+              label: t('hygiene_rating_label'),
+              id: "rating",
+              default: hygiene_rating_or_status ? hygiene_rating_or_status : '',
+            },
+            {
+              type: "dropdown",
+              hide_label: true,
+              title: t('hygiene_rating_header'),
+              name: "hygiene_rating",
+              id: "hygiene_rating",
+              options: options.ratingsFHRS,
+              default: defaultRating ? defaultRating : 'all',
+            },
+          ],
+        },
+        {
+          type: "dropdown",
+          title: t('range_label'),
+          name: "range",
+          id: "range",
+          options: options.ratingOperators,
+          default: range ? range : "Equal",
+          hide_label: true,
+        },
+      ],
+      right: [
+        {
+          type: "fieldset",
+          legend: t('hygiene_status_header'),
+          fields: [
+            {
+              type: "single-radio",
+              name: "hygiene_rating_or_status",
+              title: t('hygiene_status_header'),
+              value: "status",
+              label: t('hygiene_status_label'),
+              id: "status",
+              default: hygiene_rating_or_status ? hygiene_rating_or_status : '',
+            },
+            {
+              type: "dropdown",
+              title: t('hygiene_status_header'),
+              name: "hygiene_status",
+              id: "hygiene-status",
+              hide_label: true,
+              options: options.ratingsFHIS,
+              default: hygiene_status ? hygiene_status : '',
+            }
+          ]
+        }
+      ]
+    })
   }
 
   const searchBoxContent = {
@@ -287,8 +288,7 @@ function SearchBoxMain(props) {
     submit_button_label: t('submit_button_label'),
     submit_button_url: submit,
     submit_button_type: submitType,
-    left: contentLeft,
-    right: contentRight,
+    rows: rows,
     show_map: showMap,
     initial_map_state: init_map_state,
     initial_location_state: !!(latitude && longitude),

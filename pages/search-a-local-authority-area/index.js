@@ -60,7 +60,7 @@ function LocalAuthoritySearchLander({locale, regions}) {
   }
 
   const textBlockContent = {
-    content: `<p><a href="/">${t('search_all_data', {ns: 'localAuthorityLander'})}</a></p>`,
+    content: `<p><a href="${locale === 'cy' ? '/cy' : '/'}">${t('search_all_data', {ns: 'localAuthorityLander'})}</a></p>`,
   }
 
   const localAuthorityMapContent = {
