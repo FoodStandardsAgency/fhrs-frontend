@@ -18,13 +18,13 @@ const nextConfig = {
       new CopyFilePlugin(
          [
           { from: "node_modules/fsa-pattern-library-assets/dist/main.js", to: "public/main.js" },
-        ],
+          { from: "node_modules/fsa-pattern-library-source/src/components/fhrs/badges", to: "public/embed/badges" },
+        ], {debug: true}
       ),
     )
     config.output.publicPath = '/';
     config.resolve.alias['@components'] = path.join(__dirname, 'node_modules', 'fsa-pattern-library-assets', 'dist');
     config.module.generator.asset.publicPath = "/_next/";
-    console.log(util.inspect(config, false, null, true /* enable colors */))
 
     return config
   },

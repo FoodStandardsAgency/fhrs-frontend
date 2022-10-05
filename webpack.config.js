@@ -6,7 +6,7 @@ module.exports = {
   entry: './embed/index.js',
   output: {
     filename: 'embed-badge.js',
-    path: path.resolve(__dirname, 'public'),
+    path: path.resolve(__dirname, 'public/embed'),
   },
   resolve: {
     fallback: {
@@ -19,12 +19,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.twig$/,
-        use: {
-          loader: 'twigjs-loader',
-        }
-      },
-      {
         test: /\.(js)$/,
         exclude: /(node_modules|bower_components)/,
         loader: "babel-loader",
@@ -35,17 +29,6 @@ module.exports = {
         }
       },
       {
-        test: /\.s[ac]ss$/i,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          'css-loader',
-          'postcss-loader',
-          'sass-loader',
-        ],
-      },
-      {
         test: /\.svg$/,
         use: {
           loader: 'url-loader'
@@ -54,22 +37,4 @@ module.exports = {
     ],
   },
   mode: 'development',
-  plugins: [
-    new MiniCssExtractPlugin(),
-  ],
-  optimization: {
-    minimizer: [
-      new CssMinimizerPlugin({
-        minimizerOptions: {
-          preset: [
-            "default",
-            {
-              normalizeUrl: false,
-            },
-          ],
-        },
-      }),
-    ],
-    minimize: true,
-  }
 };
