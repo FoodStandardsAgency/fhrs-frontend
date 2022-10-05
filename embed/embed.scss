@@ -1,0 +1,6 @@
+@import "node_modules/fsa-pattern-library-source/src/components/fhrs/Badge/badge.scss";
+@include rating-badges("badge-download");
+
+.visually-hidden {
+  visibility: hidden;
+}
