@@ -1,12 +1,29 @@
-function component() {
-  const rating = document.currentScript.getAttribute('data-rating');
+import api from "../lib/api";
+
+const parentNode = document.currentScript.parentNode;
+
+async function component() {
   const style = document.currentScript.getAttribute('data-rating-style') ?? 1;
-  const fhis = document.currentScript.getAttribute('data-fhis');
-  const isWelsh = document.currentScript.getAttribute('data-welsh') === 'true';
   const url = new URL(document.currentScript.src);
+  const businessId = document.currentScript.getAttribute('data-business-id');
+  let rating = document.currentScript.getAttribute('data-rating');
+  let fhis = document.currentScript.getAttribute('data-fhis');
+  let isWelsh = document.currentScript.getAttribute('data-welsh') === 'true';
+
+  if (businessId) {
+    const details = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').getBusinessDetails(businessId);
+    rating = details.rating.replaceAll(' ', '');
+    fhis = details.scheme !== 'FHRS' ? 'true' : 'false';
+
+    const authorities = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
+    const authority = authorities.authorities.filter((la) => {
+      return la.LocalAuthorityIdCode === details.localAuthority;
+    });
+    isWelsh = authority[0].RegionName === 'Wales';
+  }
 
   let isText = 'Food hygiene rating is ';
-  const words = { 
+  const words = {
     welsh: {
       '0': "0: Angen gwella ar frys",
       '1': "1: Angen gwella yn sylweddol",
@@ -35,7 +52,6 @@ function component() {
     }
   };
 
-
   const widths = {
     1: '26.75rem',
     2: '30rem',
@@ -60,7 +76,6 @@ function component() {
   }
 
   const element = document.createElement('div');
-  element.innerHTML = rating + style + fhis;
   const img = document.createElement('img');
   img.src = url.origin + '/embed/badges/' + folder + '/' + style + '/' + folder + '-badge-' + rating + '.' + extension;
   img.alt = isText + words[isWelsh ? 'welsh' : 'english'][rating];
@@ -69,4 +84,7 @@ function component() {
   return element;
 }
 
-document.currentScript.parentNode.insertAdjacentHTML("beforebegin", component().outerHTML);
+component().then(el => {
+  parentNode.insertAdjacentHTML("beforebegin", el.outerHTML);
+})
+

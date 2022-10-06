@@ -63,7 +63,7 @@ export async function getStaticProps(context) {
 }
 
 function BusinessPage({business, scores, locale, bing_key}) {
-  const {previous} = useHistory();
+  const previous = useHistory().previous ? useHistory().previous : '';
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
@@ -74,31 +74,31 @@ function BusinessPage({business, scores, locale, bing_key}) {
     const mapWrapper = document.querySelector('.business-hero__map__wrapper');
     if (mapWrapper) {
       ReactDOM.render(
-  <BingMapsReact
-        bingMapsKey={bing_key}
-        mapOptions={{
-          navigationBarMode: 'round',
-        }}
-        viewOptions={{
-          center: {latitude: latitude, longitude: longitude},
-          mapTypeId: 'road',
-          zoom: 13,
-        }}
-        pushPins={[
-          {
-            center: {
-              latitude: latitude,
-              longitude: longitude,
-            },
-            options: {
-              title: business.BusinessName,
+        <BingMapsReact
+          bingMapsKey={bing_key}
+          mapOptions={{
+            navigationBarMode: 'round',
+          }}
+          viewOptions={{
+            center: {latitude: latitude, longitude: longitude},
+            mapTypeId: 'road',
+            zoom: 13,
+          }}
+          pushPins={[
+            {
+              center: {
+                latitude: latitude,
+                longitude: longitude,
+              },
+              options: {
+                title: business.BusinessName,
+              }
             }
-          }
-        ]}
-        mapClassName="business"
-        mapWrapper={mapWrapper}
-     />
-, mapWrapper)
+          ]}
+          mapClassName="business"
+          mapWrapper={mapWrapper}
+        />
+        , mapWrapper)
     }
   });
 
