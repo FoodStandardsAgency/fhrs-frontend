@@ -63,7 +63,7 @@ export async function getStaticProps(context) {
 }
 
 function BusinessPage({business, scores, locale, bing_key}) {
-  const previous = useHistory().previous ? useHistory().previous : '';
+  const previous = useHistory().previous ?? '';
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
