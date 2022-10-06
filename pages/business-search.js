@@ -77,6 +77,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [loading, setStatus] = useState(true);
   const [center, setCenter] = useState(null);
   const [cardsLoaded, setCardsLoaded] = useState(false);
+  const [pinsInitialised, setPinsInitialised] = useState(false);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
@@ -178,11 +179,12 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         if (mapWrapper) {
           renderMap(mapWrapper, pushPins, locations, center, bingKey)
         }
-        if (mapToggle && cardsLoaded) {
+        if (mapToggle && cardsLoaded && !pinsInitialised) {
           initMapPins(mapWrapper, setCenter);
           mapToggle.addEventListener('click', () => {
             initMapPins(mapWrapper, setCenter);
           });
+          setPinsInitialised(true);
         }
         setStatus(false);
         setResults(searchResults);
@@ -194,6 +196,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
     }
 
     getSearchResults(query, mapWrapper);
+
   }, [isReady, center, cardsLoaded]);
 
   const businesses = results.establishments;
