@@ -46,7 +46,7 @@ export default function BingMapsReact({
             htmlContent: pushPin.infobox?.infoboxHtml || pushPin.infoboxHtml,
             location: newPin.getLocation(),
             visible: true,
-            offset: new Microsoft.Maps.Point(20, 0),
+            offset: new Microsoft.Maps.Point(30, 0),
             ...pushPin.infobox,
           });
           const buffer = 18;
