@@ -24,6 +24,7 @@ jobs:
       - name: yarn install, build
         env: 
           FSA_MAIN_BASE_URL: ${{ secrets.FSA_MAIN_BASE_URL }}
+          NEXT_PUBLIC_BING_MAPS_KEY: ${{ secrets.NEXT_PUBLIC_BING_MAPS_KEY }}
         run: |
           yarn
           yarn build
