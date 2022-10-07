@@ -22,6 +22,8 @@ jobs:
           node-version: '16.x'
 
       - name: yarn install, build
+        env: 
+          FSA_MAIN_BASE_URL: ${{ secrets.FSA_MAIN_BASE_URL }}
         run: |
           yarn
           yarn build
