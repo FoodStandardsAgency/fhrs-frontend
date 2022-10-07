@@ -29,7 +29,7 @@ jobs:
           yarn
           yarn build
       - name: Zip artifact for deployment
-        run: zip --symlinks -r release.zip ./* -x *.git* 
+        run: zip --symlinks -r release.zip . -x *.git* 
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
