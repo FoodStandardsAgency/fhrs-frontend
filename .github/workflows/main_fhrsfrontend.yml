@@ -55,4 +55,4 @@ jobs:
           app-name: 'FHRSfrontend'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_97AE7931651D41AEA82A8DA6B38B089E }}
-          package: .
+          package: _next
