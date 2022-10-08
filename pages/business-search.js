@@ -249,7 +249,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   }
   const {latitude, longitude} = query;
   const distance = latitude && longitude;
-  const bingKey = process.env.NEXT_PUBLIC_BING_MAPS_KEY;
 
   return (
     <>

@@ -225,7 +225,6 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
   ];
 
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
-  const bingKey = process.env.NEXT_PUBLIC_BING_MAPS_KEY;
 
   return (
     <>
