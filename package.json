@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "bingmaps-react": "^1.2.10",
     "fsa-pattern-library-assets": "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#develop",
     "fsa-pattern-library-source": "https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#develop",
     "html-react-parser": "^2.0.0",

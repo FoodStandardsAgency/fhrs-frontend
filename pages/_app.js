@@ -5,12 +5,10 @@ import Head from 'next/head'
 
 
 function FhrsApp({Component, pageProps}) {
-  const bingKey = process.env.NEXT_PUBLIC_BING_MAPS_KEY;
   return (
     <>
       <Head>
         <script src={"/main.js"} defer/>
-        <script src={`https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=${bingKey}`} defer/>
       </Head>
       <HistoryProvider>
         <Component {...pageProps} />

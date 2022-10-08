@@ -225,11 +225,13 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
   ];
 
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
+  const bingKey = process.env.NEXT_PUBLIC_BING_MAPS_KEY;
 
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
+        <script src={`https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=${bingKey}`} defer/>
       </Head>
       <LayoutCentered>
         <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>

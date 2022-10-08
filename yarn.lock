@@ -1661,11 +1661,6 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bingmaps-react@^1.2.10:
-  version "1.2.10"
-  resolved "https://registry.yarnpkg.com/bingmaps-react/-/bingmaps-react-1.2.10.tgz#2d3176c3c39dfde3c920db96c8c7d31b120ae8ff"
-  integrity sha512-fM887Sr6OIlo6ThmSpGfNEDssSytdnsMrbDTDs+YH/43etf0dlfcR4oaJvygy+fwn21hpP2lVvwTHUDZvGxZqA==
-
 boolbase@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
@@ -2587,7 +2582,7 @@ fs.realpath@^1.0.0:
 
 "fsa-pattern-library-assets@https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#develop":
   version "0.0.0"
-  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#f01a45c79a5b8c69e43beae2ca9a0a81ffb41bd0"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#883c0974541e3704a4f477fa2571eb4ee0d9fe0a"
 
 "fsa-pattern-library-source@https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#develop":
   version "1.0.10"
