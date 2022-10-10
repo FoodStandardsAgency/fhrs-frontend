@@ -3,22 +3,22 @@ import businessHero from '@components/components/fhrs/BusinessHero/businessHero.
 import titleAndText from '@components/components/form/TitleAndText/titleAndText.html.twig';
 import explanationBlock from '@components/components/article/ExplanationBlock/explanationBlock.html.twig';
 import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.html.twig';
-import LayoutCentered from '../../../components/layout/LayoutCentered';
-import StandardsTable from '../../../components/business/StandardsTable';
-import LocalAuthority from '../../../components/business/LocalAuthority';
-import PageWrapper from '../../../components/layout/PageWrapper';
-import TwigTemplate from '../../../lib/parse.js';
-import api from '../../../lib/api.js';
+import LayoutCentered from '../../../../components/layout/LayoutCentered';
+import StandardsTable from '../../../../components/business/StandardsTable';
+import LocalAuthority from '../../../../components/business/LocalAuthority';
+import PageWrapper from '../../../../components/layout/PageWrapper';
+import TwigTemplate from '../../../../lib/parse.js';
+import api from '../../../../lib/api.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
-import BingMapsReact from "../../../lib/bing-maps";
+import BingMapsReact from "../../../../lib/bing-maps";
 import * as ReactDOM from "react-dom";
-import formatDate from "../../../lib/formatDate";
+import formatDate from "../../../../lib/formatDate";
 import Head from "next/head";
 import parse from 'html-react-parser';
-import {useHistory} from '../../../context/History'
-import generateBreadcrumbs from "../../../lib/breadcrumbs";
+import {useHistory} from '../../../../context/History'
+import generateBreadcrumbs from "../../../../lib/breadcrumbs";
 
 export async function getStaticPaths() {
   const establishments = [];
@@ -218,7 +218,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     type: 'general',
     wysiwyg_content: `<h3>${t('get_code_title', {ns: 'businessPage'})}</h3><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
     link_text: t('get_code_link_text', {ns: 'businessPage'}),
-    link_url: '#',
+    link_url: `${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}/online-ratings`,
   }
 
   const localAuthorityText = {

@@ -9,6 +9,10 @@ async function component() {
   let rating = document.currentScript.getAttribute('data-rating');
   let fhis = document.currentScript.getAttribute('data-fhis');
   let isWelsh = document.currentScript.getAttribute('data-welsh') === 'true';
+  let walesBusiness = false;
+
+  const element = document.createElement('div');
+  const img = document.createElement('img');
 
   if (businessId) {
     const details = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').getBusinessDetails(businessId);
@@ -19,9 +23,22 @@ async function component() {
     const authority = authorities.authorities.filter((la) => {
       return la.LocalAuthorityIdCode === details.localAuthority;
     });
-    isWelsh = authority[0].RegionName === 'Wales';
+    walesBusiness = authority[0].RegionName === 'Wales';
   }
 
+  if (businessId) {
+    const details = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').getBusinessDetails(businessId);
+    rating = details.rating.replaceAll(' ', '');
+    fhis = details.scheme !== 'FHRS' ? 'true' : 'false';
+
+    const authorities = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
+    const authority = authorities.authorities.filter((la) => {
+      return la.LocalAuthorityIdCode === details.localAuthority;
+    });
+    walesBusiness = authority[0].RegionName === 'Wales';
+  }
+
+  isWelsh = isWelsh || walesBusiness;
   let isText = 'Food hygiene rating is ';
   const words = {
     welsh: {
@@ -52,7 +69,7 @@ async function component() {
     }
   };
 
-  const widths = {
+  let widths = {
     1: '26.75rem',
     2: '30rem',
     3: '16.188rem',
@@ -69,17 +86,17 @@ async function component() {
   if (fhis !== 'false') {
     folder = 'fhis';
     extension = 'jpg';
+  } else {
+    img.style = 'width:' + widths[style];
   }
 
   if (rating === "Pass") {
     isText = '';
   }
 
-  const element = document.createElement('div');
-  const img = document.createElement('img');
   img.src = url.origin + '/embed/badges/' + folder + '/' + style + '/' + folder + '-badge-' + rating + '.' + extension;
   img.alt = isText + words[isWelsh ? 'welsh' : 'english'][rating];
-  img.style = 'width:' + widths[style];
+
   element.appendChild(img);
   return element;
 }
