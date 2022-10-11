@@ -134,7 +134,7 @@ function BusinessPage({business, locale, base_url}) {
     localAuthorityDetails(business.LocalAuthorityCode);
   }, []);
 
-  const pageTitle = `${business.BusinessName ? business.BusinessName : 'unknown'} | 'Get online ratings' | ${t('title', {ns: 'common'})}`;
+  const pageTitle = `${business.BusinessName ? business.BusinessName : 'unknown'} | ${t('get_online_ratings', {ns: 'onlineRatings'})} | ${t('title', {ns: 'common'})}`;
 
   const isWelsh = inWales || locale === 'cy';
 
