@@ -24,5 +24,6 @@
   "area": "ardal",
   "provided_by": "sy’n darparu’r data",
   "search_all_data_label": "Chwilio’r holl ddata",
-  "search_a_different_area": "Chwilio ardal wahanol"
+  "search_a_different_area": "Chwilio ardal wahanol",
+  "loading_location_label": "Cael lleoliad"
 }

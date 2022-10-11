@@ -24,5 +24,6 @@
   "area": "area",
   "provided_by": "The data is provided by",
   "search_all_data_label": "Search all data",
-  "search_a_different_area": "Search a different area"
+  "search_a_different_area": "Search a different area",
+  "loading_location_label": "Getting location"
 }

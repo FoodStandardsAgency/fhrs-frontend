@@ -13,6 +13,21 @@ function SearchBoxMain(props) {
     isScottishLocalAuthority = localAuthority.RegionName === 'Scotland';
   }
 
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    const form = document.querySelector('.ratings-search-box');
+    const locationField = form.querySelector('.ratings-search-box__location');
+    locationField.addEventListener('change', () => {
+      if (locationField.value) {
+        setLocation(locationField.value)
+      }
+    });
+    if (location) {
+      locationField.value = location;
+    }
+  }, [location])
+
   const [selectInit, setSelectInit] = useState(true);
 
   useEffect(() => {
@@ -275,6 +290,7 @@ function SearchBoxMain(props) {
     address_search_value: address_search ? address_search : '',
     location_label: t('location_label'),
     blocked_location_label: t('blocked_location_label'),
+    loading_location_label: t('loading_location_label'),
     search_map_results_label: t('search_map_results_label'),
     hide_map_results_label: t('hide_map_results_label'),
     more_options_label: t('more_options_label'),
@@ -294,6 +310,7 @@ function SearchBoxMain(props) {
     initial_location_state: !!(latitude && longitude),
     is_homepage: isHomepage,
     advanced_options_open: advancedOptionsOpen,
+    location: latitude && longitude ? latitude + ',' + longitude: null,
   }
   return (
     <>
