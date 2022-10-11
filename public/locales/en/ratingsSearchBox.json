@@ -25,5 +25,6 @@
   "provided_by": "The data is provided by",
   "search_all_data_label": "Search all data",
   "search_a_different_area": "Search a different area",
+  "error_message": "Please enter either \"Business Name\" or \"Street, town or postcode\" or select at least one search option",
   "loading_location_label": "Getting location"
 }

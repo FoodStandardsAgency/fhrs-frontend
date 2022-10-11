@@ -1,4 +1,5 @@
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
+import errorBox from '@components/components/form/ErrorBox/errorBox.html.twig';
 import TwigTemplate from '../../lib/parse.js';
 import {useEffect, useState} from "react";
 import {i18n, useTranslation} from "next-i18next";
@@ -29,6 +30,7 @@ function SearchBoxMain(props) {
   }, [location])
 
   const [selectInit, setSelectInit] = useState(true);
+  const [searchError, setSearchError] = useState(false);
 
   useEffect(() => {
     const form = document.querySelector('.ratings-search-box');
@@ -40,7 +42,9 @@ function SearchBoxMain(props) {
       e.preventDefault();
       const formData = new FormData(form);
       const searchParams = new URLSearchParams();
+      let entries = {};
       for (const entry of formData.entries()) {
+        entries[entry[0].replaceAll('-', '_')] = entry[1];
         if (entry[1]) {
           searchParams.append(entry[0], entry[1].trim());
         }
@@ -55,7 +59,13 @@ function SearchBoxMain(props) {
         !searchParams.get('sort') ? searchParams.append('sort', 'distance') : null;
       }
       mapState ? searchParams.append('init_map_state', true) : null;
-      window.location.href = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
+      if (!entries.address_search && !entries.business_name_search && entries.business_type === '-1' && entries.country_or_la === 'all' && entries.hygiene_rating === 'all' && entries.hygiene_status === 'all' && !locationField.value) {
+        setSearchError(true);
+      }
+      else {
+        setSearchError(false);
+        window.location.href = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
+      }
     });
 
     const localAuthoritySelect = form.querySelector('#country_or_la');
@@ -295,6 +305,8 @@ function SearchBoxMain(props) {
     hide_map_results_label: t('hide_map_results_label'),
     more_options_label: t('more_options_label'),
     fewer_options_label: t('fewer_options_label'),
+    error_title: t('error_message'),
+    error_state: searchError,
     welsh: locale === 'cy',
     search_all_data_link: searchAllData,
     local_authority_link: {
@@ -312,6 +324,7 @@ function SearchBoxMain(props) {
     advanced_options_open: advancedOptionsOpen,
     location: latitude && longitude ? latitude + ',' + longitude: null,
   }
+
   return (
     <>
       <TwigTemplate template={ratingsSearchBox} values={searchBoxContent} attribs={[]}/>

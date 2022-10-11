@@ -25,5 +25,6 @@
   "provided_by": "sy’n darparu’r data",
   "search_all_data_label": "Chwilio’r holl ddata",
   "search_a_different_area": "Chwilio ardal wahanol",
+  "error_message": "Nodwch un ai \"Enw’r Busnes\" neu \"Stryd, tref neu god post\" neu dewiswch o leiaf un opsiwn chwilio",
   "loading_location_label": "Cael lleoliad"
 }
