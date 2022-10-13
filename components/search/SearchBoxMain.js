@@ -1,5 +1,4 @@
 import ratingsSearchBox from '@components/components/fhrs/RatingsSearchBox/ratingsSearchBox.html.twig';
-import errorBox from '@components/components/form/ErrorBox/errorBox.html.twig';
 import TwigTemplate from '../../lib/parse.js';
 import {useEffect, useState} from "react";
 import {i18n, useTranslation} from "next-i18next";

@@ -11,8 +11,7 @@ function StandardsTable(props) {
   let results = [];
   scoreDescriptors.forEach(scoreDescriptor => {
     const category = scoreDescriptor.ScoreCategory;
-    const description = scoreDescriptor.Description;
-    results[category] = description;
+    results[category] = scoreDescriptor.Description;
   });
 
   const table = `

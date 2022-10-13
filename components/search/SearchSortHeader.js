@@ -44,7 +44,6 @@ function SearchSortHeader(props) {
     sortSelect.addEventListener('change', (e) => {
       e.preventDefault();
       updateParams('sort', sortSelect.value);
-      location.reload();
     });
     setSortType(sort);
     i18n.addResourceBundle(locale, 'searchSortHeader')
