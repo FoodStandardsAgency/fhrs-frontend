@@ -59,7 +59,7 @@ function SearchSortHeader(props) {
     total_results: resultsMeta.totalResults.toLocaleString(),
   }
 
-  const locationSearch = latitude && longitude ? true : false;
+  const locationSearch = !!(latitude && longitude);
   const sortByContent = {
     sort_by: t('sort_by'),
     options: getSortOptions(sortOptions, locationSearch),

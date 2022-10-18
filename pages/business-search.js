@@ -19,6 +19,7 @@ import {getSearchBoxOptions} from "../lib/getInputFieldValues";
 import SearchCard from "../components/search/SearchCard";
 import {getPushPin, initMapPins, renderMap} from "../lib/bingMapHelpers";
 import generateBreadcrumbs from "../lib/breadcrumbs";
+import SearchResultsPerPage from "../components/search/SearchResultsPerPage";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -61,7 +62,7 @@ export async function getStaticProps(context) {
       options: options,
       sortOptions: sortOptions.sortOptions,
       bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination', 'dates'])),
+      ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination', 'dates', 'searchResultsPerPage'])),
     },
     revalidate: 21600,
   }
@@ -103,7 +104,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         range,
         page,
         latitude,
-        longitude
+        longitude,
+        page_size,
       } = query;
       let rating = null;
       let scheme = null;
@@ -137,7 +139,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         localAuthorityId: localAuthorityId,
         sortOptionKey: sort,
         pageNumber: page ? page : 1,
-        pageSize: 10,
+        pageSize: page_size ? page_size : 10,
         schemeTypeKey: scheme,
         ratingOperatorKey: range,
         latitude: latitude,
@@ -152,6 +154,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
         authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
         searchResults.establishments = searchResults.establishments.map((establishment, index) => {
+          console.log('index', index);
           const authority = authorities.authorities.filter((la) => {
             return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
           });
@@ -283,6 +286,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               </>
             ) : ''
         }
+        <SearchResultsPerPage locale={locale} query={query}/>
       </LayoutCentered>
     </>
   )
