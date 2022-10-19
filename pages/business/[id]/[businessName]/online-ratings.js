@@ -97,15 +97,16 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
       }
     }
   }
+  const formattedRating = rating.replace(/\s/g, '').trim();
   for (let i = noOfBadges; i > 0; i--) {
     badges.push(
       {
         class_name: 'badge-download',
-        rating: rating,
+        rating: formattedRating,
         version: i,
         size: sizes[i].size,
         filesize: sizes[i].filesize,
-        download_link: '/embed/badges/' + folder + '/' + i + '/' + folder + '-badge-' + rating + '.' + extension,
+        download_link: '/embed/badges/' + folder + '/' + i + '/' + folder + '-badge-' + formattedRating + '.' + extension,
         code: `<script src="${base_url}/embed/embed-badge.js" data-business-id="${id}" data-rating-style="${i}" data-welsh="${isWelsh}"></script>`,
         preview_link: `/online-rating-preview?id=${id}&style=${i}&isWelsh=${isWelsh}`,
       },
