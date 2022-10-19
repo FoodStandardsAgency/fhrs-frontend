@@ -228,7 +228,7 @@ function BusinessPage({business, locale, base_url}) {
   const breadcrumbLinks = [
     {
       'text': business.BusinessName,
-      'url': `/business/${business.FHRSID.toString()}/${business.BusinessName}`,
+      'url': `/business/${business.FHRSID.toString()}/${businessNameToUrl(business.BusinessName)}`,
     },
     {
       'text': t('get_online_ratings', {ns: 'onlineRatings'}),
