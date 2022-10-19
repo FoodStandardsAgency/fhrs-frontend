@@ -97,7 +97,7 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
       }
     }
   }
-  const formattedRating = rating.replace(/\s/g, '').trim();
+  const formattedRating = rating === 'Pass and Eat Safe' ? 'PassEatSafe' : business.RatingValue.toString().replace(' ', '');
   for (let i = noOfBadges; i > 0; i--) {
     badges.push(
       {
