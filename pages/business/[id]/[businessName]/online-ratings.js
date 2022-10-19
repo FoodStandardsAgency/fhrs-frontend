@@ -6,6 +6,7 @@ import LayoutCentered from '../../../../components/layout/LayoutCentered';
 import PageWrapper from '../../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../../lib/parse.js';
 import api from '../../../../lib/api.js';
+import businessNameToUrl from '../../../../lib/business.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
@@ -23,7 +24,7 @@ export async function getStaticPaths() {
    const establishments = data.establishments;
    */
   const paths = establishments.map((establishment) => {
-    let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
+    let bn = businessNameToUrl(establishment.BusinessName);
     if (!bn.length) bn = "unknown";
     return {
       params: {
@@ -227,7 +228,7 @@ function BusinessPage({business, locale, base_url}) {
   const breadcrumbLinks = [
     {
       'text': business.BusinessName,
-      'url': `/${business.FHRSID.toString()}/${business.BusinessName}`,
+      'url': `/business/${business.FHRSID.toString()}/${business.BusinessName}`,
     },
     {
       'text': t('get_online_ratings', {ns: 'onlineRatings'}),

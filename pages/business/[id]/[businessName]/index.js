@@ -9,6 +9,7 @@ import LocalAuthority from '../../../../components/business/LocalAuthority';
 import PageWrapper from '../../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../../lib/parse.js';
 import api from '../../../../lib/api.js';
+import businessNameToUrl from '../../../../lib/business.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
@@ -28,7 +29,7 @@ export async function getStaticPaths() {
    const establishments = data.establishments;
    */
   const paths = establishments.map((establishment) => {
-    let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
+    let bn = businessNameToUrl(establishment.BusinessName);
     if (!bn.length) bn = "unknown";
     return {
       params: {
@@ -218,7 +219,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     type: 'general',
     wysiwyg_content: `<h3>${t('get_code_title', {ns: 'businessPage'})}</h3><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
     link_text: t('get_code_link_text', {ns: 'businessPage'}),
-    link_url: `${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}/online-ratings`,
+    link_url: businessNameToUrl(business.BusinessName) + '/online-ratings',
   }
 
   const localAuthorityText = {
