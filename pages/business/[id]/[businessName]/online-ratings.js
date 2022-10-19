@@ -53,7 +53,7 @@ export async function getStaticProps(context) {
       locale: context.locale,
       bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       base_url: process.env.PROJECT_BASE_URL,
-      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings'])),
+      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings', 'searchPage'])),
     },
     revalidate: 21600,
   }
@@ -119,7 +119,7 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
 }
 
 function BusinessPage({business, locale, base_url}) {
-  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings']);
+  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings', 'searchPage']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
 

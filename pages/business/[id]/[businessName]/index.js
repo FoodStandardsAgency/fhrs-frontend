@@ -244,8 +244,8 @@ function BusinessPage({business, scores, locale, bing_key}) {
 
   const breadcrumbLinks = [
     {
-      'text': previous.includes('business-search') ? t('page_title', {ns: 'searchPage'}) : t('local_authority_link_title', {ns: 'ratingsSearchBox'}),
-      'url': previous.includes('business-search') ? '/business-search' : '/search-a-local-authority-area',
+      'text': t('page_title', {ns: 'searchPage'}),
+      'url': null,
     },
   ]
 
