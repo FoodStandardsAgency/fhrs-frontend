@@ -20,6 +20,7 @@ import Head from "next/head";
 import parse from 'html-react-parser';
 import {useHistory} from '../../../../context/History'
 import generateBreadcrumbs from "../../../../lib/breadcrumbs";
+import {getTranslatedBusinessType} from "../../../../lib/getInputFieldValues";
 
 export async function getStaticPaths() {
   const establishments = [];
@@ -49,10 +50,12 @@ export async function getStaticProps(context) {
   const menus = await res.json();
   const businessId = context.params.id;
   const business = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
+  const businessType = await getTranslatedBusinessType(business.BusinessType, context.locale);
   const scores = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
   return {
     props: {
       business: business,
+      businessType: businessType,
       scores: scores,
       menus: menus,
       locale: context.locale,
@@ -63,7 +66,7 @@ export async function getStaticProps(context) {
   }
 }
 
-function BusinessPage({business, scores, locale, bing_key}) {
+function BusinessPage({business, scores, locale, bing_key, businessType}) {
   const previous = useHistory().previous ?? '';
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
@@ -161,7 +164,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     local_authority_name: business.LocalAuthorityName,
     local_authority: t('local_authority', {ns: 'businessHero'}),
     business_type_title: t('business_type_title', {ns: 'businessHero'}),
-    business_type_content: business.BusinessType,
+    business_type_content: businessType,
     date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
     rating: business.RatingValue === 'Pass and Eat Safe' ? 'PassEatSafe' : business.RatingValue.toString().replace(' ', ''),
