@@ -183,6 +183,10 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           initMapPins(mapWrapper, setCenter);
           mapToggle.addEventListener('click', () => {
             initMapPins(mapWrapper, setCenter);
+            if (mapToggle.getAttribute('aria-checked', true)) {
+              // reset when opened and closed
+              setCenter(null);
+            }
           });
           setPinsInitialised(true);
         }
