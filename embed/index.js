@@ -52,6 +52,7 @@ async function component() {
       'AwaitingPublication': "i'w gyhoeddi'n fuan",
       'Exempt': "wedi'i eithrio",
       'Pass': "Cynllun Gwybodaeth Hylendid Bwyd: Canlyniad yr Arolygiad yw 'Pasio",
+      'PassandEatSafe': "Cynllun Gwybodaeth Hylendid Bwyd Canlyniad Arolygiad yw 'Pasio' plus 'Bwyta'n Ddiogel' gwobr",
       'empty': "aros am sgôr"
     },
     english: {
@@ -65,6 +66,7 @@ async function component() {
       'AwaitingPublication': "awaiting publication",
       'Exempt': "exempt",
       'Pass': "Food Hygiene Information Scheme: Inspection result is 'Pass'",
+      'PassandEatSafe': "Food Hygiene Information Scheme ‘Pass’ inspection result plus ‘Eat Safe’ award",
       'empty': "rating awaited"
     }
   };
@@ -90,11 +92,16 @@ async function component() {
     img.style = 'width:' + widths[style];
   }
 
-  if (rating === "Pass") {
+  let ratingForImage = rating;
+  if (rating === "Pass" || rating === "PassandEatSafe") {
     isText = '';
   }
 
-  img.src = url.origin + '/embed/badges/' + folder + '/' + style + '/' + folder + '-badge-' + rating + '.' + extension;
+  if (rating === "PassandEatSafe") {
+    ratingForImage = "PassEatSafe"
+  }
+
+  img.src = url.origin + '/embed/badges/' + folder + '/' + style + '/' + folder + '-badge-' + ratingForImage + '.' + extension;
   img.alt = isText + words[isWelsh ? 'welsh' : 'english'][rating];
 
   element.appendChild(img);

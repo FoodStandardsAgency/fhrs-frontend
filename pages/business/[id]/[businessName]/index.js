@@ -9,6 +9,7 @@ import LocalAuthority from '../../../../components/business/LocalAuthority';
 import PageWrapper from '../../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../../lib/parse.js';
 import api from '../../../../lib/api.js';
+import businessNameToUrl from '../../../../lib/business.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
@@ -19,6 +20,7 @@ import Head from "next/head";
 import parse from 'html-react-parser';
 import {useHistory} from '../../../../context/History'
 import generateBreadcrumbs from "../../../../lib/breadcrumbs";
+import {getTranslatedBusinessType} from "../../../../lib/getInputFieldValues";
 
 export async function getStaticPaths() {
   const establishments = [];
@@ -28,7 +30,7 @@ export async function getStaticPaths() {
    const establishments = data.establishments;
    */
   const paths = establishments.map((establishment) => {
-    let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
+    let bn = businessNameToUrl(establishment.BusinessName);
     if (!bn.length) bn = "unknown";
     return {
       params: {
@@ -48,10 +50,12 @@ export async function getStaticProps(context) {
   const menus = await res.json();
   const businessId = context.params.id;
   const business = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
+  const businessType = await getTranslatedBusinessType(business.BusinessType, context.locale);
   const scores = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
   return {
     props: {
       business: business,
+      businessType: businessType,
       scores: scores,
       menus: menus,
       locale: context.locale,
@@ -62,7 +66,7 @@ export async function getStaticProps(context) {
   }
 }
 
-function BusinessPage({business, scores, locale, bing_key}) {
+function BusinessPage({business, scores, locale, bing_key, businessType}) {
   const previous = useHistory().previous ?? '';
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
@@ -160,7 +164,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     local_authority_name: business.LocalAuthorityName,
     local_authority: t('local_authority', {ns: 'businessHero'}),
     business_type_title: t('business_type_title', {ns: 'businessHero'}),
-    business_type_content: business.BusinessType,
+    business_type_content: businessType,
     date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
     rating: business.RatingValue === 'Pass and Eat Safe' ? 'PassEatSafe' : business.RatingValue.toString().replace(' ', ''),
@@ -218,7 +222,7 @@ function BusinessPage({business, scores, locale, bing_key}) {
     type: 'general',
     wysiwyg_content: `<h3>${t('get_code_title', {ns: 'businessPage'})}</h3><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
     link_text: t('get_code_link_text', {ns: 'businessPage'}),
-    link_url: `${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}/online-ratings`,
+    link_url: businessNameToUrl(business.BusinessName) + '/online-ratings',
   }
 
   const localAuthorityText = {
@@ -243,8 +247,8 @@ function BusinessPage({business, scores, locale, bing_key}) {
 
   const breadcrumbLinks = [
     {
-      'text': previous.includes('business-search') ? t('page_title', {ns: 'searchPage'}) : t('local_authority_link_title', {ns: 'ratingsSearchBox'}),
-      'url': previous.includes('business-search') ? '/business-search' : '/search-a-local-authority-area',
+      'text': t('page_title', {ns: 'searchPage'}),
+      'url': null,
     },
   ]
 

@@ -6,6 +6,7 @@ import LayoutCentered from '../../../../components/layout/LayoutCentered';
 import PageWrapper from '../../../../components/layout/PageWrapper';
 import TwigTemplate from '../../../../lib/parse.js';
 import api from '../../../../lib/api.js';
+import businessNameToUrl from '../../../../lib/business.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
@@ -14,6 +15,7 @@ import Head from "next/head";
 import {useHistory} from '../../../../context/History'
 import generateBreadcrumbs from "../../../../lib/breadcrumbs";
 import {useRouter} from "next/router";
+import {getTranslatedBusinessType} from "../../../../lib/getInputFieldValues";
 
 export async function getStaticPaths() {
   const establishments = [];
@@ -23,7 +25,7 @@ export async function getStaticPaths() {
    const establishments = data.establishments;
    */
   const paths = establishments.map((establishment) => {
-    let bn = establishment.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase();
+    let bn = businessNameToUrl(establishment.BusinessName);
     if (!bn.length) bn = "unknown";
     return {
       params: {
@@ -43,16 +45,18 @@ export async function getStaticProps(context) {
   const menus = await res.json();
   const businessId = context.params.id;
   const business = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
+  const businessType = await getTranslatedBusinessType(business.BusinessType, context.locale);
   const scores = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
   return {
     props: {
       business: business,
+      businessType: businessType,
       scores: scores,
       menus: menus,
       locale: context.locale,
       bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
       base_url: process.env.PROJECT_BASE_URL,
-      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings'])),
+      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings', 'searchPage'])),
     },
     revalidate: 21600,
   }
@@ -97,15 +101,16 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
       }
     }
   }
+  const formattedRating = rating === 'Pass and Eat Safe' ? 'PassEatSafe' : rating.toString().replace(' ', '');
   for (let i = noOfBadges; i > 0; i--) {
     badges.push(
       {
         class_name: 'badge-download',
-        rating: rating,
+        rating: formattedRating,
         version: i,
         size: sizes[i].size,
         filesize: sizes[i].filesize,
-        download_link: '/embed/badges/' + folder + '/' + i + '/' + folder + '-badge-' + rating + '.' + extension,
+        download_link: '/embed/badges/' + folder + '/' + i + '/' + folder + '-badge-' + formattedRating + '.' + extension,
         code: `<script src="${base_url}/embed/embed-badge.js" data-business-id="${id}" data-rating-style="${i}" data-welsh="${isWelsh}"></script>`,
         preview_link: `/online-rating-preview?id=${id}&style=${i}&isWelsh=${isWelsh}`,
       },
@@ -116,8 +121,8 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
   return badges;
 }
 
-function BusinessPage({business, locale, base_url}) {
-  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings']);
+function BusinessPage({business, locale, base_url, businessType}) {
+  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'onlineRatings', 'searchPage']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
 
@@ -177,7 +182,7 @@ function BusinessPage({business, locale, base_url}) {
     local_authority_name: business.LocalAuthorityName,
     local_authority: t('local_authority', {ns: 'businessHero'}),
     business_type_title: t('business_type_title', {ns: 'businessHero'}),
-    business_type_content: business.BusinessType,
+    business_type_content: businessType,
     date_title: t('date_title', {ns: 'businessHero'}),
     date_content: formattedDate,
     rating: business.RatingValue === 'Pass and Eat Safe' ? 'PassEatSafe' : business.RatingValue.toString().replace(' ', ''),
@@ -226,7 +231,7 @@ function BusinessPage({business, locale, base_url}) {
   const breadcrumbLinks = [
     {
       'text': business.BusinessName,
-      'url': `/${business.FHRSID.toString()}/${business.BusinessName}`,
+      'url': `/business/${business.FHRSID.toString()}/${businessNameToUrl(business.BusinessName)}`,
     },
     {
       'text': t('get_online_ratings', {ns: 'onlineRatings'}),
