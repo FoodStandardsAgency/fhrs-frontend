@@ -161,6 +161,10 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
           initMapPins(mapWrapper, setCenter);
           mapToggle.addEventListener('click', () => {
             initMapPins(mapWrapper, setCenter);
+            if (mapToggle.getAttribute('aria-checked', true)) {
+              // reset when opened and closed
+              setCenter(null);
+            }
           });
         }
         setStatus(false);
