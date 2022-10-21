@@ -11,6 +11,7 @@ import textBlock from '@components/components/article/TextBlock/textBlock.html.t
 import localAuthorityMap from '@components/components/fhrs/LocalAuthorityMap/localAuthorityMap.html.twig';
 import {useTranslation} from "next-i18next";
 import generateBreadcrumbs from "../../lib/breadcrumbs";
+import {useEffect, useState} from "react";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -32,6 +33,16 @@ export async function getStaticProps(context) {
 function LocalAuthoritySearchLander({locale, regions}) {
   const {t} = useTranslation(['dates', 'common', 'localAuthorityLander']);
   const pageTitle = `${t('page_title', {ns: 'localAuthorityLander'})} | ${t('title', {ns: 'common'})}`;
+
+  const [tablesProcessed, setTablesProcessed] = useState(false);
+
+  // Process tables
+  useEffect(() => {
+    if (!tablesProcessed) {
+      window.mobileTables();
+      setTablesProcessed(true);
+    }
+  });
 
   const formattedRegions = {};
 
