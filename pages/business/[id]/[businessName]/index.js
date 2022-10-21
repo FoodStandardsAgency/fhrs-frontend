@@ -71,8 +71,17 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
+  const [tablesProcessed, setTablesProcessed] = useState(false);
 
   const {latitude, longitude} = business.geocode;
+
+  // Process tables
+  useEffect(() => {
+    if (!tablesProcessed) {
+      window.mobileTables();
+      setTablesProcessed(true);
+    }
+  });
 
   useEffect(() => {
     const mapWrapper = document.querySelector('.business-hero__map__wrapper');

@@ -9,7 +9,7 @@ import Head from "next/head";
 import LayoutFullWidth from "../../components/layout/LayoutFullWidth";
 import api from "../../lib/api";
 import localAuthorityMap from '@components/components/fhrs/LocalAuthorityMap/localAuthorityMap.html.twig';
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import updateParams from "../../lib/updateParams";
 import {i18n, useTranslation} from "next-i18next";
 import {useRouter} from "next/router";
@@ -65,12 +65,19 @@ export async function getStaticProps(context) {
 
 function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorities}) {
   const {t} = useTranslation(['dates', 'common', 'localAuthorityLander']);
-  const {query} = useRouter();
-  const {page} = query;
+  const {query, isReady} = useRouter();
 
   const pageTitle = `${t('page_title', {ns: 'localAuthorityLander'})} - ${selectedRegion.name} | ${t('title', {ns: 'common'})}`;
 
+  const [tablesProcessed, setTablesProcessed] = useState(false);
+  const [page, setPage] = useState(0);
+
   useEffect(() => {
+    if (!isReady) return;
+
+    const {page} = query;
+    setPage(page);
+
     const paginationLinks = document.querySelectorAll('.pagination__item a');
     paginationLinks.forEach((link) => {
       link.addEventListener('click', (e) => {
@@ -78,8 +85,13 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
         updateParams('page', link.getAttribute('data-page'));
       });
     });
+
+    if (!tablesProcessed) {
+      window.mobileTables();
+      setTablesProcessed(true);
+    }
     i18n.addResourceBundle(locale, 'pagination')
-  }, []);
+  }, [isReady, page]);
 
   let authorities = [];
   let totalPages = 1;
