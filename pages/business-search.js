@@ -6,7 +6,7 @@ import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.ht
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import SearchSortHeader from "../components/search/SearchSortHeader";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import {useRouter} from "next/router";
 import api from "../lib/api";
 import TwigTemplate from "../lib/parse";
@@ -20,6 +20,7 @@ import SearchCard from "../components/search/SearchCard";
 import {getPushPin, initMapPins, renderMap} from "../lib/bingMapHelpers";
 import generateBreadcrumbs from "../lib/breadcrumbs";
 import SearchResultsPerPage from "../components/search/SearchResultsPerPage";
+import updateMultiParams from "../lib/updateMultiParams";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -77,9 +78,11 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [results, setResults] = useState({});
   const [loading, setStatus] = useState(true);
   const [center, setCenter] = useState(null);
+  const [itemsPerPage, setItemsPerPage] = useState()
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [pinsInitialised, setPinsInitialised] = useState(false);
   const [mapState, setMapState] = useState(false);
+  const [perPage, setPerPage] = useState(10);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
@@ -117,7 +120,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
         scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
-      setMapState(init_map_state);
+      setMapState(init_map_state === 'true' ?? mapState);
       // Get scheme information from value (format place-scheme)
       const locationDetails = country_or_la ? country_or_la.split('-') : null;
       if (locationDetails) {
@@ -142,12 +145,13 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         localAuthorityId: localAuthorityId,
         sortOptionKey: sort,
         pageNumber: page ? page : 1,
-        pageSize: page_size ? page_size : 10,
+        pageSize: page_size && init_map_state !== 'true' ? page_size : 10,
         schemeTypeKey: scheme,
         ratingOperatorKey: range,
         latitude: latitude,
         longitude: longitude,
       }
+      setPerPage(parameters.pageSize);
       let searchResults = {};
       let authorities = {};
       let pushPins = [];
@@ -157,7 +161,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
         authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
         searchResults.establishments = searchResults.establishments.map((establishment, index) => {
-          console.log('index', index);
           const authority = authorities.authorities.filter((la) => {
             return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
           });
@@ -189,9 +192,10 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           initMapPins(mapWrapper, setCenter);
           mapToggle.addEventListener('click', () => {
             initMapPins(mapWrapper, setCenter);
-            if (mapToggle.getAttribute('aria-checked', true)) {
-              // reset when opened and closed
-              setCenter(null);
+            let newMapState = !mapState;
+            setMapState(newMapState);
+            if (newMapState === true && perPage > 10) {
+              updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
             }
           });
           setPinsInitialised(true);
@@ -293,7 +297,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               </>
             ) : ''
         }
-        {!mapState && <SearchResultsPerPage locale={locale} query={query}/>}
+        {!mapState && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} />}
       </LayoutCentered>
     </>
   )

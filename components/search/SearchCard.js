@@ -44,7 +44,7 @@ function SearchCard(props) {
     fhis: business.SchemeType === 'FHIS',
     wales_business: business.inWales,
     welsh: locale === 'cy',
-    pin_number: business.mapDetails ? business.mapDetails.pinNumber : null,
+    pin_number: business.mapDetails && business.mapDetails.pinNumber < 11 ? business.mapDetails.pinNumber : null,
     latitude: business.mapDetails ? business.mapDetails.latitude : null,
     longitude: business.mapDetails ? business.mapDetails.longitude : null,
     show_pin: params.get('init_map_state'),

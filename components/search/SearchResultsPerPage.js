@@ -4,21 +4,20 @@ import {useEffect, useState} from "react";
 import {useTranslation} from "next-i18next";
 import { i18n } from 'next-i18next'
 import {useRouter} from "next/router";
-import updateParams from "../../lib/updateParams";
+import updateMultiParams from "../../lib/updateMultiParams";
 
 function SearchResultsPerPage(props) {
   const { locale } = props;
   const { query, isReady } = useRouter();
-  const [itemsPerPage, setItemsPerPage] = useState({});
+  console.log("props", props);
   const { page_size } = query;
   useEffect(() => {
     if(!isReady) return;
     const resultsSelect = document.querySelector('.results-per-page__select');
     resultsSelect.addEventListener('change', (e) => {
       e.preventDefault();
-      updateParams('page_size', resultsSelect.value);
+      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState === true ? true : ''}]);
     });
-    setItemsPerPage(page_size);
     i18n.addResourceBundle(locale, 'searchResultsPerPage')
   }, [isReady]);
 
@@ -40,7 +39,7 @@ function SearchResultsPerPage(props) {
         text: '50',
       }
     ],
-    default: itemsPerPage,
+    default: props.perPage,
   }
 
   return (

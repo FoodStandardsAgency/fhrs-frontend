@@ -318,7 +318,7 @@ function SearchBoxMain(props) {
     submit_button_type: submitType,
     rows: rows,
     show_map: showMap,
-    initial_map_state: init_map_state,
+    initial_map_state: init_map_state === "true" || init_map_state === true,
     initial_location_state: !!(latitude && longitude),
     is_homepage: isHomepage,
     advanced_options_open: advancedOptionsOpen,
