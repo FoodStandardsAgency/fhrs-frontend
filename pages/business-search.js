@@ -79,6 +79,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [center, setCenter] = useState(null);
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [pinsInitialised, setPinsInitialised] = useState(false);
+  const [mapState, setMapState] = useState(false);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
@@ -106,6 +107,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         latitude,
         longitude,
         page_size,
+        init_map_state,
       } = query;
       let rating = null;
       let scheme = null;
@@ -115,6 +117,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
         scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
+      setMapState(init_map_state);
       // Get scheme information from value (format place-scheme)
       const locationDetails = country_or_la ? country_or_la.split('-') : null;
       if (locationDetails) {
@@ -286,7 +289,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               </>
             ) : ''
         }
-        <SearchResultsPerPage locale={locale} query={query}/>
+        {!mapState && <SearchResultsPerPage locale={locale} query={query}/>}
       </LayoutCentered>
     </>
   )
