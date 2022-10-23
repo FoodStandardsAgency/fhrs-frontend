@@ -16,7 +16,7 @@ function SearchResultsPerPage(props) {
     const resultsSelect = document.querySelector('.results-per-page__select');
     resultsSelect.addEventListener('change', (e) => {
       e.preventDefault();
-      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState === true ? true : ''}]);
+      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState.current === true ? true : ''}]);
     });
     i18n.addResourceBundle(locale, 'searchResultsPerPage')
   }, [isReady]);
@@ -39,7 +39,7 @@ function SearchResultsPerPage(props) {
         text: '50',
       }
     ],
-    default: props.perPage,
+    default: props.perPage.current,
   }
 
   return (

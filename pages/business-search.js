@@ -81,8 +81,9 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [itemsPerPage, setItemsPerPage] = useState()
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [pinsInitialised, setPinsInitialised] = useState(false);
-  const [mapState, setMapState] = useState(false);
-  const [perPage, setPerPage] = useState(10);
+  const [forceUpdate, setForceUpdate] = useState();
+  const mapState = useRef(false);
+  const perPage = useRef(10);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
@@ -120,7 +121,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
         scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
-      setMapState(init_map_state === 'true' ?? mapState);
+      mapState.current = init_map_state === 'true' ?? mapState.current;
       // Get scheme information from value (format place-scheme)
       const locationDetails = country_or_la ? country_or_la.split('-') : null;
       if (locationDetails) {
@@ -151,7 +152,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         latitude: latitude,
         longitude: longitude,
       }
-      setPerPage(parameters.pageSize);
+      perPage.current = parameters.pageSize;
       let searchResults = {};
       let authorities = {};
       let pushPins = [];
@@ -192,9 +193,10 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           initMapPins(mapWrapper, setCenter);
           mapToggle.addEventListener('click', () => {
             initMapPins(mapWrapper, setCenter);
-            let newMapState = !mapState;
-            setMapState(newMapState);
-            if (newMapState === true && perPage > 10) {
+            let newMapState = !mapState.current;
+            mapState.current = newMapState;
+            setForceUpdate(Math.random());
+            if (newMapState === true && perPage.current > 10) {
               updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
             }
           });
@@ -297,7 +299,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               </>
             ) : ''
         }
-        {!mapState && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} />}
+        {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} />}
       </LayoutCentered>
     </>
   )

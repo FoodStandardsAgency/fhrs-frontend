@@ -2,7 +2,7 @@ import LayoutCentered from '../../components/layout/LayoutCentered';
 import PageWrapper from '../../components/layout/PageWrapper';
 import api from '../../lib/api.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import {useRouter} from "next/router";
 import Pagination from "../../components/search/Pagination";
 import SearchSortHeader from "../../components/search/SearchSortHeader";
@@ -17,6 +17,8 @@ import {getSearchBoxOptions} from "../../lib/getInputFieldValues";
 import SearchCard from "../../components/search/SearchCard";
 import {getPushPin, initMapPins, renderMap} from "../../lib/bingMapHelpers";
 import generateBreadcrumbs from "../../lib/breadcrumbs";
+import SearchResultsPerPage from "../../components/search/SearchResultsPerPage";
+import updateMultiParams from "../../lib/updateMultiParams";
 
 export async function getStaticPaths() {
   const authorities = [];
@@ -73,7 +75,7 @@ export async function getStaticProps(context) {
       options: options,
       sortOptions: sortOptions.sortOptions,
       bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates'])),
+      ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates', 'searchResultsPerPage'])),
     },
     revalidate: 21600,
   }
@@ -89,6 +91,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
   const [loading, setStatus] = useState(true);
   const [center, setCenter] = useState(null);
   const [cardsLoaded, setCardsLoaded] = useState(false);
+  const mapState = useRef(false);
+  const perPage = useRef(10);
   const {query, isReady} = useRouter();
 
   useEffect(() => {
@@ -109,6 +113,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         range,
         latitude,
         longitude,
+        page_size,
+        init_map_state
       } = query;
       const rating = hygiene_status ? hygiene_status : hygiene_rating;
       const parameters = {
@@ -118,12 +124,14 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         ratingKey: rating,
         sortOptionKey: sort,
         pageNumber: page ? page : 1,
-        pageSize: 10,
+        pageSize: page_size && init_map_state !== 'true' ? page_size : 10,
         localAuthorityId: authority.LocalAuthorityId.toString(),
         ratingOperatorKey: range,
         latitude: latitude,
         longitude: longitude,
       }
+      mapState.current = init_map_state === 'true' ?? mapState.current;
+      perPage.current = parameters.pageSize;
       let searchResults = {};
       let authorities = {};
       let pushPins = [];
@@ -161,7 +169,10 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
           initMapPins(mapWrapper, setCenter);
           mapToggle.addEventListener('click', () => {
             initMapPins(mapWrapper, setCenter);
-            if (mapToggle.getAttribute('aria-checked', true)) {
+            let newMapState = !mapState.current;
+            mapState.current = newMapState;
+            if (newMapState === true && perPage.current > 10) {
+              updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
               // reset when opened and closed
               setCenter(null);
             }
@@ -261,6 +272,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
               </>
             ) : ''
         }
+      {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} />}
       </LayoutCentered>
     </>
   )
