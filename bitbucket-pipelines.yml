@@ -1,0 +1,19 @@
+definitions:
+  steps:
+    - step: &Push-to-GitHub
+        image: alpine/git:1.0.26 
+        name: Push code changes to GitHub
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - git remote add github git@github.com:FoodStandardsAgency/fhrs-frontend.git
+          - git checkout $BITBUCKET_BRANCH
+          - git pull
+          - git push github $BITBUCKET_BRANCH
+
+pipelines:
+  branches:
+    main:
+      - step: *Push-to-GitHub
