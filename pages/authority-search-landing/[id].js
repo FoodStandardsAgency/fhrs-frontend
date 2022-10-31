@@ -232,10 +232,6 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
     {
       'text': t('local_authority_link_title', {ns: 'ratingsSearchBox'}),
       'url': '/search-a-local-authority-area',
-    },
-    {
-      'text': authority.Name,
-      'url': null,
     }
   ];
 
