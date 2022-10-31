@@ -128,11 +128,7 @@ function LocalAuthorityRegion({locale, regions, selectedRegion, selectedAuthorit
     {
       'text': t('page_title', {ns: 'localAuthorityLander'}),
       'url': `/search-a-local-authority-area`,
-    },
-    {
-      'text': selectedRegion.name,
-      'url': null,
-    },
+    }
   ]
 
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
