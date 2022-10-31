@@ -14,6 +14,7 @@ function SearchSortHeader(props) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         updateParams('page', link.getAttribute('data-page'));
+        location.reload();
       });
     });
     i18n.addResourceBundle(locale, 'pagination')
