@@ -5,16 +5,20 @@ import pagination from '@components/components/search/Pagination/pagination.html
 import { i18n } from 'next-i18next'
 import updateParams from "../../lib/updateParams";
 
-function SearchSortHeader(props) {
-  const { locale, resultsMeta } = props;
+function Pagination(props) {
+  const { locale, resultsMeta, routerPush, setStatus } = props;
 
   useEffect(() => {
     const paginationLinks = document.querySelectorAll('.pagination__item a');
     paginationLinks.forEach((link) => {
       link.addEventListener('click', (e) => {
+        const showing = document.querySelector('#topOfResults');
         e.preventDefault();
-        updateParams('page', link.getAttribute('data-page'));
-        location.reload();
+        setStatus(true);
+        updateParams('page', link.getAttribute('data-page'), false, routerPush);
+        if (showing) {
+          showing.scrollIntoView();
+        }
       });
     });
     i18n.addResourceBundle(locale, 'pagination')
@@ -40,4 +44,4 @@ function SearchSortHeader(props) {
   )
 }
 
-export default SearchSortHeader;
+export default Pagination;

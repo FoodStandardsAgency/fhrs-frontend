@@ -8,15 +8,14 @@ import updateMultiParams from "../../lib/updateMultiParams";
 
 function SearchResultsPerPage(props) {
   const { locale } = props;
-  const { query, isReady } = useRouter();
-  console.log("props", props);
+  const { query, isReady, push } = useRouter();
   const { page_size } = query;
   useEffect(() => {
     if(!isReady) return;
     const resultsSelect = document.querySelector('.results-per-page__select');
     resultsSelect.addEventListener('change', (e) => {
       e.preventDefault();
-      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState.current === true ? true : ''}]);
+      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState.current === true ? true : ''}, {name: 'page', value: 1}], false, push);
     });
     i18n.addResourceBundle(locale, 'searchResultsPerPage')
   }, [isReady]);

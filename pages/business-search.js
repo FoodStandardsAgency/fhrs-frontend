@@ -84,7 +84,30 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [forceUpdate, setForceUpdate] = useState();
   const mapState = useRef(false);
   const perPage = useRef(10);
-  const {query, isReady} = useRouter();
+  const {query, isReady, push} = useRouter();
+
+  const {
+    "business-name-search": business_name_search,
+    "address-search": address_search,
+    business_type,
+    hygiene_rating,
+    hygiene_rating_or_status,
+    country_or_la,
+    hygiene_status,
+    sort,
+    range,
+    page,
+    latitude,
+    longitude,
+    page_size,
+    init_map_state,
+  } = query;
+  useEffect(() => {
+    if (!isReady) return;
+    mapState.current = init_map_state === 'true' ?? mapState.current;
+    console.log(query);
+    console.log("setMs: current", mapState);
+  }, [isReady]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -96,23 +119,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       return country.value;
     });
 
+
     async function getSearchResults(query, mapWrapper = null) {
-      const {
-        "business-name-search": business_name_search,
-        "address-search": address_search,
-        business_type,
-        hygiene_rating,
-        hygiene_rating_or_status,
-        country_or_la,
-        hygiene_status,
-        sort,
-        range,
-        page,
-        latitude,
-        longitude,
-        page_size,
-        init_map_state,
-      } = query;
       let rating = null;
       let scheme = null;
       let countryId = null;
@@ -121,7 +129,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
         scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
-      mapState.current = init_map_state === 'true' ?? mapState.current;
       // Get scheme information from value (format place-scheme)
       const locationDetails = country_or_la ? country_or_la.split('-') : null;
       if (locationDetails) {
@@ -149,8 +156,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         pageSize: page_size && init_map_state !== 'true' ? page_size : 10,
         schemeTypeKey: scheme,
         ratingOperatorKey: range,
-        latitude: latitude,
-        longitude: longitude,
+	latitude: latitude,
+	longitude: longitude,
       }
       perPage.current = parameters.pageSize;
       let searchResults = {};
@@ -158,62 +165,68 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       let pushPins = [];
       let locations = [];
 
-      try {
-        searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
-        authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
-        searchResults.establishments = searchResults.establishments.map((establishment, index) => {
-          const authority = authorities.authorities.filter((la) => {
-            return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
-          });
-          establishment.inWales = authority[0].RegionName === 'Wales';
+        try {
+          searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
+          authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
+          searchResults.establishments = searchResults.establishments.map((establishment, index) => {
+            const authority = authorities.authorities.filter((la) => {
+              return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
+            });
+            establishment.inWales = authority[0].RegionName === 'Wales';
 
-          const {latitude, longitude} = establishment.geocode;
-          let mapDetails = {};
+            const eLatitude = establishment.geocode?.latitude ?? undefined;
+            const eLongitude = establishment.geocode?.longitude ?? undefined;
+            let mapDetails = {};
 
-          if (latitude && longitude) {
-            const mapPinNumber = index + 1;
-            mapDetails = {
-              pinNumber: mapPinNumber,
-              longitude: longitude,
-              latitude: latitude,
+            if (eLatitude && eLongitude) {
+              const mapPinNumber = index + 1;
+              mapDetails = {
+                pinNumber: mapPinNumber,
+                longitude: eLongitude,
+                latitude: eLatitude,
+              }
+              pushPins.push(getPushPin(establishment, mapPinNumber, locale))
+              locations.push({
+                latitude: eLatitude,
+                longitude: eLongitude,
+              })
             }
-            pushPins.push(getPushPin(establishment, mapPinNumber, locale))
-            locations.push({
-              latitude: latitude,
-              longitude: longitude,
-            })
+            establishment.mapDetails = mapDetails;
+            return establishment;
+          })
+          if (mapToggle) {
+            if (!mapToggle.dataset.mapToggleEventProcessed) {
+              mapToggle.addEventListener('click', () => {
+                initMapPins(mapWrapper, setCenter);
+                let newMapState = !mapState.current;
+                mapState.current = newMapState;
+                setForceUpdate(Math.random());
+                if (mapState.current && mapWrapper) {
+                  renderMap(mapWrapper, pushPins, locations, center, bingKey)
+                }
+                if (newMapState === true && perPage.current > 10) {
+                  updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
+                }
+              });
+            }
+            mapToggle.dataset.mapToggleEventProcessed = 1;
           }
-          establishment.mapDetails = mapDetails;
-          return establishment;
-        })
-        if (mapWrapper) {
-          renderMap(mapWrapper, pushPins, locations, center, bingKey)
-        }
-        if (mapToggle && cardsLoaded && !pinsInitialised) {
+          if (mapState.current && mapWrapper) {
+            renderMap(mapWrapper, pushPins, locations, center, bingKey)
+          }
+          setStatus(false);
+          setResults(searchResults);
           initMapPins(mapWrapper, setCenter);
-          mapToggle.addEventListener('click', () => {
-            initMapPins(mapWrapper, setCenter);
-            let newMapState = !mapState.current;
-            mapState.current = newMapState;
-            setForceUpdate(Math.random());
-            if (newMapState === true && perPage.current > 10) {
-              updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
-            }
-          });
-          setPinsInitialised(true);
+        } catch (e) {
+          setStatus(false);
+          setResults(searchResults);
+          // TODO: add error state for no results
         }
-        setStatus(false);
-        setResults(searchResults);
-      } catch (e) {
-        setStatus(false);
-        setResults(searchResults);
-        // TODO: add error state for no results
-      }
     }
 
     getSearchResults(query, mapWrapper);
 
-  }, [isReady, center, cardsLoaded]);
+  }, [isReady, center, cardsLoaded, query, mapState, perPage]);
 
   const businesses = results.establishments;
 
@@ -230,7 +243,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   let paginationBlock = '';
   if (resultsMeta.totalResults && resultsMeta.totalPages > 1) {
-    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale}/>;
+    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale} routerPush={push} setStatus={setStatus} />;
   }
 
   let resultsHeader = '';
@@ -263,7 +276,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       setCardsLoaded(true);
     }
   }
-  const {latitude, longitude} = query;
   const distance = latitude && longitude;
 
   return (
@@ -278,6 +290,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       <LayoutCentered>
         <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options}
                        showMap={showMap}/>
+        <div id="topOfResults"></div>
         {
           Object.keys(query).length !== 0 && loading ?
             <Loader/> :
@@ -288,7 +301,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 {businesses.map((business, index) => {
                   updateCardState();
                   return (
-                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} distance={distance}/>
+                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} distance={distance} setStatus={setStatus} />
                   )
                 })}
                 {paginationBlock}

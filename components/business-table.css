@@ -1,0 +1,23 @@
+.fhrs-layout table caption {
+  padding: 0.5rem;
+}
+.fhrs-layout .fsa-table td {
+  padding: 0.5rem;
+}
+.fhrs-layout .fsa-table td .responsive-table__heading {
+  flex: 0 1 38%;
+  padding: 0 0.5rem 0 0;
+  margin-right: 0.5rem;
+}
+.fhrs-layout .fsa-table td .responsive-table__heading:after {
+  right: 62%;
+}
+.fhrs-layout .fsa-table td div {
+  flex: 0 1 62%;
+}
+
+@media screen and (min-width: 1024px) {
+  .fhrs-layout .fsa-table td {
+    padding: 1rem;
+  }
+}
