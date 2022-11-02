@@ -91,9 +91,33 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
   const [loading, setStatus] = useState(true);
   const [center, setCenter] = useState(null);
   const [cardsLoaded, setCardsLoaded] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState();
+  const [scrollToResults, setScrollToResults] = useState(false);
   const mapState = useRef(false);
   const perPage = useRef(10);
-  const {query, isReady} = useRouter();
+  const {query, isReady, push} = useRouter();
+
+  const {
+    "business-name-search": business_name_search,
+    "address-search": address_search,
+    business_type,
+    hygiene_rating,
+    hygiene_rating_or_status,
+    country_or_la,
+    hygiene_status,
+    sort,
+    range,
+    page,
+    latitude,
+    longitude,
+    page_size,
+    init_map_state,
+  } = query;
+
+  useEffect(() => {
+    if (!isReady) return;
+    mapState.current = init_map_state === 'true' ?? mapState.current;
+  }, [isReady]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -102,40 +126,51 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
     const mapToggle = document.querySelector('#map-toggle');
 
     async function getSearchResults(query, mapWrapper = null) {
-      const {
-        "business-name-search": business_name_search,
-        "address-search": address_search,
-        business_type,
-        hygiene_rating,
-        hygiene_status,
-        sort,
-        page,
-        range,
-        latitude,
-        longitude,
-        page_size,
-        init_map_state
-      } = query;
-      const rating = hygiene_status ? hygiene_status : hygiene_rating;
+      // @TODO: consolidate with the main business search results, the only difference is the LA id.
+      let rating = null;
+      let scheme = null;
+      let countryId = null;
+      let localAuthorityId = null;
+      if (hygiene_rating_or_status) {
+        rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
+        scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
+      }
+      // Get scheme information from value (format place-scheme)
+      const locationDetails = country_or_la ? country_or_la.split('-') : null;
+      if (locationDetails) {
+        if (countries.includes(country_or_la)) {
+          const countries = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('countries').getResults();
+          countryId = countries.countries.filter((country) => {
+            return country.nameKey === locationDetails[0];
+          }).map((country) => {
+            return country.id;
+          })
+        } else {
+          localAuthorityId = locationDetails[0];
+        }
+      }
+
       const parameters = {
         name: business_name_search,
         address: address_search,
         businessTypeId: business_type,
         ratingKey: rating,
+        countryId: countryId ? countryId[0] : null,
+        localAuthorityId: authority.LocalAuthorityId.toString(),
         sortOptionKey: sort,
         pageNumber: page ? page : 1,
         pageSize: page_size && init_map_state !== 'true' ? page_size : 10,
-        localAuthorityId: authority.LocalAuthorityId.toString(),
+        schemeTypeKey: scheme,
         ratingOperatorKey: range,
-        latitude: latitude,
-        longitude: longitude,
+	latitude: latitude,
+	longitude: longitude,
       }
-      mapState.current = init_map_state === 'true' ?? mapState.current;
       perPage.current = parameters.pageSize;
       let searchResults = {};
       let authorities = {};
       let pushPins = [];
       let locations = [];
+
       try {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
         authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
@@ -144,50 +179,68 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
             return la.LocalAuthorityIdCode === establishment.LocalAuthorityCode;
           });
           establishment.inWales = authority[0].RegionName === 'Wales';
-          const {latitude, longitude} = establishment.geocode;
+
+          const eLatitude = establishment.geocode?.latitude ?? undefined;
+          const eLongitude = establishment.geocode?.longitude ?? undefined;
           let mapDetails = {};
-          if (latitude && longitude) {
+
+          if (eLatitude && eLongitude) {
             const mapPinNumber = index + 1;
             mapDetails = {
               pinNumber: mapPinNumber,
-              longitude: longitude,
-              latitude: latitude,
+              longitude: eLongitude,
+              latitude: eLatitude,
             }
             pushPins.push(getPushPin(establishment, mapPinNumber, locale))
             locations.push({
-              latitude: latitude,
-              longitude: longitude,
+              latitude: eLatitude,
+              longitude: eLongitude,
             })
           }
           establishment.mapDetails = mapDetails;
           return establishment;
         })
-        if (mapWrapper) {
-          renderMap(mapWrapper, pushPins, locations, center, bingKey)
+        if (mapToggle) {
+          if (!mapToggle.dataset.mapToggleEventProcessed) {
+            mapToggle.addEventListener('click', () => {
+              initMapPins(mapWrapper, setCenter);
+              let newMapState = !mapState.current;
+              mapState.current = newMapState;
+              setForceUpdate(Math.random());
+              if (newMapState === true && perPage.current > 10) {
+                updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
+              }
+              else {
+                if (mapState.current && mapWrapper) {
+                  renderMap(mapWrapper, pushPins, locations, center, bingKey)
+                }
+              }
+            });
+          }
+          mapToggle.dataset.mapToggleEventProcessed = 1;
         }
-        if (mapToggle && cardsLoaded) {
-          initMapPins(mapWrapper, setCenter);
-          mapToggle.addEventListener('click', () => {
-            initMapPins(mapWrapper, setCenter);
-            let newMapState = !mapState.current;
-            mapState.current = newMapState;
-            if (newMapState === true && perPage.current > 10) {
-              updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
-              // reset when opened and closed
-              setCenter(null);
-            }
-          });
+        if (mapState.current && mapWrapper) {
+          renderMap(mapWrapper, pushPins, locations, center, bingKey)
         }
         setStatus(false);
         setResults(searchResults);
+        initMapPins(mapWrapper, setCenter);
+        if (scrollToResults) {
+          const showing = document.querySelector('#topOfResults');
+          if (showing) {
+            showing.scrollIntoView();
+            setScrollToResults(false);
+          }
+        }
       } catch (e) {
         setStatus(false);
         setResults(searchResults);
+        // TODO: add error state for no results
       }
     }
 
     getSearchResults(query, mapWrapper)
-  }, [isReady, center, cardsLoaded]);
+  }, [isReady, center, cardsLoaded, query, mapState, perPage]);
 
   const businesses = results.establishments;
 
@@ -204,7 +257,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
 
   let paginationBlock = '';
   if (resultsMeta.totalResults && resultsMeta.totalPages > 1) {
-    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale}/>;
+    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale} routerPush={push} setStatus={setStatus} setScrollToResults={setScrollToResults} />;
   }
 
   let resultsHeader = '';
@@ -245,7 +298,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
       </Head>
       <LayoutCentered>
         <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
-        <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options} showMap={showMap}/>
+        <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options} showMap={showMap} />
+        <div id="topOfResults"></div>
         {
           Object.keys(query).length !== 0 && loading ?
             <Loader/> :
@@ -256,7 +310,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
                 {businesses.map((business, index) => {
                   updateCardState();
                   return (
-                    <SearchCard key={`search-card-${index}`} business={business} locale={locale}/>
+                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} mapState={mapState} />
                   )
                 })
                 }
@@ -268,7 +322,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
               </>
             ) : ''
         }
-      {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} />}
+      {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setStatus={setStatus} setScrollToResults={setScrollToResults} />}
       </LayoutCentered>
     </>
   )

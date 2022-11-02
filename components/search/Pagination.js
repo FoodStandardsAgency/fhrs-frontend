@@ -6,19 +6,20 @@ import { i18n } from 'next-i18next'
 import updateParams from "../../lib/updateParams";
 
 function Pagination(props) {
-  const { locale, resultsMeta, routerPush, setStatus } = props;
+  const { locale, resultsMeta, routerPush, setStatus, setScrollToResults } = props;
 
   useEffect(() => {
     const paginationLinks = document.querySelectorAll('.pagination__item a');
     paginationLinks.forEach((link) => {
       link.addEventListener('click', (e) => {
-        const showing = document.querySelector('#topOfResults');
         e.preventDefault();
-        setStatus(true);
-        updateParams('page', link.getAttribute('data-page'), false, routerPush);
-        if (showing) {
-          showing.scrollIntoView();
+        if (setStatus) {
+          setStatus(true);
         }
+        if (setScrollToResults) {
+          setScrollToResults(true);
+        }
+        updateParams('page', link.getAttribute('data-page'), false, routerPush);
       });
     });
     i18n.addResourceBundle(locale, 'pagination')

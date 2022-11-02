@@ -7,7 +7,7 @@ import {useRouter} from "next/router";
 import updateMultiParams from "../../lib/updateMultiParams";
 
 function SearchResultsPerPage(props) {
-  const { locale } = props;
+  const { locale, setStatus, setScrollToResults } = props;
   const { query, isReady, push } = useRouter();
   const { page_size } = query;
   useEffect(() => {
@@ -15,6 +15,12 @@ function SearchResultsPerPage(props) {
     const resultsSelect = document.querySelector('.results-per-page__select');
     resultsSelect.addEventListener('change', (e) => {
       e.preventDefault();
+      if (setStatus) {
+        setStatus(true);
+      }
+      if (setScrollToResults) {
+        setScrollToResults(true);
+      }
       updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState.current === true ? true : ''}, {name: 'page', value: 1}], false, push);
     });
     i18n.addResourceBundle(locale, 'searchResultsPerPage')

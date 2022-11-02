@@ -82,6 +82,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [pinsInitialised, setPinsInitialised] = useState(false);
   const [forceUpdate, setForceUpdate] = useState();
+  const [scrollToResults, setScrollToResults] = useState(false);
   const mapState = useRef(false);
   const perPage = useRef(10);
   const {query, isReady, push} = useRouter();
@@ -201,22 +202,33 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 let newMapState = !mapState.current;
                 mapState.current = newMapState;
                 setForceUpdate(Math.random());
-                if (mapState.current && mapWrapper) {
-                  renderMap(mapWrapper, pushPins, locations, center, bingKey)
-                }
                 if (newMapState === true && perPage.current > 10) {
                   updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
+                }
+                else {
+                  if (mapState.current && mapWrapper) {
+                    console.log("I'll render the map");
+                    renderMap(mapWrapper, pushPins, locations, center, bingKey)
+                  }
                 }
               });
             }
             mapToggle.dataset.mapToggleEventProcessed = 1;
           }
           if (mapState.current && mapWrapper) {
-            renderMap(mapWrapper, pushPins, locations, center, bingKey)
+            console.log("I'll render the map :)");
+            renderMap(mapWrapper, pushPins, locations, center, bingKey);
           }
           setStatus(false);
           setResults(searchResults);
           initMapPins(mapWrapper, setCenter);
+          if (scrollToResults) {
+            const showing = document.querySelector('#topOfResults');
+            if (showing) {
+              showing.scrollIntoView();
+              setScrollToResults(false);
+            }
+          }
         } catch (e) {
           setStatus(false);
           setResults(searchResults);
@@ -243,7 +255,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   let paginationBlock = '';
   if (resultsMeta.totalResults && resultsMeta.totalPages > 1) {
-    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale} routerPush={push} setStatus={setStatus} />;
+    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale} routerPush={push} setStatus={setStatus} setScrollToResults={setScrollToResults} />;
   }
 
   let resultsHeader = '';
@@ -289,7 +301,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       </LayoutFullWidth>
       <LayoutCentered>
         <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options}
-                       showMap={showMap}/>
+                       showMap={showMap} setStatus={setStatus} />
         <div id="topOfResults"></div>
         {
           Object.keys(query).length !== 0 && loading ?
@@ -301,7 +313,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 {businesses.map((business, index) => {
                   updateCardState();
                   return (
-                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} distance={distance} setStatus={setStatus} />
+                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} distance={distance} setStatus={setStatus} mapState={mapState} />
                   )
                 })}
                 {paginationBlock}
@@ -312,7 +324,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
               </>
             ) : ''
         }
-        {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} />}
+        {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setScollToResults={setScrollToResults} />}
       </LayoutCentered>
     </>
   )

@@ -3,9 +3,11 @@ import errorBox from '@components/components/form/ErrorBox/errorBox.html.twig';
 import TwigTemplate from '../../lib/parse.js';
 import {useEffect, useState} from "react";
 import {i18n, useTranslation} from "next-i18next";
+import {useRouter} from "next/router";
 
 function SearchBoxMain(props) {
-  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, isHomepage} = props;
+  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, isHomepage, setStatus} = props;
+  const {push} = useRouter();
   const isLocalAuthoritySearch = !!localAuthority;
   let localAuthorityId = null;
   let isScottishLocalAuthority = false;
@@ -65,7 +67,17 @@ function SearchBoxMain(props) {
       }
       else {
         setSearchError(false);
-        window.location.href = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
+        const u = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
+        if (isHomepage) {
+          // TODO: convert to push and set a loading state?
+          window.location.href = u
+        }
+        else {
+          push(u);
+        }
+        if (setStatus) {
+          setStatus(true);
+        }
       }
     });
 
