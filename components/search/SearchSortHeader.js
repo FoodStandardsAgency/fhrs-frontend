@@ -32,8 +32,8 @@ function getSortOptions(options, location = false) {
 }
 
 function SearchSortHeader(props) {
-  const { locale, resultsMeta, sortOptions } = props;
-  const { query, isReady } = useRouter();
+  const { locale, resultsMeta, sortOptions, setStatus, setScrollToResults } = props;
+  const { query, isReady, push } = useRouter();
 
   const [sortType, setSortType] = useState({});
 
@@ -43,8 +43,13 @@ function SearchSortHeader(props) {
     const sortSelect = document.querySelector('.sort__select');
     sortSelect.addEventListener('change', (e) => {
       e.preventDefault();
-      updateParams('sort', sortSelect.value);
-      location.reload();
+      updateParams('sort', sortSelect.value, false, push);
+      if (setStatus) {
+        setStatus(true);
+      }
+      if (setScrollToResults) {
+        setScrollToResults(true);
+      }
     });
     setSortType(sort);
     i18n.addResourceBundle(locale, 'searchSortHeader')

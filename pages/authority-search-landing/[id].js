@@ -262,7 +262,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
 
   let resultsHeader = '';
   if (resultsMeta.totalResults) {
-    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}/>;
+    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}  setStatus={setStatus} setScollToResults={setScrollToResults} />;
   }
 
   const helpText = t('no_results_text');
