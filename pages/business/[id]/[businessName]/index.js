@@ -122,7 +122,7 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
         return la.LocalAuthorityIdCode === localAuthorityCode;
       });
       setInWales(authority[0].RegionName === 'Wales');
-      setLocalAuthorityId(authority[0].LocalAuthorityId);
+      setLocalAuthorityId(authority[0].LocalAuthorityIdCode);
     }
 
     localAuthorityDetails(business.LocalAuthorityCode);

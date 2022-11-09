@@ -44,7 +44,7 @@ export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
   const authorityId = context.params.id;
-  const authority = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('authorities', {id: authorityId}).getResults();
+  const authority = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').getAuthorityFromV1Id(authorityId);
 
   const searchFields = [
     {
@@ -162,8 +162,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         pageSize: page_size && init_map_state !== 'true' ? page_size : 10,
         schemeTypeKey: scheme,
         ratingOperatorKey: range,
-	latitude: latitude,
-	longitude: longitude,
+        latitude: latitude,
+        longitude: longitude,
       }
       perPage.current = parameters.pageSize;
       let searchResults = {};
@@ -208,9 +208,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
               mapState.current = newMapState;
               setForceUpdate(Math.random());
               if (newMapState === true && perPage.current > 10) {
-                updateMultiParams([{name: 'page_size', value: 10 }, {name: 'init_map_state', value: true}]);
-              }
-              else {
+                updateMultiParams([{name: 'page_size', value: 10}, {name: 'init_map_state', value: true}]);
+              } else {
                 if (mapState.current && mapWrapper) {
                   renderMap(mapWrapper, pushPins, locations, center, bingKey)
                 }
@@ -257,12 +256,15 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
 
   let paginationBlock = '';
   if (resultsMeta.totalResults && resultsMeta.totalPages > 1) {
-    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale} routerPush={push} setStatus={setStatus} setScrollToResults={setScrollToResults} />;
+    paginationBlock = <Pagination resultsMeta={resultsMeta} locale={locale} routerPush={push} setStatus={setStatus}
+                                  setScrollToResults={setScrollToResults}/>;
   }
 
   let resultsHeader = '';
   if (resultsMeta.totalResults) {
-    resultsHeader = <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions}  setStatus={setStatus} setScollToResults={setScrollToResults} />;
+    resultsHeader =
+      <SearchSortHeader locale={locale} resultsMeta={resultsMeta} sortOptions={sortOptions} setStatus={setStatus}
+                        setScollToResults={setScrollToResults}/>;
   }
 
   const helpText = t('no_results_text');
@@ -272,7 +274,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
               <p class="search-no-results__content--h4">${helpText}</p>`,
   }
 
-  const showMap  = businesses ? businesses.length > 0 : false;
+  const showMap = businesses ? businesses.length > 0 : false;
 
   function updateCardState() {
     if (!cardsLoaded) {
@@ -298,7 +300,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
       </Head>
       <LayoutCentered>
         <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
-        <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options} showMap={showMap} />
+        <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options}
+                       showMap={showMap}/>
         <div id="topOfResults"></div>
         {
           Object.keys(query).length !== 0 && loading ?
@@ -310,7 +313,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
                 {businesses.map((business, index) => {
                   updateCardState();
                   return (
-                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} mapState={mapState} />
+                    <SearchCard key={`search-card-${index}`} business={business} locale={locale} mapState={mapState}/>
                   )
                 })
                 }
@@ -322,7 +325,9 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
               </>
             ) : ''
         }
-      {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setStatus={setStatus} setScrollToResults={setScrollToResults} />}
+        {!mapState.current &&
+        <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setStatus={setStatus}
+                              setScrollToResults={setScrollToResults}/>}
       </LayoutCentered>
     </>
   )

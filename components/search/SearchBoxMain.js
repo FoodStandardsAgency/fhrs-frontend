@@ -174,6 +174,7 @@ function SearchBoxMain(props) {
   }
 
   const {t} = useTranslation(['ratingsSearchBox']);
+
   let searchAllData = {};
   let rows = [];
   rows.push({
@@ -300,6 +301,16 @@ function SearchBoxMain(props) {
     })
   }
 
+  let website_url;
+  let domain;
+
+  if (isLocalAuthoritySearch) {
+    // Get local authority website domain only for the label
+    website_url = localAuthority.Url;
+    domain = new URL(website_url);
+    domain = domain.hostname;
+  }
+
   const searchBoxContent = {
     title: pageTitle,
     title_prefix: isLocalAuthoritySearch ? t('search_the') : '',
@@ -307,6 +318,14 @@ function SearchBoxMain(props) {
     subtitle_prefix: isLocalAuthoritySearch ? t('provided_by') : '',
     council_name: isLocalAuthoritySearch ? localAuthority.Name : '',
     area: isLocalAuthoritySearch ? localAuthority.Name : '',
+    local_authority_section: isLocalAuthoritySearch ? {
+      website_title: t('la_website_label'),
+      website_url: website_url,
+      website_label: domain,
+      email_title: t('la_email_label'),
+      email_address: localAuthority.Email.trim() ? localAuthority.Email : '',
+      logo_svg: '',
+    } : null,
     business_name_label: t('business_name_label'),
     business_name_value: business_name_search ? business_name_search : '',
     address_search_label: t('address_search_label'),

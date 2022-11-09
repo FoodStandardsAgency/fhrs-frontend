@@ -26,5 +26,7 @@
   "search_all_data_label": "Search all data",
   "search_a_different_area": "Search a different area",
   "error_message": "Please enter either \"Business Name\" or \"Street, town or postcode\" or select at least one search option",
-  "loading_location_label": "Getting location"
+  "loading_location_label": "Getting location",
+  "la_website_label": "Website",
+  "la_email_label": "Email"
 }
