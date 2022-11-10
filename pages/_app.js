@@ -17,8 +17,8 @@ function FhrsApp({Component, pageProps}) {
       const lang = document.querySelectorAll('.header__language a');
       lang.forEach((a) => {
         let href = a.getAttribute('href');
-        if (!href.includes('?') && typeof window === 'object' && window.location?.search.length) {
-          href += window.location.search;
+        if (typeof window === 'object' && window.location?.search.length) {
+          href = href.split('?')[0] + window.location.search;
         }
         a.setAttribute('href', href);
       });
