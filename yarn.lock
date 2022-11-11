@@ -2582,11 +2582,11 @@ fs.realpath@^1.0.0:
 
 "fsa-pattern-library-assets@https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#develop":
   version "0.0.0"
-  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#a86e8fd5e29a15c2fb43a117ebbf145dc839fc3d"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#d0d3c02167ac6fd705bf6db6d4804e24cdd36feb"
 
 "fsa-pattern-library-source@https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#develop":
-  version "1.1.0"
-  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#4588d0924857c311cfa3369784a092edef8c9cd7"
+  version "1.1.1"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#02c14c090c55bccaaa2d59093a131ab4bc64576f"
   dependencies:
     css-vars-ponyfill "2.4.7"
     dwnld-attr-polyfill "^1.1.7"
@@ -3040,6 +3040,13 @@ js-yaml@^4.1.0:
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
   dependencies:
     argparse "^2.0.1"
+
+js2xmlparser@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/js2xmlparser/-/js2xmlparser-5.0.0.tgz#2c969c136762b567402a605f3931eb2e98bce1b9"
+  integrity sha512-ckXs0Fzd6icWurbeAXuqo+3Mhq2m8pOPygsQjTPh8K5UWgKaUgDSHrdDxAfexmT11xvBKOQ6sgYwPkYc5RW/bg==
+  dependencies:
+    xmlcreate "^2.0.4"
 
 jsesc@^2.5.1:
   version "2.5.2"
@@ -4533,6 +4540,11 @@ word-wrap@^1.2.3:
 wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
+
+xmlcreate@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/xmlcreate/-/xmlcreate-2.0.4.tgz#0c5ab0f99cdd02a81065fa9cd8f8ae87624889be"
+  integrity sha512-nquOebG4sngPmGPICTS5EnxqhKbCmz5Ox5hsszI2T6U5qdrJizBc+0ilYSEjTSzU0yZcmvppztXe/5Al5fUwdg==
 
 yallist@^4.0.0:
   version "4.0.0"

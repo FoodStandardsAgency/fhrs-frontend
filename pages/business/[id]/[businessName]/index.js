@@ -21,6 +21,8 @@ import parse from 'html-react-parser';
 import {useHistory} from '../../../../context/History'
 import generateBreadcrumbs from "../../../../lib/breadcrumbs";
 import {getTranslatedBusinessType} from "../../../../lib/getInputFieldValues";
+import {generateDataUri, getSelectContent} from "../../../../lib/dataDownload";
+import dataDownload from '@components/components/fhrs/DataDownload/dataDownload.html.twig';
 
 export async function getStaticPaths() {
   const establishments = [];
@@ -72,8 +74,16 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
   const [tablesProcessed, setTablesProcessed] = useState(false);
+  const [apiDataUri, setApiDataUri] = useState(`/api/download-data/json${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {id: business.FHRSID}).uri}`);
 
   const {latitude, longitude} = business.geocode;
+
+  useEffect(() => {
+    const format = document.querySelector('.data-download__select--format select');
+    format.addEventListener('change', () => {
+      setApiDataUri(generateDataUri('format', format, apiDataUri));
+    });
+  }, [])
 
   // Process tables
   useEffect(() => {
@@ -264,6 +274,8 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
   const bingKey = process.env.NEXT_PUBLIC_BING_MAPS_KEY;
 
+  const dataDownloadContent = getSelectContent(apiDataUri);
+
   return (
     <>
       <Head>
@@ -280,6 +292,7 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
         <TwigTemplate template={explanationBlock} values={getCodeText} attribs={[]}/>
         <LocalAuthority business={business} translations={localAuthorityText}/>
+        <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
       </LayoutCentered>
     </>
   )

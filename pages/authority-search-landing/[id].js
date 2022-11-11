@@ -19,6 +19,8 @@ import {getPushPin, initMapPins, renderMap} from "../../lib/bingMapHelpers";
 import generateBreadcrumbs from "../../lib/breadcrumbs";
 import SearchResultsPerPage from "../../components/search/SearchResultsPerPage";
 import updateMultiParams from "../../lib/updateMultiParams";
+import {generateDataUri, getSelectContent} from "../../lib/dataDownload";
+import dataDownload from '@components/components/fhrs/DataDownload/dataDownload.html.twig';
 
 export async function getStaticPaths() {
   const authorities = [];
@@ -92,6 +94,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
   const [center, setCenter] = useState(null);
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [forceUpdate, setForceUpdate] = useState();
+  const [apiDataUri, setApiDataUri] = useState('');
   const [scrollToResults, setScrollToResults] = useState(false);
   const mapState = useRef(false);
   const perPage = useRef(10);
@@ -171,6 +174,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
       let pushPins = [];
       let locations = [];
 
+      setApiDataUri(`/api/download-data/json${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).uri}`);
+
       try {
         searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
         authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
@@ -241,6 +246,20 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
     getSearchResults(query, mapWrapper)
   }, [isReady, center, cardsLoaded, query, mapState, perPage]);
 
+  // Logic for the data download component
+  useEffect(() => {
+    const numberOfResults = document.querySelector('.data-download__select--no-of-results select');
+    const format = document.querySelector('.data-download__select--format select');
+
+    numberOfResults.addEventListener('change', () => {
+      setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
+    });
+
+    format.addEventListener('change', () => {
+      setApiDataUri(generateDataUri('format', format, apiDataUri));
+    });
+  })
+
   const businesses = results.establishments;
 
   const meta = results.meta;
@@ -292,6 +311,8 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
 
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
 
+  const dataDownloadContent = getSelectContent(apiDataUri, perPage);
+
   return (
     <>
       <Head>
@@ -328,6 +349,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         {!mapState.current &&
         <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setStatus={setStatus}
                               setScrollToResults={setScrollToResults}/>}
+        <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
       </LayoutCentered>
     </>
   )

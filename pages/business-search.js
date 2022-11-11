@@ -6,6 +6,7 @@ import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.ht
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import SearchBoxMain from "../components/search/SearchBoxMain";
 import SearchSortHeader from "../components/search/SearchSortHeader";
+import dataDownload from '@components/components/fhrs/DataDownload/dataDownload.html.twig';
 import {useEffect, useState, useRef} from "react";
 import {useRouter} from "next/router";
 import api from "../lib/api";
@@ -21,6 +22,8 @@ import {getPushPin, initMapPins, renderMap} from "../lib/bingMapHelpers";
 import generateBreadcrumbs from "../lib/breadcrumbs";
 import SearchResultsPerPage from "../components/search/SearchResultsPerPage";
 import updateMultiParams from "../lib/updateMultiParams";
+import * as Url from "url";
+import {generateDataUri, getSelectContent} from "../lib/dataDownload";
 
 export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -78,13 +81,12 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [results, setResults] = useState({});
   const [loading, setStatus] = useState(true);
   const [center, setCenter] = useState(null);
-  const [itemsPerPage, setItemsPerPage] = useState()
   const [cardsLoaded, setCardsLoaded] = useState(false);
-  const [pinsInitialised, setPinsInitialised] = useState(false);
   const [forceUpdate, setForceUpdate] = useState();
   const [scrollToResults, setScrollToResults] = useState(false);
   const mapState = useRef(false);
   const perPage = useRef(10);
+  const [apiDataUri, setApiDataUri] = useState('');
   const {query, isReady, push} = useRouter();
 
   const {
@@ -103,11 +105,10 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
     page_size,
     init_map_state,
   } = query;
+
   useEffect(() => {
     if (!isReady) return;
     mapState.current = init_map_state === 'true' ?? mapState.current;
-    console.log(query);
-    console.log("setMs: current", mapState);
   }, [isReady]);
 
   useEffect(() => {
@@ -157,15 +158,15 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
         pageSize: page_size && init_map_state !== 'true' ? page_size : 10,
         schemeTypeKey: scheme,
         ratingOperatorKey: range,
-	latitude: latitude,
-	longitude: longitude,
+        latitude: latitude,
+        longitude: longitude,
       }
       perPage.current = parameters.pageSize;
       let searchResults = {};
       let authorities = {};
       let pushPins = [];
       let locations = [];
-
+      setApiDataUri(`/api/download-data/json${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).uri}`);
         try {
           searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
           authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
@@ -240,6 +241,20 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   }, [isReady, center, cardsLoaded, query, mapState, perPage]);
 
+  // Logic for the data download component
+  useEffect(() => {
+    const numberOfResults = document.querySelector('.data-download__select--no-of-results select');
+    const format = document.querySelector('.data-download__select--format select');
+
+    numberOfResults.addEventListener('change', () => {
+      setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
+    });
+
+    format.addEventListener('change', () => {
+      setApiDataUri(generateDataUri('format', format, apiDataUri));
+    });
+  })
+
   const businesses = results.establishments;
 
   const meta = results.meta;
@@ -290,6 +305,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   }
   const distance = latitude && longitude;
 
+  const dataDownloadContent = getSelectContent(apiDataUri, perPage);
+
   return (
     <>
       <Head>
@@ -325,6 +342,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
             ) : ''
         }
         {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setScollToResults={setScrollToResults} />}
+        <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
       </LayoutCentered>
     </>
   )
