@@ -49,7 +49,7 @@ export default function PageWrapper(Component, options) {
         },
       ],
     }
-
+    let hidePromoGroup = false;
     if (options) {
       if (options.footerBlockText) {
         const text = {
@@ -59,6 +59,9 @@ export default function PageWrapper(Component, options) {
           description_link_label: t('promo_group_link'),
         };
         promoGroupContent = {...promoGroupContent, ...text};
+      }
+      if (options.hidePromoGroup) {
+        hidePromoGroup = true;
       }
     }
     const feedbackSectionContent = {
@@ -70,7 +73,7 @@ export default function PageWrapper(Component, options) {
         <TwigTemplate template={header} values={props.menus.header} attribs={[]}/>
         <main>
           <Component {...props} />
-          <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>
+          {!hidePromoGroup && <TwigTemplate template={promoGroup} values={promoGroupContent} attribs={[]}/>}
         </main>
         <TwigTemplate template={feedback} values={feedbackSectionContent} attribs={[]}/>
         <TwigTemplate template={footer} values={props.menus.footer} attribs={[]}/>
