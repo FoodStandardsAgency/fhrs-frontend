@@ -12,7 +12,7 @@ function SearchBoxMain(props) {
   let localAuthorityId = null;
   let isScottishLocalAuthority = false;
   if (localAuthority) {
-    localAuthorityId = localAuthority.LocalAuthorityId.toString();
+    localAuthorityId = localAuthority.LocalAuthorityIdCode.toString();
     isScottishLocalAuthority = localAuthority.RegionName === 'Scotland';
   }
 
