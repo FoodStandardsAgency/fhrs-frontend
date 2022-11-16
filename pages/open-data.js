@@ -197,7 +197,7 @@ function OpenData({locale, authorities, regions}) {
                  <tbody>
                   ${section.authorities.map(authority => {
                       const date = new Date(authority.LastPublishedDate);
-                      const formattedDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} at ${date.getHours() % 12 || 12}:${date.getMinutes()}`;
+                      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} at ${date.getHours() % 12 || 12}:${date.getMinutes()}`;
                       return `
                         <tr>
                           <td><a href="${authority.FileName}">${authority.Name} (${t('english_language', {ns: 'openData'})})</a></td>
