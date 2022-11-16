@@ -121,7 +121,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       return country.value;
     });
 
-
     async function getSearchResults(query, mapWrapper = null) {
       let rating = null;
       let scheme = null;
@@ -208,7 +207,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
                 }
                 else {
                   if (mapState.current && mapWrapper) {
-                    console.log("I'll render the map");
                     renderMap(mapWrapper, pushPins, locations, center, bingKey)
                   }
                 }
@@ -217,7 +215,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
             mapToggle.dataset.mapToggleEventProcessed = 1;
           }
           if (mapState.current && mapWrapper) {
-            console.log("I'll render the map :)");
             renderMap(mapWrapper, pushPins, locations, center, bingKey);
           }
           setStatus(false);
