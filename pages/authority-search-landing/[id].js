@@ -47,7 +47,13 @@ export async function getStaticProps(context) {
   const menus = await res.json();
   const authorityId = context.params.id;
   const authority = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').getAuthorityFromV1Id(authorityId);
-
+  if (!authority) {
+    return {
+      redirect: {
+        destination: `${context.locale === 'cy' ? '/cy' : ''}/search-a-local-authority-area`
+      }
+    }
+  }
   const searchFields = [
     {
       apiIndex: 'businessTypes',
