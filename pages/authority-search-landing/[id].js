@@ -138,6 +138,12 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         rating = hygiene_rating_or_status === 'status' ? hygiene_status : hygiene_rating;
         scheme = hygiene_rating_or_status === 'status' ? 'fhis' : 'fhrs';
       }
+      else if (hygiene_rating && hygiene_rating !== 'all') {
+        rating = hygiene_rating;
+      }
+      else if (hygiene_status && hygiene_status !== 'all') {
+        rating = hygiene_status;
+      }
       // Get scheme information from value (format place-scheme)
       const locationDetails = country_or_la ? country_or_la.split('-') : null;
       if (locationDetails) {

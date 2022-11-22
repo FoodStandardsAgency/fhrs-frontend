@@ -41,6 +41,15 @@ function SearchSortHeader(props) {
   useEffect(() => {
     if(!isReady) return;
     const sortSelect = document.querySelector('.sort__select');
+
+    // Reset sort when query changes
+    if (sort) {
+      sortSelect.value = sort;
+    }
+    else {
+      sortSelect.value = 'relevance';
+    }
+
     sortSelect.addEventListener('change', (e) => {
       e.preventDefault();
       updateParams('sort', sortSelect.value, false, push);
@@ -53,7 +62,7 @@ function SearchSortHeader(props) {
     });
     setSortType(sort);
     i18n.addResourceBundle(locale, 'searchSortHeader')
-  }, [isReady]);
+  }, [isReady, query]);
 
   const {t} = useTranslation(['searchSortHeader']);
 

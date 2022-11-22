@@ -64,15 +64,13 @@ function SearchBoxMain(props) {
       mapState ? searchParams.delete('page_size') : null;
       if (!entries.address_search && !entries.business_name_search && entries.business_type === '-1' && entries.country_or_la === 'all' && entries.hygiene_rating === 'all' && entries.hygiene_status === 'all' && !locationField.value) {
         setSearchError(true);
-      }
-      else {
+      } else {
         setSearchError(false);
         const u = `${locale === 'cy' ? '/cy' : ''}/${isLocalAuthoritySearch ? 'authority-search-landing/' + localAuthorityId : 'business-search'}${searchParams ? '?' + searchParams : ''}`;
         if (isHomepage) {
           // TODO: convert to push and set a loading state?
           window.location.href = u
-        }
-        else {
+        } else {
           push(u);
         }
         if (setStatus) {
@@ -155,10 +153,14 @@ function SearchBoxMain(props) {
     range,
     init_map_state,
     latitude,
-    longitude
+    longitude,
   } = query;
 
-  const advancedOptionsOpen = business_type && business_type !== '-1' || country_or_la && country_or_la !== 'all' || hygiene_rating_or_status;
+  const advancedOptionsOpen = business_type && business_type !== '-1'
+    || country_or_la && country_or_la !== 'all'
+    || hygiene_rating_or_status
+    || hygiene_rating && hygiene_rating !== 'all'
+    || hygiene_status && hygiene_status !== 'all';
 
   let countries_and_la;
 
@@ -354,7 +356,7 @@ function SearchBoxMain(props) {
     initial_location_state: !!(latitude && longitude),
     is_homepage: isHomepage,
     advanced_options_open: advancedOptionsOpen,
-    location: latitude && longitude ? latitude + ',' + longitude: null,
+    location: latitude && longitude ? latitude + ',' + longitude : null,
   }
 
   return (
