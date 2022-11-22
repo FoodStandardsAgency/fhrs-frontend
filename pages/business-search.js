@@ -84,6 +84,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   const [cardsLoaded, setCardsLoaded] = useState(false);
   const [forceUpdate, setForceUpdate] = useState();
   const [scrollToResults, setScrollToResults] = useState(false);
+  const [errorState, setErrorState] = useState(false);
   const mapState = useRef(false);
   const perPage = useRef(10);
   const [apiDataUri, setApiDataUri] = useState('');
@@ -121,7 +122,11 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       return country.value;
     });
 
-    async function getSearchResults(query, mapWrapper = null) {
+    async function getSearchResults(query, mapWrapper = null, errorState) {
+      if (errorState) {
+        setResults({});
+        return;
+      }
       let rating = null;
       let scheme = null;
       let countryId = null;
@@ -233,26 +238,26 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           // TODO: add error state for no results
         }
     }
-
-    getSearchResults(query, mapWrapper);
-
-  }, [isReady, center, cardsLoaded, query, mapState, perPage]);
+    getSearchResults(query, mapWrapper, errorState);
+  }, [isReady, center, cardsLoaded, query, mapState, perPage, errorState]);
 
   // Logic for the data download component
   useEffect(() => {
     const numberOfResults = document.querySelector('.data-download__select--no-of-results select');
     const format = document.querySelector('.data-download__select--format select');
-
-    numberOfResults.addEventListener('change', () => {
-      setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
-    });
-
-    format.addEventListener('change', () => {
-      setApiDataUri(generateDataUri('format', format, apiDataUri));
-    });
+    if (numberOfResults) {
+      numberOfResults.addEventListener('change', () => {
+        setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
+      });
+    }
+    if (format) {
+      format.addEventListener('change', () => {
+        setApiDataUri(generateDataUri('format', format, apiDataUri));
+      });
+    }
   })
 
-  const businesses = results.establishments;
+  let businesses = results.establishments;
 
   const meta = results.meta;
   let resultsMeta = {};
@@ -304,6 +309,10 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   const dataDownloadContent = getSelectContent(apiDataUri, perPage);
 
+  function getErrorState(state) {
+    setErrorState(state);
+  }
+
   return (
     <>
       <Head>
@@ -315,7 +324,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       </LayoutFullWidth>
       <LayoutCentered>
         <SearchBoxMain locale={locale} query={query} submitType={'input'} pageTitle={searchBoxTitle} options={options}
-                       showMap={showMap} setStatus={setStatus} />
+                       showMap={showMap} setStatus={setStatus} sendData={getErrorState}/>
         <div id="topOfResults"></div>
         {
           Object.keys(query).length !== 0 && loading ?
@@ -339,7 +348,11 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
             ) : ''
         }
         {!mapState.current && <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setScollToResults={setScrollToResults} />}
-        <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
+        {
+          (businesses && businesses.length > 0) && <>
+            <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
+          </>
+        }
       </LayoutCentered>
     </>
   )

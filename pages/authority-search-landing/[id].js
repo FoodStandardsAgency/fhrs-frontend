@@ -262,14 +262,16 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
   useEffect(() => {
     const numberOfResults = document.querySelector('.data-download__select--no-of-results select');
     const format = document.querySelector('.data-download__select--format select');
-
-    numberOfResults.addEventListener('change', () => {
-      setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
-    });
-
-    format.addEventListener('change', () => {
-      setApiDataUri(generateDataUri('format', format, apiDataUri));
-    });
+    if (numberOfResults) {
+      numberOfResults.addEventListener('change', () => {
+        setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
+      });
+    }
+    if (format) {
+      format.addEventListener('change', () => {
+        setApiDataUri(generateDataUri('format', format, apiDataUri));
+      });
+    }
   })
 
   const businesses = results.establishments;
@@ -361,7 +363,11 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
         {!mapState.current &&
         <SearchResultsPerPage locale={locale} query={query} perPage={perPage} mapState={mapState} setStatus={setStatus}
                               setScrollToResults={setScrollToResults}/>}
-        <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
+        {
+          (businesses && businesses.length > 0) && <>
+            <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
+          </>
+        }
       </LayoutCentered>
     </>
   )
