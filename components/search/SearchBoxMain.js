@@ -69,7 +69,7 @@ function SearchBoxMain(props) {
         setSearchError(true);
       }
       else {
-        if (!isLocalAuthoritySearch) {
+        if (!isLocalAuthoritySearch && !isHomepage) {
           props.sendData(false);
         }
         setSearchError(false);
