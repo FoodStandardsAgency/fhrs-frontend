@@ -69,7 +69,14 @@ export async function getStaticProps(context) {
 }
 
 function BusinessPage({business, scores, locale, bing_key, businessType}) {
-  const previous = useHistory().previous ?? '';
+  let previous = '';
+  const history = useHistory().history;
+
+  // Only use the latest authority-search or business-search page for the back button
+  if (history) {
+    const reversed = [...history].reverse();
+    previous = reversed.find(a => a.includes('authority-search-landing') || a.includes('business-search'));
+  }
   const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
