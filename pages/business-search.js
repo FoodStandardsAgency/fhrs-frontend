@@ -66,7 +66,7 @@ export async function getStaticProps(context) {
       options: options,
       sortOptions: sortOptions.sortOptions,
       bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination', 'dates', 'searchResultsPerPage'])),
+      ...(await serverSideTranslations(context.locale, ['common', 'businessSearch', 'ratingsSearchBox', 'searchPage', 'searchSortHeader', 'pagination', 'dates', 'searchResultsPerPage', 'dataDownload'])),
     },
     revalidate: 21600,
   }
@@ -74,7 +74,7 @@ export async function getStaticProps(context) {
 
 function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
-  const {t} = useTranslation(['searchPage', 'dates', 'common']);
+  const {t} = useTranslation(['searchPage', 'dates', 'common', 'dataDownload']);
 
   const pageTitle = `${t('page_title', {ns: 'searchPage'})} | ${t('title', {ns: 'common'})}`;
 
@@ -307,7 +307,16 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
   }
   const distance = latitude && longitude;
 
-  const dataDownloadContent = getSelectContent(apiDataUri, perPage);
+  const translations = {
+    download_data: t('download_data', {ns: 'dataDownload'}),
+    format: t('format', {ns: 'dataDownload'}),
+    results: t('results', {ns: 'dataDownload'}),
+    all: t('all', {ns: 'dataDownload'}),
+    download: t('download', {ns: 'dataDownload'}),
+    number_of_results: t('number_of_results', {ns: 'dataDownload'}),
+  }
+
+  const dataDownloadContent = getSelectContent(apiDataUri, translations, perPage);
 
   function getErrorState(state) {
     setErrorState(state);

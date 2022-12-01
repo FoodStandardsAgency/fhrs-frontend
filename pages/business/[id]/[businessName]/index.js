@@ -62,7 +62,7 @@ export async function getStaticProps(context) {
       menus: menus,
       locale: context.locale,
       bing_key: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox'])),
+      ...(await serverSideTranslations(context.locale, ['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox', 'dataDownload'])),
     },
     revalidate: 21600,
   }
@@ -77,7 +77,7 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
     const reversed = [...history].reverse();
     previous = reversed.find(a => a.includes('authority-search-landing') || a.includes('business-search'));
   }
-  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox']);
+  const {t} = useTranslation(['dates', 'common', 'businessHero', 'businessPage', 'searchPage', 'ratingsSearchBox', 'dataDownload']);
   const [inWales, setInWales] = useState(false);
   const [localAuthorityId, setLocalAuthorityId] = useState(null);
   const [tablesProcessed, setTablesProcessed] = useState(false);
@@ -281,7 +281,16 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
   const bingKey = process.env.NEXT_PUBLIC_BING_MAPS_KEY;
 
-  const dataDownloadContent = getSelectContent(apiDataUri);
+  const translations = {
+    download_data: t('download_data', {ns: 'dataDownload'}),
+    format: t('format', {ns: 'dataDownload'}),
+    results: t('results', {ns: 'dataDownload'}),
+    all: t('all', {ns: 'dataDownload'}),
+    download: t('download', {ns: 'dataDownload'}),
+    number_of_results: t('number_of_results', {ns: 'dataDownload'}),
+  }
+
+  const dataDownloadContent = getSelectContent(apiDataUri, translations);
 
   return (
     <>

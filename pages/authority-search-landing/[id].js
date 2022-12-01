@@ -83,7 +83,7 @@ export async function getStaticProps(context) {
       options: options,
       sortOptions: sortOptions.sortOptions,
       bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
-      ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates', 'searchResultsPerPage'])),
+      ...(await serverSideTranslations(context.locale, ['searchPage', 'searchSortHeader', 'common', 'ratingsSearchBox', 'dates', 'searchResultsPerPage', 'dataDownload', 'pagination'])),
     },
     revalidate: 21600,
   }
@@ -91,7 +91,7 @@ export async function getStaticProps(context) {
 
 function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}) {
 
-  const {t} = useTranslation(['searchPage', 'dates', 'common', 'ratingsSearchBox']);
+  const {t} = useTranslation(['searchPage', 'dates', 'common', 'ratingsSearchBox', 'dataDownload', 'pagination']);
 
   const pageTitle = `${t('local_authority_link_title', {ns: 'ratingsSearchBox'})} - ${authority.Name}  | ${t('title', {ns: 'common'})}`;
 
@@ -325,7 +325,16 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
 
   const breadcrumbContent = generateBreadcrumbs(breadcrumbLinks, locale, t);
 
-  const dataDownloadContent = getSelectContent(apiDataUri, perPage);
+  const translations = {
+    download_data: t('download_data', {ns: 'dataDownload'}),
+    format: t('format', {ns: 'dataDownload'}),
+    results: t('results', {ns: 'dataDownload'}),
+    all: t('all', {ns: 'dataDownload'}),
+    download: t('download', {ns: 'dataDownload'}),
+    number_of_results: t('number_of_results', {ns: 'dataDownload'}),
+  }
+
+  const dataDownloadContent = getSelectContent(apiDataUri, translations, perPage);
 
   return (
     <>
