@@ -62,7 +62,7 @@ export async function getStaticProps(context) {
   }
 }
 
-function generateBadges(id, rating, scheme, isWelsh, base_url) {
+function generateBadges(id, rating, scheme, isWelsh, inWales, base_url) {
   let badges = [];
   let folder = 'fhrs';
   let extension = 'svg';
@@ -82,7 +82,7 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
     }
   };
 
-  if (isWelsh) {
+  if (isWelsh || inWales) {
     folder = 'fhrs-bilingual';
   }
 
@@ -101,7 +101,8 @@ function generateBadges(id, rating, scheme, isWelsh, base_url) {
       }
     }
   }
-  const formattedRating = rating === 'Pass and Eat Safe' ? 'PassEatSafe' : rating.toString().replace(' ', '');
+  let formattedRating = rating === 'Pass and Eat Safe' ? 'PassEatSafe' : rating.toString().replace(' ', '');
+  formattedRating = inWales && formattedRating === 'AwaitingInspection' ? 'Empty' : formattedRating;
   for (let i = noOfBadges; i > 0; i--) {
     badges.push(
       {
@@ -223,9 +224,10 @@ function BusinessPage({business, locale, base_url, businessType}) {
     },
     preview: t('preview', {ns: 'onlineRatings'}),
     download_image: t('download_image', {ns: 'onlineRatings'}),
-    badges: generateBadges(business.FHRSID, business.RatingValue, business.SchemeType, isWelsh, base_url),
+    badges: generateBadges(business.FHRSID, business.RatingValue, business.SchemeType, isWelsh, inWales, base_url),
     fhis: business.SchemeType === 'FHIS',
     welsh: isWelsh,
+    wales_business: inWales,
   }
 
   const breadcrumbLinks = [

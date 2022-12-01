@@ -29,6 +29,7 @@ async function component() {
   if (businessId) {
     const details = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').getBusinessDetails(businessId);
     rating = details.rating.replaceAll(' ', '');
+    rating = walesBusiness && rating === 'AwaitingInspection' ? 'Empty' : rating;
     fhis = details.scheme !== 'FHRS' ? 'true' : 'false';
 
     const authorities = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
