@@ -35,17 +35,17 @@ export default function PageWrapper(Component, options) {
         {
           title: t('download_data_label'),
           description: t('download_data_description'),
-          promo_link: '/open-data',
+          promo_link: locale === 'cy' ? '/cy/open-data' : '/open-data',
         },
         {
           title: t('food_problems_label'),
           description: t('food_problems_description'),
-          promo_link: 'https://www.food.gov.uk/contact/consumers/report-problem',
+          promo_link: locale === 'cy' ? 'https://www.food.gov.uk/cy/contact/consumers/rhoi-gwybod-am-broblem' : 'https://www.food.gov.uk/contact/consumers/report-problem',
         },
         {
           title: t('be_updated_label'),
           description: t('be_updated_description'),
-          promo_link: 'https://www.food.gov.uk/news-alerts/subscribe/alerts/',
+          promo_link: locale === 'cy' ? 'https://www.food.gov.uk/cy/news-alerts/subscribe' : 'https://www.food.gov.uk/news-alerts/subscribe',
         },
       ],
     }
