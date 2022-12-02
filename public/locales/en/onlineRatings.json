@@ -2,6 +2,7 @@
   "get_online_ratings": "Get online ratings",
   "get_online_ratings_for": "Get online ratings for",
   "copy_code": "Copy and paste the code below into your page",
+  "how_to_use_code": "To position the online rating on your page, wrap the code inside a &lt;div&gt; tag",
   "preview": "Preview",
   "download_image": "Download image",
   "get_code": "Get code",
@@ -11,5 +12,5 @@
   "how_to_display_content": "<p>We provide a selection of online food hygiene rating formats for use across websites, apps, social media and emails.</p><p>If you are displaying your rating online, we recommend you embed the javascript code where possible. This is because the code is developed to update automatically if your score changes. It is a one-off implementation.</p><p>If you choose to download the image file and upload directly, you will need to make sure to update the online rating should it change in the future.</p><p><a href=\"https://www.food.gov.uk/business-guidance/food-hygiene-rating-scheme-online-display-guidance\"> Guidance on the requirements for online display of your food hygiene rating is available</a></p>",
   "high_res_online_rating": "High resolution online rating",
   "legacy_rating_title": "Legacy online rating code",
-  "legacy_rating_content": "<p>The previous version of the online ratings has now been retired.</p><p>Use the code for the high resolution online ratings provided above if you are adding the online rating to a businesses website.</p><p>Use the online rating images provided above if you are sharing across your online or social portfolio.</p><p>The legacy code will remain active until [add date 12 month from launch], after this period it will be retired.</p>"
+  "legacy_rating_content": "<p>The previous version of the online ratings has now been retired.</p><p>Use the code for the high resolution online ratings provided above if you are adding the online rating to a businesses website.</p><p>Use the online rating images provided above if you are sharing across your online or social portfolio.</p><p>The legacy code will remain active until March 2024, after this period it will be retired.</p>"
 }

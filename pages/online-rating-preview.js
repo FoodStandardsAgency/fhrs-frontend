@@ -9,13 +9,24 @@ function Preview() {
 
     const {id, style, isWelsh} = query;
 
+    let widths = {
+      1: '26.75rem',
+      2: '30rem',
+      3: '16.188rem',
+      4: '7.813rem',
+      5: '11.813rem'
+    };
+    const container = document.createElement('div');
     const scriptTag = document.createElement('script');
     scriptTag.src = '/embed/embed-badge.js';
+    container.style = 'width:' + widths[style];
+
     scriptTag.setAttribute('data-business-id', id);
     scriptTag.setAttribute('data-rating-style', style);
     scriptTag.setAttribute('data-welsh', isWelsh.toString());
     scriptTag.setAttribute('defer', 'defer');
-    document.body.appendChild(scriptTag);
+    container.appendChild(scriptTag);
+    document.body.appendChild(container);
   }, [isReady]);
 
   return null;

@@ -220,6 +220,7 @@ function BusinessPage({business, locale, base_url, businessType}) {
     pixels: t('pixels', {ns: 'onlineRatings'}),
     js: {
       label: t('copy_code', {ns: 'onlineRatings'}),
+      description: t('how_to_use_code', {ns: 'onlineRatings'}),
       rows: 2,
     },
     preview: t('preview', {ns: 'onlineRatings'}),

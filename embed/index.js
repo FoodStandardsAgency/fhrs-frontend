@@ -12,18 +12,14 @@ async function component() {
   let walesBusiness = false;
 
   const element = document.createElement('div');
+  const link = document.createElement('a');
   const img = document.createElement('img');
 
-  if (businessId) {
-    const details = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').getBusinessDetails(businessId);
-    rating = details.rating.replaceAll(' ', '');
-    fhis = details.scheme !== 'FHRS' ? 'true' : 'false';
+  let businessLink = '';
 
-    const authorities = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
-    const authority = authorities.authorities.filter((la) => {
-      return la.LocalAuthorityIdCode === details.localAuthority;
-    });
-    walesBusiness = authority[0].RegionName === 'Wales';
+  if (!['1', '2', '3'].includes(style)) {
+    element.innerHTML = 'Invalid style. Ensure that the style parameter is 1, 2 or 3.';
+    return element;
   }
 
   if (businessId) {
@@ -31,6 +27,7 @@ async function component() {
     rating = details.rating.replaceAll(' ', '');
     rating = walesBusiness && rating === 'AwaitingInspection' ? 'Empty' : rating;
     fhis = details.scheme !== 'FHRS' ? 'true' : 'false';
+    businessLink = details.url;
 
     const authorities = await api.setLanguage(isWelsh === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
     const authority = authorities.authorities.filter((la) => {
@@ -72,14 +69,6 @@ async function component() {
     }
   };
 
-  let widths = {
-    1: '26.75rem',
-    2: '30rem',
-    3: '16.188rem',
-    4: '7.813rem',
-    5: '11.813rem'
-  };
-
   let folder = 'fhrs';
   let extension = 'svg';
   if (isWelsh) {
@@ -89,8 +78,6 @@ async function component() {
   if (fhis !== 'false') {
     folder = 'fhis';
     extension = 'jpg';
-  } else {
-    img.style = 'width:' + widths[style];
   }
 
   let ratingForImage = rating;
@@ -104,12 +91,15 @@ async function component() {
 
   img.src = url.origin + '/embed/badges/' + folder + '/' + style + '/' + folder + '-badge-' + ratingForImage + '.' + extension;
   img.alt = isText + words[isWelsh ? 'welsh' : 'english'][rating];
+  link.href = url.origin + businessLink;
 
-  element.appendChild(img);
+  link.appendChild(img)
+  element.appendChild(link);
+
   return element;
 }
 
 component().then(el => {
-  parentNode.insertAdjacentHTML("beforebegin", el.outerHTML);
+  parentNode.insertAdjacentHTML("afterbegin", el.innerHTML);
 })
 

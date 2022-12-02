@@ -2,6 +2,7 @@
   "get_online_ratings": "Cael sgôr ar-lein",
   "get_online_ratings_for": "Cael sgôr ar-lein ar gyfer",
   "copy_code": "Copïwch a gludwch y cod isod i'ch tudalen",
+  "how_to_use_code": "Er mwyn gosod y sgôr ar-lein ar eich tudalen, nodwch y cod mewn tag &lt;div&gt;",
   "preview": "Rhagolwg",
   "download_image": "Lawrlwytho delwedd",
   "get_code": "Cael cod",
@@ -11,5 +12,5 @@
   "how_to_display_content": "<p>Rydym yn darparu detholiad o fformatau ar gyfer arddangos eich sgôr hylendid bwyd ar-lein i’w defnyddio ar wefannau, apiau, y cyfryngau cymdeithasol ac e-byst.</p><p>Os ydych yn arddangos eich sgôr ar-lein, rydym yn argymell eich bod yn mewnosod y cod javascript lle bo modd. Mae hyn oherwydd bod y cod wedi’i ddatblygu i ddiweddaru’n awtomatig os bydd eich sgôr yn newid. Bydd dim ond angen gwneud hyn unwaith.</p><p>Os byddwch yn dewis lawrlwytho’r ddelwedd a’i huwchlwytho’n uniongyrchol, bydd angen i chi sicrhau eich bod yn diweddaru'r sgôr ar-lein os bydd yn newid yn y dyfodol.</p><p><a href=\"https://www.food.gov.uk/cy/canllawiau-busnes/canllawiau-arddangos-ar-lein-ar-gyfer-y-cynllun-sgorio-hylendid-bwyd\">Mae canllawiau ar y gofynion ar gyfer arddangos eich sgôr hylendid bwyd ar-lein ar gael.</a></p>",
   "high_res_online_rating": "Sgôr ar-lein ansawdd uchel",
   "legacy_rating_title": "Cod sgôr ar-lein etifeddol",
-  "legacy_rating_content": "<p>Mae fersiynau blaenorol y sgoriau ar-lein bellach wedi dod i ben.</p><p>Defnyddiwch y cod ar gyfer sgoriau ar-lein ansawdd uchel a ddarperir uchod os ydych yn ychwanegu’r sgôr ar-lein at wefan busnes.</p><p>Defnyddiwch y delweddau sgoriau ar-lein a ddarperir uchod os ydych yn eu rhannu ar draws eich llwyfannau ar-lein neu gymdeithasol.</p><p>Bydd y cod etifeddol yn parhau i fod yn weithredol tan [ychwanegwch y dyddiad 12 mis ar ôl ei lansio]. Ar ôl y cyfnod hwn, bydd y cod yn dod i ben.</p>"
+  "legacy_rating_content": "<p>Mae fersiynau blaenorol y sgoriau ar-lein bellach wedi dod i ben.</p><p>Defnyddiwch y cod ar gyfer sgoriau ar-lein ansawdd uchel a ddarperir uchod os ydych yn ychwanegu’r sgôr ar-lein at wefan busnes.</p><p>Defnyddiwch y delweddau sgoriau ar-lein a ddarperir uchod os ydych yn eu rhannu ar draws eich llwyfannau ar-lein neu gymdeithasol.</p><p>Bydd y cod etifeddol yn parhau i fod yn weithredol tan fis Mawrth 2024. Ar ôl y cyfnod hwn ni fydd yn gweithio mwyach.</p>"
 }
