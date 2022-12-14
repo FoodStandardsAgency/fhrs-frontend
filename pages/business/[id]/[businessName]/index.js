@@ -32,8 +32,7 @@ export async function getStaticPaths() {
    const establishments = data.establishments;
    */
   const paths = establishments.map((establishment) => {
-    let bn = businessNameToUrl(establishment.BusinessName);
-    if (!bn.length) bn = "unknown";
+    const bn = businessNameToUrl(establishment.BusinessName, establishment.AddressLine3);
     return {
       params: {
         id: establishment.FHRSID.toString(),
@@ -250,7 +249,7 @@ function BusinessPage({business, scores, locale, bing_key, businessType, laLogo}
     type: 'general',
     wysiwyg_content: `<h3>${t('get_code_title', {ns: 'businessPage'})}</h3><p>${t('get_code_description', {ns: 'businessPage'})}</p>`,
     link_text: t('get_code_link_text', {ns: 'businessPage'}),
-    link_url: businessNameToUrl(business.BusinessName) + '/online-ratings',
+    link_url: businessNameToUrl(business.BusinessName, business.AddressLine3) + '/online-ratings',
   }
 
   const localAuthorityText = {

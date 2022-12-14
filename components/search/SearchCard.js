@@ -4,6 +4,7 @@ import {useEffect} from "react";
 import searchCard from '@components/components/fhrs/SearchCard/searchCard.html.twig';
 
 import {i18n, useTranslation} from "next-i18next";
+import businessNameToUrl from "../../lib/business";
 
 function SearchCard(props) {
   const {business, locale, distance, mapState} = props;
@@ -28,7 +29,7 @@ function SearchCard(props) {
 
   const establishmentContent = {
     business_name: business.BusinessName,
-    business_link: `${locale === 'cy' ? '/cy' : ''}/business/${business.FHRSID.toString()}/${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
+    business_link: `${locale === 'cy' ? '/cy' : ''}/business/${business.FHRSID.toString()}/${businessNameToUrl(business.BusinessName, business.AddressLine3)}`,
     private: !formattedAddress,
     address: formattedAddress,
     post_code: business.PostCode,

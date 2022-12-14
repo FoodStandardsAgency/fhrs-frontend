@@ -25,8 +25,7 @@ export async function getStaticPaths() {
    const establishments = data.establishments;
    */
   const paths = establishments.map((establishment) => {
-    let bn = businessNameToUrl(establishment.BusinessName);
-    if (!bn.length) bn = "unknown";
+    const bn = businessNameToUrl(establishment.BusinessName, establishment.AddressLine3);
     return {
       params: {
         id: establishment.FHRSID.toString(),
@@ -168,7 +167,7 @@ function BusinessPage({business, locale, base_url, businessType}) {
   // Generate hero data
   const heroData = {
     name: business.BusinessName,
-    back_link: `${locale === 'cy' ? '/cy' : ''}/business/${business.FHRSID.toString()}/${business.BusinessName.replace(/[^a-z0-9 -]/gi, '').replace(/\s+/g, '-').toLowerCase()}`,
+    back_link: `${locale === 'cy' ? '/cy' : ''}/business/${business.FHRSID.toString()}/${businessNameToUrl(business.BusinessName, business.AddressLine3)}`,
     back_to_search_results: t('back_to_business_page', {ns: 'onlineRatings'}),
     search_local_link: `${locale === 'cy' ? '/cy' : ''}/authority-search-landing/${localAuthorityId}`,
     search_this_local_authority_area: t('search_this_local_authority_area', {ns: 'businessHero'}),
@@ -234,7 +233,7 @@ function BusinessPage({business, locale, base_url, businessType}) {
   const breadcrumbLinks = [
     {
       'text': business.BusinessName,
-      'url': `/business/${business.FHRSID.toString()}/${businessNameToUrl(business.BusinessName)}`,
+      'url': `/business/${business.FHRSID.toString()}/${businessNameToUrl(business.BusinessName, business.AddressLine3)}`,
     },
     {
       'text': t('get_online_ratings', {ns: 'onlineRatings'}),
