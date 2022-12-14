@@ -98,7 +98,7 @@ function OpenData({locale, authorities, regions}) {
     title: t('images_title', {ns: 'openData'}),
     description: t('images_desc', {ns: 'openData'}),
     welsh: locale === 'cy',
-    download_link: '/images/ratings.zip',
+    download_link: '/images/images.zip',
     download_text: t('images_download_text', {ns: 'openData'}),
     filesize: '1 MB',
     file_format: 'ZIP',
