@@ -45,6 +45,16 @@ const nextConfig = {
         destination: '/cy/business/:path*',
         permanent: false,
       },
+      {
+        source: '/authority-search-landing/en-GB/:path*',
+        destination: '/authority-search-landing/:path*',
+        permanent: false,
+      },
+      {
+        source: '/authority-search-landing/cy-GB/:path*',
+        destination: '/cy/authority-search-landing/:path*',
+        permanent: false,
+      },
     ]
   }
 }
