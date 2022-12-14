@@ -42,7 +42,7 @@ const nextConfig = {
       },
       {
         source: '/business/cy-GB/:path*',
-        destination: '/business/:path*',
+        destination: '/cy/business/:path*',
         permanent: false,
       },
     ]
