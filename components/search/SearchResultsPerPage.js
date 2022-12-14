@@ -21,7 +21,7 @@ function SearchResultsPerPage(props) {
       if (setScrollToResults) {
         setScrollToResults(true);
       }
-      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState.current === true ? true : ''}, {name: 'page', value: 1}], false, push);
+      updateMultiParams([{name: 'page_size', value: resultsSelect.value}, {name: 'init_map_state', value: props.mapState.current === true ? true : ''}, {name: 'page', value: 1}], false, true);
     });
     i18n.addResourceBundle(locale, 'searchResultsPerPage')
   }, [isReady]);

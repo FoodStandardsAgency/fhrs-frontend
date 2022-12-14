@@ -37,14 +37,15 @@ describe('Business search', () => {
     cy.get('.fhrs-layout__center').find('.fhrs-search-card').should('have.length', 50);
     cy.get('p.showing').contains('Showing 1 - 50');
   })
-  it('Can show a map', () => {
+  it.only('Can show a map', () => {
     fhrs.typeInAField('business', 'pizza');
     cy.get('[data-fsa-at="map-toggle"]').click();
     cy.get('.ratings-search-box__submit input').click();
-    cy.get('.MicrosoftMap').should('be.visible');
+    cy.get('.ratings-search-box__map--open').should('exist');
     cy.get('.fhrs-search-card__map-pin--1').should('be.visible');
     cy.get('[data-fsa-at="map-toggle"]').click();
-    cy.get('.MicrosoftMap').should('not.be.visible');
+    cy.get('.ratings-search-box__map').should('exist');
+    cy.get('.ratings-search-box__map--open').should('not.exist');
     cy.get('.fhrs-search-card__map-pin--1').should('not.be.visible');
   })
   it('Can switch to Welsh and retain search', () => {
@@ -64,11 +65,11 @@ describe('Business search', () => {
     fhrs.setSort('alpha');
     firstResultContains('Best Kebab And Pizza Time');
   });
-  it.only('Keeps the enhanced search open when used', () => {
+  it('Keeps the enhanced search open when used', () => {
     fhrs.typeInAField('business', 'pizza');
     fhrs.typeInAField('location', 'canterbury')
     cy.get('[data-fsa-at="more-search-options"]').click();
-    cy.get('[data-fsa-at="radio-rating"]').click();
+    cy.get('[data-fsa-at="radio-rating"]').click({force: true});
     cy.get('.ratings-search-box__submit input').click();
     cy.get('[data-fsa-at="radio-rating"]').should('be.visible').should('be.checked');
     cy.get('[data-fsa-at="more-search-options"]').contains('Fewer search options');

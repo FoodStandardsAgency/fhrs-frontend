@@ -9,7 +9,8 @@ fhrs.typeInAField = function (field, value) {
 }
 
 fhrs.setSort = function (value) {
-  return cy.get('[data-fsa-at="search-sort"]').select(value);
+  cy.get('[data-fsa-at="search-sort"]').select(value);
+  return cy.wait(2000);
 }
 
 fhrs.setItemsPerPage = function (value) {
@@ -17,11 +18,11 @@ fhrs.setItemsPerPage = function (value) {
 }
 
 fhrs.firstResultContains = function (value) {
-  return cy.get('.fhrs-search-card h2 a').first().contains(value);
+  return cy.get('.fhrs-search-card__left h2 a').first().contains(value);
 }
 
 fhrs.firstResultClick = function () {
-  return cy.get('.fhrs-search-card h2 a').first().click();
+  return cy.get('.fhrs-search-card__left h2 a').first().click();
 }
 
 fhrs.switchToLanguage = function (lang) {
