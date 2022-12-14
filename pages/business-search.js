@@ -170,7 +170,14 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       let authorities = {};
       let pushPins = [];
       let locations = [];
-      setApiDataUri(`/api/download-data/json${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).uri}`);
+
+        let formatElem = document.getElementById('format');
+        let formatVal = 'json';
+        if (formatElem) {
+          formatVal = formatElem.value;
+        }
+
+        setApiDataUri(`/api/download-data/${formatVal}${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).uri}`);
         try {
           searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
           authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
@@ -251,6 +258,7 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       });
     }
     if (format) {
+      setApiDataUri(generateDataUri('format', format, apiDataUri));
       format.addEventListener('change', () => {
         setApiDataUri(generateDataUri('format', format, apiDataUri));
       });
