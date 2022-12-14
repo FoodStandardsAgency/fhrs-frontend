@@ -54,9 +54,11 @@ export async function getStaticProps(context) {
   const business = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('establishments', {id: businessId}).getResults();
   const businessType = await getTranslatedBusinessType(business.BusinessType, context.locale);
   const scores = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('scoredescriptors', {}, {establishmentId: businessId}).getResults();
+  const laLogo = `${process.env.NEXT_PUBLIC_LA_LOGO_URL}/lalogo_${business.LocalAuthorityCode}.jpg`;
   return {
     props: {
       business: business,
+      laLogo: laLogo,
       businessType: businessType,
       scores: scores,
       menus: menus,
@@ -68,7 +70,7 @@ export async function getStaticProps(context) {
   }
 }
 
-function BusinessPage({business, scores, locale, bing_key, businessType}) {
+function BusinessPage({business, scores, locale, bing_key, businessType, laLogo}) {
   let previous = '';
   const history = useHistory().history;
 
@@ -307,7 +309,7 @@ function BusinessPage({business, scores, locale, bing_key, businessType}) {
         {rightToReplySection}
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
         <TwigTemplate template={explanationBlock} values={getCodeText} attribs={[]}/>
-        <LocalAuthority business={business} translations={localAuthorityText}/>
+        <LocalAuthority business={business} translations={localAuthorityText} logo={laLogo}/>
         <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
       </LayoutCentered>
     </>

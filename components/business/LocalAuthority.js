@@ -4,6 +4,7 @@ import TwigTemplate from '../../lib/parse.js';
 function LocalAuthority(props) {
    const business = props.business;
    const translations = props.translations;
+   const logo = props.logo;
 
    // Get local authority website domain only
    const website_url = business.LocalAuthorityWebSite;
@@ -19,7 +20,8 @@ function LocalAuthority(props) {
      website_label: domain,
      email_title: translations.la_email_label,
      email_address: business.LocalAuthorityEmailAddress.trim() ? business.LocalAuthorityEmailAddress : '',
-     logo_svg: '',
+     logo_url: logo,
+     logo_alt: `${business.LocalAuthorityName} logo`,
      opens_in_new_tab_label: translations.opens_in_new_tab_label,
    }
    return(

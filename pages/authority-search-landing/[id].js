@@ -75,11 +75,14 @@ export async function getStaticProps(context) {
   const options = await getSearchBoxOptions(searchFields, context.locale);
   const sortOptions = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('sortOptions').getResults();
 
+  const laLogo = `${process.env.NEXT_PUBLIC_LA_LOGO_URL}/lalogo_${authorityId}.jpg`;
+
   return {
     props: {
       menus: menus,
       locale: context.locale,
       authority: authority,
+      laLogo: laLogo,
       options: options,
       sortOptions: sortOptions.sortOptions,
       bingKey: process.env.NEXT_PUBLIC_BING_MAPS_KEY,
@@ -89,7 +92,7 @@ export async function getStaticProps(context) {
   }
 }
 
-function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}) {
+function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey, laLogo}) {
 
   const {t} = useTranslation(['searchPage', 'dates', 'common', 'ratingsSearchBox', 'dataDownload', 'pagination']);
 
@@ -345,7 +348,7 @@ function LocalAuthoritySearch({authority, locale, options, sortOptions, bingKey}
       <LayoutCentered>
         <TwigTemplate template={breadcrumb} values={breadcrumbContent} attribs={[]}/>
         <SearchBoxMain locale={locale} query={query} submitType={'input'} localAuthority={authority} options={options}
-                       showMap={showMap}/>
+                       showMap={showMap} laLogo={laLogo}/>
         <div id="topOfResults"></div>
         {
           Object.keys(query).length !== 0 && loading ?

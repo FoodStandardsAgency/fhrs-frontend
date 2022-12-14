@@ -6,7 +6,7 @@ import {i18n, useTranslation} from "next-i18next";
 import {useRouter} from "next/router";
 
 function SearchBoxMain(props) {
-  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, isHomepage, setStatus} = props;
+  const {locale, query, submit, submitType, pageTitle, options, localAuthority, showMap, isHomepage, setStatus, laLogo} = props;
   const {push} = useRouter();
   const isLocalAuthoritySearch = !!localAuthority;
   let localAuthorityId = null;
@@ -333,7 +333,8 @@ function SearchBoxMain(props) {
       website_label: domain,
       email_title: t('la_email_label'),
       email_address: localAuthority.Email.trim() ? localAuthority.Email : '',
-      logo_svg: '',
+      logo_url: laLogo,
+      logo_alt: `${localAuthority.Name} logo`
     } : null,
     business_name_label: t('business_name_label'),
     business_name_value: business_name_search ? business_name_search : '',
