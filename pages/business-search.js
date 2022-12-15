@@ -171,13 +171,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       let pushPins = [];
       let locations = [];
 
-        let formatElem = document.getElementById('format');
-        let formatVal = 'json';
-        if (formatElem) {
-          formatVal = formatElem.value;
-        }
-
-        setApiDataUri(`/api/download-data/${formatVal}${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).uri}`);
         try {
           searchResults = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).getResults();
           authorities = await api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('authorities').getResults();
@@ -232,6 +225,13 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           setStatus(false);
           setResults(searchResults);
           initMapPins(mapWrapper, setCenter);
+          let formatElem = document.getElementById('format');
+          let formatVal = 'json';
+          if (formatElem) {
+            formatVal = formatElem.value;
+          }
+
+          setApiDataUri(`/api/download-data/${formatVal}${api.setLanguage(locale === 'cy' ? 'cy-GB' : '').setType('establishments', {}, parameters).uri}`);
           if (scrollToResults) {
             const showing = document.querySelector('#topOfResults');
             if (showing) {
@@ -245,7 +245,8 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
           // TODO: add error state for no results
         }
     }
-    getSearchResults(query, mapWrapper, errorState);
+    getSearchResults(query, mapWrapper, errorState).then(() => {
+    });
   }, [isReady, center, cardsLoaded, query, mapState, perPage, errorState]);
 
   // Logic for the data download component
@@ -258,7 +259,6 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
       });
     }
     if (format) {
-      setApiDataUri(generateDataUri('format', format, apiDataUri));
       format.addEventListener('change', () => {
         setApiDataUri(generateDataUri('format', format, apiDataUri));
       });
