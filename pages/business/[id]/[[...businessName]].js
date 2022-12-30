@@ -3,25 +3,25 @@ import businessHero from '@components/components/fhrs/BusinessHero/businessHero.
 import titleAndText from '@components/components/form/TitleAndText/titleAndText.html.twig';
 import explanationBlock from '@components/components/article/ExplanationBlock/explanationBlock.html.twig';
 import breadcrumb from '@components/components/general/Breadcrumb/breadcrumbs.html.twig';
-import LayoutCentered from '../../../../components/layout/LayoutCentered';
-import StandardsTable from '../../../../components/business/StandardsTable';
-import LocalAuthority from '../../../../components/business/LocalAuthority';
-import PageWrapper from '../../../../components/layout/PageWrapper';
-import TwigTemplate from '../../../../lib/parse.js';
-import api from '../../../../lib/api.js';
-import businessNameToUrl from '../../../../lib/business.js';
+import LayoutCentered from '../../../components/layout/LayoutCentered';
+import StandardsTable from '../../../components/business/StandardsTable';
+import LocalAuthority from '../../../components/business/LocalAuthority';
+import PageWrapper from '../../../components/layout/PageWrapper';
+import TwigTemplate from '../../../lib/parse.js';
+import api from '../../../lib/api.js';
+import businessNameToUrl from '../../../lib/business.js';
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
 import {useTranslation} from "next-i18next";
 import {useEffect, useState} from "react";
-import BingMapsReact from "../../../../lib/bing-maps";
+import BingMapsReact from "../../../lib/bing-maps";
 import * as ReactDOM from "react-dom";
-import formatDate from "../../../../lib/formatDate";
+import formatDate from "../../../lib/formatDate";
 import Head from "next/head";
 import parse from 'html-react-parser';
-import {useHistory} from '../../../../context/History'
-import generateBreadcrumbs from "../../../../lib/breadcrumbs";
-import {getTranslatedBusinessType} from "../../../../lib/getInputFieldValues";
-import {generateDataUri, getSelectContent} from "../../../../lib/dataDownload";
+import {useHistory} from '../../../context/History'
+import generateBreadcrumbs from "../../../lib/breadcrumbs";
+import {getTranslatedBusinessType} from "../../../lib/getInputFieldValues";
+import {generateDataUri, getSelectContent} from "../../../lib/dataDownload";
 import dataDownload from '@components/components/fhrs/DataDownload/dataDownload.html.twig';
 
 export async function getStaticPaths() {

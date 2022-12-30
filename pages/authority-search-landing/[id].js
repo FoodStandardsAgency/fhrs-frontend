@@ -46,7 +46,13 @@ export async function getStaticProps(context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
   const menus = await res.json();
   const authorityId = context.params.id;
-  const authority = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').getAuthorityFromV1Id(authorityId);
+  let authority;
+  if (/^\d+$/.test(authorityId)) {
+    authority = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').getAuthorityFromV1Id(authorityId);
+  }
+  else {
+    authority = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').getAuthorityFromName(authorityId);
+  }
   if (!authority) {
     return {
       redirect: {
@@ -75,7 +81,7 @@ export async function getStaticProps(context) {
   const options = await getSearchBoxOptions(searchFields, context.locale);
   const sortOptions = await api.setLanguage(context.locale === 'cy' ? 'cy-GB' : '').setType('sortOptions').getResults();
 
-  const laLogo = `${process.env.NEXT_PUBLIC_LA_LOGO_URL}/lalogo_${authorityId}.jpg`;
+  const laLogo = `${process.env.NEXT_PUBLIC_LA_LOGO_URL}/lalogo_${authority.LocalAuthorityIdCode}.jpg`;
 
   return {
     props: {
