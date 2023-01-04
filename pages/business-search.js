@@ -251,16 +251,44 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
 
   // Logic for the data download component
   useEffect(() => {
-    const numberOfResults = document.querySelector('.data-download__select--no-of-results select');
+    const numberOfResults = document.querySelector('#number-of-results-text');
+    const pageNo = document.querySelector('#page-no-text');
     const format = document.querySelector('.data-download__select--format select');
-    if (numberOfResults) {
-      numberOfResults.addEventListener('change', () => {
-        setApiDataUri(generateDataUri('number_of_results', numberOfResults, apiDataUri));
-      });
+    const down = document.querySelector('.data-download__button a');
+    const err = document.querySelector('.data-download .ratings-search-box__error__container');
+    let errBox = false;
+    if (err) {
+      err.classList.remove('ratings-search-box__error__container--active');
+      errBox = err.querySelector('div');
     }
-    if (format) {
-      format.addEventListener('change', () => {
-        setApiDataUri(generateDataUri('format', format, apiDataUri));
+    if (down) {
+      down.addEventListener('click', (e) => { 
+        e.preventDefault();
+        err.classList.remove('ratings-search-box__error__container--active');
+        numberOfResults.closest('div.input-field').classList.remove('input-field--error');
+        pageNo.closest('div.input-field').classList.remove('input-field--error');
+        const no = parseInt(numberOfResults.value);
+        const page = parseInt(pageNo.value);
+        if (no > 5000) {
+          numberOfResults.closest('div.input-field').classList.add('input-field--error');
+          errBox.innerHTML = 'You can download a maximum of 5000 results';
+          err.classList.add('ratings-search-box__error__container--active');
+          return;
+        }
+        if (results.meta.totalCount < no * (page - 1)) {
+          numberOfResults.closest('div.input-field').classList.add('input-field--error');
+          pageNo.closest('div.input-field').classList.add('input-field--error');
+          errBox.innerHTML = 'No results for this selection';
+          err.classList.add('ratings-search-box__error__container--active');
+          return;
+        }
+        if (typeof apiDataUri === 'string' && apiDataUri.length) {
+          const url = new URL(window.location.origin + apiDataUri);
+          url.searchParams.set('pageSize', no);
+          url.searchParams.set('pageNumber', page);
+          url.href = url.href.replace(/(json|xml)/, format.value);
+          window.location = url;
+        }   
       });
     }
   })
@@ -322,9 +350,11 @@ function BusinessSearch({locale, options, sortOptions, bingKey}) {
     all: t('all', {ns: 'dataDownload'}),
     download: t('download', {ns: 'dataDownload'}),
     number_of_results: t('number_of_results', {ns: 'dataDownload'}),
+    page_number: t('page_number', {ns: 'dataDownload'}),
   }
 
   const dataDownloadContent = getSelectContent(apiDataUri, translations, perPage);
+  const errorBoxValues = {title: 'error'};
 
   function getErrorState(state) {
     setErrorState(state);

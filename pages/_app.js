@@ -13,7 +13,7 @@ function FhrsApp({Component, pageProps}) {
   useEffect(() => {
     // Some kind of weirdness is preventing azure giving a full URL in the header.
     // Force one in.
-    const handleStop = () => {
+    const handleStop = (url) => {
       const lang = document.querySelectorAll('.header__language a');
       lang.forEach((a) => {
         let href = a.getAttribute('href');
@@ -22,6 +22,20 @@ function FhrsApp({Component, pageProps}) {
         }
         a.setAttribute('href', href);
       });
+      console.log(url);
+      const q = new URLSearchParams(window.location.search);  
+
+      const ps = document.querySelector('#number-of-results-text');
+      const psv = parseInt(q.get('page_size'));
+      if (ps && psv > 0) {
+        ps.value = psv;
+      }
+
+      const p = document.querySelector('#page-no-text');
+      const pv = parseInt(q.get('page'));
+      if (p && pv > 0) {
+        p.value = pv;
+      }
     }
 
     router.events.on('routeChangeComplete', handleStop)

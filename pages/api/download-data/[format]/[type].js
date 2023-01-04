@@ -21,10 +21,12 @@ export default async function handler(req, res) {
     results.EstablishmentCollection.EstablishmentDetail.push(establishment);
   });
   if (format === 'json') {
+    res.setHeader('Content-Disposition', 'attachment; filename=establishments.json'); 
     res.status(200).json(results);
   }
   else if (format === 'xml') {
     res.setHeader('Content-Type', 'text/xml')
+    res.setHeader('Content-Disposition', 'attachment; filename=establishments.xml'); 
     res.status(200).send(js2xmlparser.parse(`FHRS${type}`, results))
   }
 }

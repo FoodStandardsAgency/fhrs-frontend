@@ -5,6 +5,7 @@ const js2xmlparser = require("js2xmlparser");
 // Generate xml or json for an individual establishment
 export default async function handler(req, res) {
   const {format, id} = req.query;
+  console.log("IDDWH", id);
   const searchResults = await api.setUri('/establishments/' + id).getResults();
   const establishment = {};
   const date = new Date;
@@ -22,5 +23,5 @@ export default async function handler(req, res) {
   } else if (format === 'xml') {
     res.setHeader('Content-Type', 'text/xml')
     res.status(200).send(js2xmlparser.parse('FHRSEstablishment', establishment));
-    }
+  }
 }
