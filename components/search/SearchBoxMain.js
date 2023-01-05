@@ -62,7 +62,7 @@ function SearchBoxMain(props) {
       }
       mapState ? searchParams.append('init_map_state', true) : null;
       mapState ? searchParams.delete('page_size') : null;
-      if (!entries.address_search && !entries.business_name_search && entries.business_type === '-1' && entries.country_or_la === 'all' && entries.hygiene_rating === 'all' && entries.hygiene_status === 'all' && !locationField.value) {
+      if (!entries.address_search && !entries.business_name_search && entries.business_type === '-1' && entries.country_or_la === 'all' && entries.hygiene_rating === 'all' && entries.hygiene_status === 'all' && !locationField.value && !entries.hygiene_rating_or_status) {
         if (!isLocalAuthoritySearch && !isHomepage) {
           props.sendData(true);
         }
