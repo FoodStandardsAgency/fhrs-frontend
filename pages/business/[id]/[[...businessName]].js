@@ -308,7 +308,7 @@ function BusinessPage({business, scores, locale, bing_key, businessType, laLogo}
         {rightToReplySection}
         <TwigTemplate template={titleAndText} values={businessOwnerText} attribs={[]}/>
         <TwigTemplate template={explanationBlock} values={getCodeText} attribs={[]}/>
-        <LocalAuthority business={business} translations={localAuthorityText} logo={laLogo}/>
+        <LocalAuthority business={business} translations={localAuthorityText} logo={laLogo} welsh={locale === 'cy'}/>
         <TwigTemplate template={dataDownload} values={dataDownloadContent} attribs={[]}/>
       </LayoutCentered>
     </>
