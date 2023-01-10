@@ -1,7 +1,7 @@
 {
   "page_title": "Download ratings data",
   "header": "UK food hygiene rating data API",
-  "intro": "The food hygiene rating data published at <a href=\"www.food.gov.uk/ratings\">www.food.gov.uk/ratings</a> are available via an application programming interface (API) in XML and JSON formats. This is a free service and there is no need to register to use it. Terms and conditions apply (see link below), and guidance for developers is available.",
+  "intro": "The food hygiene rating data published at <a href=\"/\">https://ratings.food.gov.uk</a> are available via an application programming interface (API) in XML and JSON formats. This is a free service and there is no need to register to use it. Terms and conditions apply (see link below), and guidance for developers is available.",
   "terms_title": "Terms and conditions",
   "terms_content": "<a href=\"https://www.food.gov.uk/terms-and-conditions\">Read the terms and conditions of using the data and images.</a>",
   "about_title": "About the data",
