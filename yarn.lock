@@ -2975,11 +2975,11 @@ fs.realpath@^1.0.0:
 
 "fsa-pattern-library-assets@https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#develop":
   version "0.0.0"
-  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#16b6e9fe9d2c7e2c71b33e4e54a286e8cdfd6fb3"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-assets.git#b15e1662edb1f53f03fc971bc5acd9ea5817c0ea"
 
 "fsa-pattern-library-source@https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#develop":
   version "1.1.5"
-  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#34a87c60c8dede7ebe52c422e4b40fad914a1843"
+  resolved "https://github.com/FoodStandardsAgency/fsa-pattern-library-source.git#796367bac55e9ef2e2ad2854ce4b6fef6fbf1698"
   dependencies:
     css-vars-ponyfill "2.4.7"
     dwnld-attr-polyfill "^1.1.7"
