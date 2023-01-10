@@ -6,6 +6,7 @@ import promoGroup from '@components/components/landing/PromoGroup/promoGroup.htm
 import feedback from '@components/components/general/Feedback/feedback.html.twig';
 import {useEffect} from "react";
 import {i18n, useTranslation} from "next-i18next";
+import { useRouter } from 'next/router'
 
 export async function getStaticProps (context) {
   const res = await fetch(process.env.FSA_MAIN_BASE_URL + (context.locale === 'cy' ? '/cy' : '') + '/api/menus');
@@ -25,10 +26,24 @@ export async function getStaticProps (context) {
 export default function PageWrapper(Component, options) {
   function PageWrapper(props) {
     const {locale} = props;
+    const router = useRouter();
+    let path;
+    if (router) {
+      const pathname = router.pathname;
+      path = pathname.split("/").pop();
+    }
     useEffect(() => {
       i18n.addResourceBundle(locale, 'common')
     }, []);
+
     const {t} = useTranslation(['common']);
+
+    // Only add the beta banner if we're on the online-ratings page
+    if (path === 'online-ratings') {
+      props.menus.header['beta_banner'] = {
+        content: t('beta_banner_online_ratings'),
+      };
+    }
 
     let promoGroupContent = {
       cards: [

@@ -13,5 +13,6 @@
   "opens_in_new_tab_label": "(Opens in a new tab)",
   "ss_recently_inspected": "Recently inspected",
   "sd_recently_inspected": "New rating to be published soon",
-  "feedback_content": "<p><a href=\"https://www.food.gov.uk/fhrs-feedback\">Is there anything wrong with this page?</a></p>"
+  "feedback_content": "<p><a href=\"https://www.food.gov.uk/fhrs-feedback\">Is there anything wrong with this page?</a></p>",
+  "beta_banner_online_ratings": "This is a new service - your <a href=\"https://www.food.gov.uk/fhrs-feedback\">feedback</a> will help us to improve it"
 }
