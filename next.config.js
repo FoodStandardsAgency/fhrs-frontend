@@ -55,6 +55,11 @@ const nextConfig = {
         destination: '/cy/authority-search-landing/:path*',
         permanent: false,
       },
+      {
+        source: '/status/:path*',
+        destination: 'https://api.ratings.food.gov.uk/Help/Status',
+        permanent: false,
+      },
     ]
   }
 }
